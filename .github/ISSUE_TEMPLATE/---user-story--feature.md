@@ -8,7 +8,7 @@ assignees: ''
 ---
 
 **User Story**
-As a <USER ROLE> I want to <GOAL>, so that <REASON>.
+As a user, I want to <GOAL>, so that <REASON>.
 
 **Implementation**
 Steps to implement the feature:
