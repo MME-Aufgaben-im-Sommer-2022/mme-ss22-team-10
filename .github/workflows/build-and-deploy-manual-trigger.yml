@@ -1,4 +1,4 @@
-name: Build and Deploy
+name: Build and Deploy (Manual Trigger)
 on: [workflow_dispatch]
 jobs:
   build-and-deploy:
