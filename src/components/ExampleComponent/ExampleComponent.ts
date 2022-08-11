@@ -42,7 +42,7 @@ export default class ExampleComponent extends WebComponent {
 		// set the listeners for the button and the view model
 		this.select("button")!.addEventListener("click", this.onButtonClicked);
 
-		this.exampleState.addEventListener("change", this.onViewModelChanged);
+		this.exampleState.addEventListener("change", this.onModelChanged);
 	}
 
 	// this method is called, when the button is clicked
@@ -52,8 +52,8 @@ export default class ExampleComponent extends WebComponent {
 
 	// this method is called, when the view model changes
 	// -> we need to update our component with the new values
-	onViewModelChanged = (data: any) => {
+	onModelChanged = (data: any) => {
 		this.select("#count")!.innerHTML = `${this.exampleState.value.count}`;
-		console.log("COMPONENT ViewModel changed:", data);
+		console.log("COMPONENT Model changed:", data);
 	};
 }
