@@ -16,9 +16,9 @@ import { Observable } from "./Observable";
 // EventBus.notifyAll("someEvent", {some: "data"}) // send "someEvent" event
 
 class EventBus extends Observable {
-	constructor() {
-		super();
-	}
+  constructor() {
+    super();
+  }
 }
 
 export default new EventBus();

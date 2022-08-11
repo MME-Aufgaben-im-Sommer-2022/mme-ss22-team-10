@@ -22,54 +22,54 @@ import DataManager from "../../data/DataManager";
 // );
 
 export default class GlobalState {
-	private static states: Map<string, State<any>> = new Map<
-		string,
-		State<any>
-	>();
+  private static states: Map<string, State<any>> = new Map<
+    string,
+    State<any>
+  >();
 
-	// This function is used to initialize all states.
-	// It should be called at the start of the application.
-	public static async init() {
-		const exampleModel = await DataManager.getExampleModel();
-		this.addState(exampleModel.toState());
-	}
+  // This function is used to initialize all states.
+  // It should be called at the start of the application.
+  public static async init() {
+    const exampleModel = await DataManager.getExampleModel();
+    this.addState(exampleModel.toState());
+  }
 
-	// Adds a state to the store.
-	public static addState(state: State<any>): void {
-		this.states.set(state.id, state);
-	}
+  // Adds a state to the store.
+  public static addState(state: State<any>): void {
+    this.states.set(state.id, state);
+  }
 
-	// Returns a state from the store by its id.
-	public static getStateById<T, S extends State<T>>(id: string): S | undefined {
-		return this.states.get(id) as S;
-	}
+  // Returns a state from the store by its id.
+  public static getStateById<T, S extends State<T>>(id: string): S | undefined {
+    return this.states.get(id) as S;
+  }
 
-	// Returns a state from the store, that matches the given predicate.
-	// Example: GlobalState.findModel(state => state.name === "John", ExampleModel)
-	public static findState<T, S extends State<T>>(
-		predicate: (value: T) => boolean,
-		classConstructor: new (...args: any[]) => T
-	): S | undefined {
-		for (const state of this.states.values()) {
-			if (state.value instanceof classConstructor && predicate(state.value)) {
-				return state as S;
-			}
-		}
-		return undefined;
-	}
+  // Returns a state from the store, that matches the given predicate.
+  // Example: GlobalState.findModel(state => state.name === "John", ExampleModel)
+  public static findState<T, S extends State<T>>(
+    predicate: (value: T) => boolean,
+    classConstructor: new (...args: any[]) => T
+  ): S | undefined {
+    for (const state of this.states.values()) {
+      if (state.value instanceof classConstructor && predicate(state.value)) {
+        return state as S;
+      }
+    }
+    return undefined;
+  }
 
-	// Returns all states from the store, that match the given predicate.
-	// -> Like GlobalState.findModel(), but returns all matches.
-	public static findStates<T, S extends State<T>>(
-		predicate: (value: T) => boolean,
-		classConstructor: new (...args: any[]) => T
-	): S[] {
-		const states: S[] = [];
-		for (const state of this.states.values()) {
-			if (state.value instanceof classConstructor && predicate(state.value)) {
-				states.push(state as S);
-			}
-		}
-		return states;
-	}
+  // Returns all states from the store, that match the given predicate.
+  // -> Like GlobalState.findModel(), but returns all matches.
+  public static findStates<T, S extends State<T>>(
+    predicate: (value: T) => boolean,
+    classConstructor: new (...args: any[]) => T
+  ): S[] {
+    const states: S[] = [];
+    for (const state of this.states.values()) {
+      if (state.value instanceof classConstructor && predicate(state.value)) {
+        states.push(state as S);
+      }
+    }
+    return states;
+  }
 }

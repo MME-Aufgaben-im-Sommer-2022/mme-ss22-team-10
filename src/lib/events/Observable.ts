@@ -14,36 +14,36 @@ import { Event } from "./Event";
 // 	- call addEventListener(eventType, callback) on an Observable to listen for events
 
 export abstract class Observable {
-	listener: any = {};
+  listener: any = {};
 
-	addEventListener(type: string, callback: Function) {
-		if (this.listener[type] === undefined) {
-			this.listener[type] = [];
-		}
-		this.listener[type].push(callback);
-	}
+  addEventListener(type: string, callback: (event: Event) => void) {
+    if (this.listener[type] === undefined) {
+      this.listener[type] = [];
+    }
+    this.listener[type].push(callback);
+  }
 
-	removeEventListener(type: string, callback: Function) {
-		if (this.listener[type] !== undefined) {
-			for (let i = 0; i < this.listener[type].length; i++) {
-				if (this.listener[type][i] === callback) {
-					this.listener[type].splice(i, 1);
-					return;
-				}
-			}
-		}
-	}
+  removeEventListener(type: string, callback: (event: Event) => void) {
+    if (this.listener[type] !== undefined) {
+      for (let i = 0; i < this.listener[type].length; i++) {
+        if (this.listener[type][i] === callback) {
+          this.listener[type].splice(i, 1);
+          return;
+        }
+      }
+    }
+  }
 
-	notifyAll(type: string, data: any) {
-		const event = new Event(type, data);
-		if (this.listener[event.type] !== undefined) {
-			for (let i = 0; i < this.listener[event.type].length; i++) {
-				this.listener[event.type][i](event);
-			}
-		}
-	}
+  notifyAll(type: string, data: any) {
+    const event = new Event(type, data);
+    if (this.listener[event.type] !== undefined) {
+      for (let i = 0; i < this.listener[event.type].length; i++) {
+        this.listener[event.type][i](event);
+      }
+    }
+  }
 
-	clear() {
-		this.listener = {};
-	}
+  clear() {
+    this.listener = {};
+  }
 }
