@@ -79,7 +79,7 @@ export default class State<T> extends Observable {
 
   set value(value: T) {
     this.setValue(value);
-    this.notifyAll(State.STATE_CHANGE_EVENT, this);
+    this.notifyAll(State.STATE_CHANGE_EVENT, this.val);
   }
 
   private generateId() {
