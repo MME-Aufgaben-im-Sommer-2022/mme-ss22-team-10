@@ -22,7 +22,7 @@ import DataManager from "../../data/DataManager";
 // );
 
 export default class GlobalState {
-	private static _states: Map<string, State<any>> = new Map<
+	private static states: Map<string, State<any>> = new Map<
 		string,
 		State<any>
 	>();
@@ -36,12 +36,12 @@ export default class GlobalState {
 
 	// Adds a state to the store.
 	public static addState(state: State<any>): void {
-		this._states.set(state.id, state);
+		this.states.set(state.id, state);
 	}
 
 	// Returns a state from the store by its id.
 	public static getStateById<T, S extends State<T>>(id: string): S | undefined {
-		return this._states.get(id) as S;
+		return this.states.get(id) as S;
 	}
 
 	// Returns a state from the store, that matches the given predicate.
@@ -50,7 +50,7 @@ export default class GlobalState {
 		predicate: (value: T) => boolean,
 		classConstructor: new (...args: any[]) => T
 	): S | undefined {
-		for (const state of this._states.values()) {
+		for (const state of this.states.values()) {
 			if (state.value instanceof classConstructor && predicate(state.value)) {
 				return state as S;
 			}
@@ -65,7 +65,7 @@ export default class GlobalState {
 		classConstructor: new (...args: any[]) => T
 	): S[] {
 		const states: S[] = [];
-		for (const state of this._states.values()) {
+		for (const state of this.states.values()) {
 			if (state.value instanceof classConstructor && predicate(state.value)) {
 				states.push(state as S);
 			}

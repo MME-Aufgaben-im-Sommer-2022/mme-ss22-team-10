@@ -20,7 +20,7 @@ export default abstract class WebComponent extends HTMLElement {
 
 	// Called, when the component is connected to the DOM
 	// Override this method in your component to add listeners, set data, etc.
-	abstract onConnected(): void;
+	abstract onCreate(): void;
 
 	// Returns the HTML tag name of the component
 	// Example: A component <example-component /> would return "example-component"
@@ -34,8 +34,10 @@ export default abstract class WebComponent extends HTMLElement {
 
 	// Returns the root element of the component
 	get root(): ShadowRoot {
-		if (this.shadowRoot) return this.shadowRoot;
-		else throw new Error("WebComponent.root is not available yet");
+		if (this.shadowRoot) {
+			return this.shadowRoot;
+		}
+		throw new Error("WebComponent.root is not available yet");
 	}
 
 	// shortcut for this.root.querySelector(selector)
@@ -51,7 +53,7 @@ export default abstract class WebComponent extends HTMLElement {
 	async connectedCallback() {
 		this.loadStylesheet();
 		this.loadHtml();
-		this.onConnected();
+		this.onCreate();
 	}
 
 	loadStylesheet() {

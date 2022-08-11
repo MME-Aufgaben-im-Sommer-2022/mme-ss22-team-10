@@ -1,4 +1,4 @@
-## 📖 Docs
+## 📖 Lib Documentation (starter template)
 
 ### How to: Create Components
 
@@ -81,4 +81,4 @@ For an example, see [GlobalState](/src/lib/state/GlobalState.ts)
 
 ## 🌅 Cheat Sheet
 
-![📖 Cheat Sheet](docs/res/../../res/web-component-architecture.svg)
+![📖 Cheat Sheet](./res/web-component-architecture.svg)

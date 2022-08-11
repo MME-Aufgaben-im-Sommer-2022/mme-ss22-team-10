@@ -21,26 +21,26 @@ import { Observable } from "../events/Observable";
 
 export default class State<T> extends Observable {
 	static STATE_CHANGE_EVENT = "change";
-	private _value!: T;
+	private val!: T;
 
-	private _id: string = ""; // unique id that identifies any state
-	private static _stateCounts: Map<string, number> = new Map<string, number>();
+	id: string = ""; // unique id that identifies any state
+	private static stateCounts: Map<string, number> = new Map<string, number>();
 
 	constructor(value: T) {
 		super();
-		this._generateId()
-		this._setValue(value);
+		this.generateId();
+		this.setValue(value);
 	}
 
-	private _setValue(value: T): void {
-		this._value = typeof value == "object" ? this._createProxy(value) : value;
+	private setValue(_value: T): void {
+		this.val = typeof _value === "object" ? this.createProxy(_value) : _value;
 	}
 
-	private _createProxy(value: Object): T {
-		return new Proxy(value, this._proxyHandler) as T;
+	private createProxy(value: Object): T {
+		return new Proxy(value, this.proxyHandler) as T;
 	}
 
-	private _proxyHandler = {
+	private proxyHandler = {
 		set: (object: any, key: string | symbol, value: any) => {
 			if (object[key] !== value) {
 				object[key] = value;
@@ -53,13 +53,16 @@ export default class State<T> extends Observable {
 		// to avoid creating new proxies for already proxied objects, the following code was adopted from:
 		// https://stackoverflow.com/questions/41299642/how-to-use-javascript-proxy-for-nested-objects
 		get: (object: any, key: string | symbol) => {
-			if (key == "isProxy") return true;
+			if (key === "isProxy") {
+				return true;
+			}
 
 			const prop = object[key];
-			if (typeof prop == "undefined") return;
-			else if (!prop.isProxy) {
-				if (typeof prop == "object") {
-					return this._createProxy(prop);
+			if (typeof prop === "undefined") {
+				return undefined;
+			} else if (!prop.isProxy) {
+				if (typeof prop === "object") {
+					return this.createProxy(prop);
 				}
 			}
 
@@ -68,27 +71,22 @@ export default class State<T> extends Observable {
 	};
 
 	get value(): T {
-		return this._value;
+		return this.val;
 	}
 
 	set value(value: T) {
-		this._setValue(value);
+		this.setValue(value);
 		this.notifyAll(State.STATE_CHANGE_EVENT, this);
 	}
 
-	private _generateId() {
+	private generateId() {
 		const name = this.constructor.name;
-		let count = State._stateCounts.get(name);
+		let count = State.stateCounts.get(name);
 		if (count === undefined) {
 			count = 0;
 		}
-		State._stateCounts.set(name, count + 1);
-		this._id = name + "-" + count;
-		Object.freeze(this._id);
-	}
-
-
-	get id(): string {
-		return this._id;
+		State.stateCounts.set(name, count + 1);
+		this.id = name + "-" + count;
+		Object.freeze(this.id);
 	}
 }

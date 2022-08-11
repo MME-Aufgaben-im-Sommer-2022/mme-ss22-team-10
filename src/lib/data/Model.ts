@@ -8,11 +8,12 @@ import State from "../state/State";
 // Extend it to create your own models. To get/set model values use States (DO NOT USE RAW MODELS) in your application.
 
 export default abstract class Model {
-
-	private _state: State<this> | undefined;
+	private state: State<this> | undefined;
 
 	toState(): State<this> {
-		if (!this._state) this._state = new State(this);
-		return this._state;
+		if (!this.state) {
+			this.state = new State(this);
+		}
+		return this.state;
 	}
 }

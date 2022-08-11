@@ -1,8 +1,10 @@
-# Vorlage für MME-Projekte
+# EcoNotes
 
-Dieses Repository bildet die Grundlage für Ihre Projektarbeit und wurde über die Annahme der _Classroom_-Aufgabe automatisch erstellt. Hinweise zum Aufbau der vorgegebenen Struktur und Hilfswerkzeuge finden Sie im [Dev Guide](./DevGuide.md). **Achten Sie während der Entwicklung stets darauf, dass der Code in Ihrem Repository zu jeder Zeit über `npm run build` fehlerfrei gebaut und veröffentlicht werden kann.**
+## Docs
 
-**Ergänzen Sie im Laufe der Entwicklung die folgenden Punkte in dieser Readme-Datei!**
+Code documentation:
+
+- [Lib](docs/lib.md): documentation for the core library (= starter template)
 
 ## Projekt
 

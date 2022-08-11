@@ -13,11 +13,13 @@ export default class WebComponentLoader {
 	private static componentDefinitions: ComponentDefinition<WebComponent>[] = [];
 
 	public static async loadAll(): Promise<void> {
-		const modules: GlobImport = import.meta.importGlob("../../components/**/*.ts");
-		const modulePaths = Object.keys(modules);
+		const modules: GlobImport = import.meta.importGlob(
+				"../../components/**/*.ts"
+			),
+			modulePaths = Object.keys(modules);
 		for (const modulePath of modulePaths) {
-			const module = await modules[modulePath]();
-			const componentClass = module.default;
+			const module = await modules[modulePath](),
+				componentClass = module.default;
 			if (componentClass && componentClass.prototype.htmlTagName) {
 				const componentDefinition = new ComponentDefinition(
 					componentClass.prototype.htmlTagName,
@@ -43,7 +45,13 @@ export default class WebComponentLoader {
 }
 
 class ComponentDefinition<T extends WebComponent> {
-	constructor(public name: string, public componentConstructor: new () => T) {}
+	name: string;
+	componentConstructor: new () => T;
+
+	constructor(name: string, componentConstructor: new () => T) {
+		this.name = name;
+		this.componentConstructor = componentConstructor;
+	}
 
 	public defineSelf(): void {
 		customElements.define(this.name, this.componentConstructor);
