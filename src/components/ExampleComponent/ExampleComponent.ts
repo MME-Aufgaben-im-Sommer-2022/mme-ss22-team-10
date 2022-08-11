@@ -55,6 +55,7 @@ export default class ExampleComponent extends WebComponent {
   // -> we need to update our component with the new values
   onModelChanged = (data: any) => {
     this.select("#count")!.innerHTML = `${this.exampleState.value.count}`;
+    this.select("h1")!.innerHTML = `Hello ${this.exampleState.value.name}!`;
     log("COMPONENT Model changed:", data);
   };
 }
