@@ -7,6 +7,7 @@ import DataManager from "./data/DataManager";
 
 const app = () => {
 	"use strict";
+
 	WebComponentLoader.loadAll() // Initialize the WebComponent definitions
 		.then(() => DataManager.init()) // Initialize the database connection etc.
 		.then(() => GlobalState.init()) // Initialize the global state
