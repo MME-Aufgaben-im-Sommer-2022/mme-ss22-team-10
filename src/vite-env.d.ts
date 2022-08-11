@@ -1,7 +1,7 @@
 /// <reference types="vite/client" />
 
 interface ImportMetaEnv {
-  readonly VITE_LOGGER_IS_ENABLED: boolean;
+  readonly VITE_LOGGER_IS_ENABLED: string;
   // more env variables...
 }
 
