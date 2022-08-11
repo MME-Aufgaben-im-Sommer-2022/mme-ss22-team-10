@@ -1,35 +1,19 @@
 {
-  "name": "mme-projects",
-  "version": "0.0.1",
-  "description": "A template for your MME Projects",
-  "type": "module",
-  "main": "index.js",
-  "watch": {
-    "runDevelopementServer": {
-      "patterns": [
-        "app/src"
-      ],
-      "extensions": "js",
-      "inherit": true,
-      "clearBuffer": true
-    }
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "npm-watch",
-    "runDevelopementServer": "node start_dev_server.js",
-    "build": "node build_for_deployment.js",
-    "check": "eslint app/src/",
-    "prebuild": "npm install && npm run check"
-  },
-  "author": "",
-  "license": "MIT",
-  "devDependencies": {
-    "dotenv": "^16.0.0",
-    "eslint": "^8.8.0",
-    "express": "^4.17.2",
-    "fs-extra": "^10.0.0",
-    "npm-watch": "^0.11.0",
-    "open": "^8.4.0"
-  }
+	"name": "web-components-ts",
+	"private": true,
+	"version": "0.0.0",
+	"type": "module",
+	"scripts": {
+		"dev": "vite",
+		"build": "tsc && vite build",
+		"preview": "vite preview",
+		"deploy": "npm run build && gh-pages -d dist -b master"
+	},
+	"devDependencies": {
+		"@rollup/plugin-replace": "^4.0.0",
+		"gh-pages": "^4.0.0",
+		"typescript": "^4.6.4",
+		"vite": "^3.0.0",
+		"vite-plugin-glob": "^0.3.2"
+	}
 }

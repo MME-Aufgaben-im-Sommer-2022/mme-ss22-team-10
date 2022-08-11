@@ -1,0 +1,16 @@
+p {
+    display: inline-block;
+    color: rgb(255, 135, 30);
+}
+
+.red {
+    color: red;
+}
+
+.containter {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
