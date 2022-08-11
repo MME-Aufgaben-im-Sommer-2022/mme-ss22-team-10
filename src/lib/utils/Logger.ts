@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+
 const DO_LOG = import.meta.env.VITE_LOGGER_IS_ENABLED === "true";
 
 // eslint-disable-next-line one-var

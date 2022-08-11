@@ -9,7 +9,7 @@
 
 ## 📝 Making changes to the code
 
-- To start the dev server run `npm run dev`
+- To start the dev server run `npm run dev` (or run the `dev` profile in WebStorm)
   - You can now view the website by clicking the link in the terminal
   - Changes you make to the code will be automatically reflected in the browser
 
