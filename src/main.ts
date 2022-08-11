@@ -22,7 +22,7 @@ const app = () => {
       exampleComponent: ExampleComponent = new ExampleComponent(exampleState);
     document.querySelector<HTMLDivElement>("#app")!.append(exampleComponent);
 
-    // listen to any changes on the exampleModel
+    // listen to changes on the exampleModel
     exampleState.addEventListener(State.STATE_CHANGE_EVENT, (data: any) => {
       log("MAIN Model changed:", data);
       log(GlobalState);
