@@ -1,10 +1,7 @@
-import ExampleComponent from "./components/ExampleComponent/ExampleComponent";
 import WebComponentLoader from "./lib/components/WebComponentLoader";
-import State from "./lib/state/State";
-import ExampleModel from "./data/models/ExampleModel";
 import GlobalState from "./lib/state/GlobalState";
 import DataManager from "./data/DataManager";
-import { log } from "./lib/utils/Logger";
+import Playground from "./components/Playground/Playground";
 
 const app = () => {
   WebComponentLoader.loadAll() // Initialize the WebComponent definitions
@@ -12,22 +9,18 @@ const app = () => {
     .then(() => GlobalState.init()) // Initialize the global state
     .then(() => onApplicationStart()); // Start the application
 
+  const appendDevPlayground = () => {
+    const playground = new Playground();
+    document.querySelector<HTMLDivElement>("#app")!.append(playground);
+  };
+
   function onApplicationStart() {
-    // retrieve the example Model from the model store
-    const exampleState = GlobalState.findState(
-        (exampleModel) => exampleModel.name === "John",
-        ExampleModel
-      )!,
-      // create the example component and append it to the body
-      exampleComponent: ExampleComponent = new ExampleComponent(exampleState);
+    const IS_IN_DEV_MODE = import.meta.env.DEV;
+    if (IS_IN_DEV_MODE) {
+      appendDevPlayground();
+    }
 
-    document.querySelector<HTMLDivElement>("#app")!.append(exampleComponent);
-
-    // listen to changes on the exampleModel
-    exampleState.addEventListener(State.STATE_CHANGE_EVENT, (data: any) => {
-      log("MAIN Model changed:", data);
-      log(GlobalState);
-    });
+    // production code here
   }
 };
 
