@@ -2,8 +2,6 @@
 
 A common issue is that your callback function is defined as a _normal_ function instead of an _arrow_ function.
 
-Arrow functions are an alternative way of writing functions:
-
 ### Syntax
 
 Inside a class:
