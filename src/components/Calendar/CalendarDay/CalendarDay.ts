@@ -4,8 +4,10 @@ import css from "../../Calendar/CalendarDay/CalendarDay.css";
 import { log } from "../../../lib/utils/Logger";
 
 export default class CalendarDay extends WebComponent {
-  constructor() {
+  entryDate = "";
+  constructor(entryDate: string) {
     super(html, css);
+    this.entryDate = entryDate;
   }
 
   // override htmlTagName to return the tag name our component
@@ -15,6 +17,7 @@ export default class CalendarDay extends WebComponent {
   }
 
   onCreate(): void {
+    this.select("h3")!.innerText = this.entryDate;
     log("IT WORKS");
   }
 }

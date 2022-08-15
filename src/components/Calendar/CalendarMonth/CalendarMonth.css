@@ -1,6 +1,39 @@
-.calendarMonth{
+.days{
     display: grid;
-    grid-template-columns: 100px;
-    grid-template-rows: 100px;
-    grid-column-gap: 5px;
+    grid-template-columns: repeat(3,1fr);
+    grid-template-rows: repeat(3, 100px);
+    grid-auto-rows: 100px;
+    background-color: #383833;
+    gap: 10px
 }
+
+
+a,h3{
+    text-decoration: none;
+    display: inline-block;
+    padding: 8px 16px;
+}
+
+.selector{
+    align-items: center;
+    alignment: center;
+
+}
+
+a:hover {
+    background-color: #ddd;
+    color: black;
+}
+
+.previous {
+    background-color: #f1f1f1;
+    color: black;
+}
+
+.next {
+    background-color: #f1f1f1;
+    color: black;
+}
+
+.round {
+    border-radius: 50%;

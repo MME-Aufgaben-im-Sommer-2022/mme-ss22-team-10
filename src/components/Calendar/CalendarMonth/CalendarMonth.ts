@@ -1,7 +1,6 @@
 import WebComponent from "../../../lib/components/WebComponent";
 import html from "../../Calendar/CalendarMonth/CalendarMonth.html";
 import css from "../../Calendar/CalendarMonth/CalendarMonth.css";
-import { log } from "../../../lib/utils/Logger";
 import CalendarDay from "../CalendarDay/CalendarDay";
 
 export default class CalendarMonth extends WebComponent {
@@ -16,8 +15,20 @@ export default class CalendarMonth extends WebComponent {
   }
 
   onCreate(): void {
-    log("IT WORKS");
-    const calendarDay: CalendarDay = new CalendarDay();
-    this.select(".days")!.append(calendarDay);
+    for (let i = 1; i <= 30; i++) {
+      let date: string;
+      if (i < 10) {
+        date = "0" + i + ".08";
+      } else {
+        date = i + ".08";
+      }
+
+      this.select(".days")!.append(new CalendarDay(date));
+      this.setMonth("August");
+    }
+  }
+
+  setMonth(month: string): void {
+    this.select("h3")!.innerText = month;
   }
 }
