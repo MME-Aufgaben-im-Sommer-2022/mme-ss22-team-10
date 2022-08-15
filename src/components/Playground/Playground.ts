@@ -1,8 +1,8 @@
 import WebComponent from "../../lib/components/WebComponent";
-import html from "./DevPlayground.html";
-import css from "./DevPlayground.css";
+import html from "./Playground.html";
+import css from "./Playground.css";
 
-export default class DevPlayground extends WebComponent {
+export default class Playground extends WebComponent {
   constructor() {
     super(html, css);
   }
@@ -13,6 +13,6 @@ export default class DevPlayground extends WebComponent {
 
   onCreate(): void {
     // write your playground code here
-    // the dev playground won't be appended in production
+    // the dev playground won't be appended in psssroduction
   }
 }

@@ -1,7 +1,7 @@
 import WebComponentLoader from "./lib/components/WebComponentLoader";
 import GlobalState from "./lib/state/GlobalState";
 import DataManager from "./data/DataManager";
-import DevPlayground from "./components/Playground/DevPlayground";
+import Playground from "./components/Playground/Playground";
 
 const app = () => {
   WebComponentLoader.loadAll() // Initialize the WebComponent definitions
@@ -10,7 +10,7 @@ const app = () => {
     .then(() => onApplicationStart()); // Start the application
 
   const appendDevPlayground = () => {
-    const playground = new DevPlayground();
+    const playground = new Playground();
     document.querySelector<HTMLDivElement>("#app")!.append(playground);
   };
 
