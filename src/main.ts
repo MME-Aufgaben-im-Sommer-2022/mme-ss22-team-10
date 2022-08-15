@@ -20,8 +20,9 @@ const app = () => {
       )!,
       // create the example component and append it to the body
       exampleComponent: ExampleComponent = new ExampleComponent(exampleState);
+    //calendar: Calendar = new Calendar(exampleState);
     document.querySelector<HTMLDivElement>("#app")!.append(exampleComponent);
-
+    //document.querySelector<HTMLDivElement>("#app")!.append(calendar);
     // listen to changes on the exampleModel
     exampleState.addEventListener(State.STATE_CHANGE_EVENT, (data: any) => {
       log("MAIN Model changed:", data);
