@@ -1,9 +1,7 @@
 import WebComponentLoader from "./lib/components/WebComponentLoader";
-import State from "./lib/state/State";
 import GlobalState from "./lib/state/GlobalState";
 import DataManager from "./data/DataManager";
-import { log } from "./lib/utils/Logger";
-import Editor, { EditorModel } from "./components/editor/Editor/Editor";
+import Playground from "./components/Playground/Playground";
 
 const app = () => {
   WebComponentLoader.loadAll() // Initialize the WebComponent definitions
@@ -11,32 +9,18 @@ const app = () => {
     .then(() => GlobalState.init()) // Initialize the global state
     .then(() => onApplicationStart()); // Start the application
 
+  const appendDevPlayground = () => {
+    const playground = new Playground();
+    document.querySelector<HTMLDivElement>("#app")!.append(playground);
+  };
+
   function onApplicationStart() {
-    // retrieve the example Model from the model store
-    const editorModelState: State<EditorModel> = new State({
-        day: new Date(),
-        blockContents: [
-          {
-            title: "Free text input field",
-            inputType: "free-text-input-field",
-            inputValue: "gibberish",
-          },
-          {
-            title: "Free text input field",
-            inputType: "free-text-input-field",
-            inputValue: "even more gibberish",
-          },
-        ],
-      }),
-      editor = new Editor(editorModelState);
+    const IS_IN_DEV_MODE = import.meta.env.DEV;
+    if (IS_IN_DEV_MODE) {
+      appendDevPlayground();
+    }
 
-    document.querySelector<HTMLDivElement>("#app")!.appendChild(editor);
-
-    // listen to changes on the exampleModel
-    editorModelState.addEventListener(State.STATE_CHANGE_EVENT, (data: any) => {
-      log("MAIN Model changed:", data);
-      log(GlobalState);
-    });
+    // production code here
   }
 };
 
