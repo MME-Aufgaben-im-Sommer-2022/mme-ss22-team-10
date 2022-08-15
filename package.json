@@ -10,8 +10,8 @@
     "build-preview": "npm run build && npm run preview",
     "check": "eslint src/ --ext .ts",
     "format": "prettier --write .",
-    "git-ignore-playground": "git update-index --assume-unchanged src/components/Playground/Playground.ts && git update-index --no-assume-unchanged src/components/Playground/Playground.html && git update-index --assume-unchanged src/components/Playground/Playground.css",
-    "git-unignore-playground": "git update-index --no-assume-unchanged src/components/Playground/Playground.ts && git update-index --assume-unchanged src/components/Playground/Playground.html && git update-index --no-assume-unchanged src/components/Playground/Playground.css"
+    "git-ignore-playground": "git update-index --assume-unchanged src/components/Playground/Playground.ts && git update-index --assume-unchanged src/components/Playground/Playground.html && git update-index --assume-unchanged src/components/Playground/Playground.css",
+    "git-unignore-playground": "git update-index --no-assume-unchanged src/components/Playground/Playground.ts && git update-index --no-assume-unchanged src/components/Playground/Playground.html && git update-index --no-assume-unchanged src/components/Playground/Playground.css"
   },
   "devDependencies": {
     "@rollup/plugin-replace": "^4.0.0",
