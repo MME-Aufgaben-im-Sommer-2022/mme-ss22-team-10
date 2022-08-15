@@ -13,6 +13,6 @@ export default class Playground extends WebComponent {
 
   onCreate(): void {
     // write your playground code here
-    // the dev playground won't be appended in psssroduction
+    // the dev playground won't be appended in production
   }
 }
