@@ -10,55 +10,55 @@ import WebComponent from "./WebComponent";
 // - Call WebComponentLoader.loadComponents().then(() => {...}) at the start of the application
 
 export default class WebComponentLoader {
-	private static componentDefinitions: ComponentDefinition<WebComponent>[] = [];
+  private static componentDefinitions: ComponentDefinition<WebComponent>[] = [];
 
-	public static async loadAll(): Promise<void> {
-		const modules: GlobImport = import.meta.importGlob(
-				"../../components/**/*.ts"
-			),
-			modulePaths = Object.keys(modules);
-		for (const modulePath of modulePaths) {
-			const module = await modules[modulePath](),
-				componentClass = module.default;
-			if (componentClass && componentClass.prototype.htmlTagName) {
-				const componentDefinition = new ComponentDefinition(
-					componentClass.prototype.htmlTagName,
-					componentClass
-				);
-				WebComponentLoader.addComponentDefinition(componentDefinition);
-			}
-		}
-		WebComponentLoader.defineAll();
-	}
+  public static async loadAll(): Promise<void> {
+    const modules: GlobImport = import.meta.importGlob(
+        "../../components/**/*.ts"
+      ),
+      modulePaths = Object.keys(modules);
+    for (const modulePath of modulePaths) {
+      const module = await modules[modulePath](),
+        componentClass = module.default;
+      if (componentClass && componentClass.prototype.htmlTagName) {
+        const componentDefinition = new ComponentDefinition(
+          componentClass.prototype.htmlTagName,
+          componentClass
+        );
+        WebComponentLoader.addComponentDefinition(componentDefinition);
+      }
+    }
+    WebComponentLoader.defineAll();
+  }
 
-	private static addComponentDefinition(
-		componentDefinition: ComponentDefinition<WebComponent>
-	): void {
-		this.componentDefinitions.push(componentDefinition);
-	}
+  private static addComponentDefinition(
+    componentDefinition: ComponentDefinition<WebComponent>
+  ): void {
+    this.componentDefinitions.push(componentDefinition);
+  }
 
-	private static defineAll(): void {
-		this.componentDefinitions.forEach((componentDefinition) =>
-			componentDefinition.defineSelf()
-		);
-	}
+  private static defineAll(): void {
+    this.componentDefinitions.forEach((componentDefinition) =>
+      componentDefinition.defineSelf()
+    );
+  }
 }
 
 class ComponentDefinition<T extends WebComponent> {
-	name: string;
-	componentConstructor: new () => T;
+  name: string;
+  componentConstructor: new () => T;
 
-	constructor(name: string, componentConstructor: new () => T) {
-		this.name = name;
-		this.componentConstructor = componentConstructor;
-	}
+  constructor(name: string, componentConstructor: new () => T) {
+    this.name = name;
+    this.componentConstructor = componentConstructor;
+  }
 
-	public defineSelf(): void {
-		customElements.define(this.name, this.componentConstructor);
-	}
+  public defineSelf(): void {
+    customElements.define(this.name, this.componentConstructor);
+  }
 }
 
 // Helper type for the return value of the import.meta.importGlob() function
 type GlobImport = {
-	[key: string]: () => Promise<any>;
+  [key: string]: () => Promise<any>;
 };
