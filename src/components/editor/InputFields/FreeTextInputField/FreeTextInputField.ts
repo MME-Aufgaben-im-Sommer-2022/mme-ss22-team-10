@@ -1,12 +1,17 @@
 import WebComponent from "../../../../lib/components/WebComponent";
-import log from "../../../../lib/log/log";
+import html from "./FreeTextInputField.html";
 
 export default class FreeTextInputField extends WebComponent {
-  inputValue = "";
+  initialValue = "";
+  onInputValueChanged: (newValue: string) => void;
 
-  constructor(inputValue: string) {
-    super();
-    this.inputValue = inputValue;
+  constructor(
+    initialValue: string,
+    onInputValueChanged: (newValue: string) => void
+  ) {
+    super(html);
+    this.initialValue = initialValue;
+    this.onInputValueChanged = onInputValueChanged;
   }
 
   get htmlTagName(): string {
@@ -15,12 +20,11 @@ export default class FreeTextInputField extends WebComponent {
 
   onCreate(): void {
     const input: HTMLInputElement = this.select("input")!;
-    input.value = this.inputValue;
+    input.value = this.initialValue;
     input.addEventListener("input", this.onInputChanged);
   }
 
   onInputChanged = (event: Event) => {
-    log("onInputChanged", event);
-    this.inputValue = (event.target as HTMLInputElement).value;
+    this.onInputValueChanged((event.target as HTMLInputElement).value);
   };
 }
