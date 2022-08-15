@@ -1,0 +1,19 @@
+.calendarDay {
+    width: 100px;
+    height: 100px;
+    border: 2px solid black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #5a6d52;
+    margin: 10px;
+}
+.calendarDay:hover{
+    background: #b62020;
+}
+
+h3 {
+
+
+
+}
