@@ -3,21 +3,25 @@
     grid-template-columns: repeat(3,1fr);
     grid-template-rows: repeat(3, 100px);
     grid-auto-rows: 100px;
-    background-color: #383833;
-    gap: 10px
+    background-color: #27282c;
+    gap: 10px;
+    font-family: monospace;
+
 }
 
 
-a,h3{
+a{
     text-decoration: none;
     display: inline-block;
     padding: 8px 16px;
+    margin: 15px;
 }
 
-.selector{
-    align-items: center;
-    alignment: center;
 
+.selector{
+    width: 30vw;
+    display: flex;
+    justify-content: center ;
 }
 
 a:hover {

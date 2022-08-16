@@ -5,11 +5,11 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background: #5a6d52;
+    background: #d8d7d3;
     margin: 10px;
 }
 .calendarDay:hover{
-    background: #b62020;
+    background: #965454;
 }
 
 h3 {
