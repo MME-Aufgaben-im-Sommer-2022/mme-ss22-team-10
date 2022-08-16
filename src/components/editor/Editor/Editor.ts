@@ -1,21 +1,17 @@
 import WebComponent from "../../../lib/components/WebComponent";
 import html from "./Editor.html";
-import EditorBlock, { BlockContent } from "../EditorBlock/EditorBlock";
+import EditorBlock from "../EditorBlock/EditorBlock";
 import State from "../../../lib/state/State";
-import { Event } from "../../../lib/events/Event";
-import { log } from "../../../lib/utils/Logger";
-
-export interface EditorModel {
-  day: Date;
-  blockContents: BlockContent[];
-}
+import EditorModel from "../../../data/models/EditorModel";
 
 export default class Editor extends WebComponent {
   editorModelState: State<EditorModel>;
 
-  constructor(editorModel: State<EditorModel>) {
+  $editorBlocksContainer!: HTMLDivElement;
+
+  constructor(editorModelState: State<EditorModel>) {
     super(html);
-    this.editorModelState = editorModel;
+    this.editorModelState = editorModelState;
   }
 
   get htmlTagName(): string {
@@ -23,15 +19,14 @@ export default class Editor extends WebComponent {
   }
 
   onCreate(): void {
-    this.editorModelState.addEventListener("change", (event: Event) => {
-      log("Editor model changed", event.data);
-    });
-
-    const editorBlocksContainer: HTMLDivElement = this.select(
-      ".editor-blocks-container"
-    )!;
-    this.editorModelState.value.blockContents.forEach((blockContent) => {
-      editorBlocksContainer.appendChild(new EditorBlock(blockContent));
+    this.$editorBlocksContainer = this.select(".editor-blocks-container")!;
+    this.editorModelState.value.blockContents.forEach((_, index) => {
+      const blockContentState = this.editorModelState.createSubState(
+        `value.blockContents.${index}`
+      );
+      this.$editorBlocksContainer.appendChild(
+        new EditorBlock(blockContentState)
+      );
     });
   }
 }

@@ -1,7 +1,8 @@
 import WebComponent from "../../../lib/components/WebComponent";
 import html from "./EditorBlock.html";
 import FreeTextInputField from "../InputFields/FreeTextInputField/FreeTextInputField";
-import { error } from "../../../lib/utils/Logger";
+import State, { StateChangedEventData } from "../../../lib/state/State";
+import { Event } from "../../../lib/events/Event";
 
 export interface BlockContent {
   title: string;
@@ -10,40 +11,48 @@ export interface BlockContent {
 }
 
 export default class EditorBlock extends WebComponent {
-  blockContent: BlockContent;
+  blockContentState: State<BlockContent>;
 
-  constructor(blockContent: BlockContent) {
+  $title!: HTMLSpanElement;
+  $inputFieldContainer!: HTMLDivElement;
+
+  constructor(blockContentState: State<BlockContent>) {
     super(html);
-    this.blockContent = blockContent;
+    this.blockContentState = blockContentState;
   }
 
   get htmlTagName(): string {
     return "editor-block";
   }
 
-  onInputValueChanged = (newValue: string) => {
-    this.blockContent.inputValue = newValue;
-  };
-
   onCreate(): void {
-    const title: HTMLSpanElement = this.select(".title")!,
-      inputFieldContainer: HTMLDivElement = this.select(
-        ".input-field-container"
-      )!;
+    this.$title = this.select(".title")!;
+    this.$inputFieldContainer = this.select(".input-field-container")!;
 
-    title.innerHTML = this.blockContent.title;
+    this.$title.innerHTML = this.blockContentState.value.title;
 
-    switch (this.blockContent.inputType) {
+    this.blockContentState.addEventListener("change", (event: Event) =>
+      this.onBlockContentStateChanged(event.data)
+    );
+
+    switch (this.blockContentState.value.inputType) {
       case "free-text-input-field":
-        inputFieldContainer.appendChild(
-          new FreeTextInputField(
-            this.blockContent.inputValue,
-            this.onInputValueChanged
-          )
+        this.$inputFieldContainer.appendChild(
+          new FreeTextInputField(this.blockContentState)
         );
         break;
       default:
-        error(`Unknown input type: ${this.blockContent.inputType}`);
+        throw new Error(
+          `Unknown input type: ${this.blockContentState.value.inputType}`
+        );
     }
   }
+
+  onBlockContentStateChanged = (data: StateChangedEventData) => {
+    if (data.propertyName === "value.title") {
+      this.$title.innerHTML = this.blockContentState.value.title;
+    } else if (data.propertyName === "value.inputType") {
+      // ...
+    }
+  };
 }
