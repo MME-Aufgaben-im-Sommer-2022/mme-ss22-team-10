@@ -3,7 +3,7 @@
 // ====================================================== //
 
 // Modified JS-Class by Alexander Bazo
-export class Event {
+export class AppEvent {
   type: string;
   data: any;
   constructor(type: string, data: any) {

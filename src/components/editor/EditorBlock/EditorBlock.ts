@@ -2,7 +2,7 @@ import WebComponent from "../../../lib/components/WebComponent";
 import html from "./EditorBlock.html";
 import FreeTextInputField from "../InputFields/FreeTextInputField/FreeTextInputField";
 import State, { StateChangedEventData } from "../../../lib/state/State";
-import { Event } from "../../../lib/events/Event";
+import { AppEvent } from "../../../lib/events/AppEvent";
 
 export interface BlockContent {
   title: string;
@@ -31,7 +31,7 @@ export default class EditorBlock extends WebComponent {
 
     this.$title.innerHTML = this.blockContentState.value.title;
 
-    this.blockContentState.addEventListener("change", (event: Event) =>
+    this.blockContentState.addEventListener("change", (event: AppEvent) =>
       this.onBlockContentStateChanged(event.data)
     );
 

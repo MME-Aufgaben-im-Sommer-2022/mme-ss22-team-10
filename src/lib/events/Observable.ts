@@ -1,4 +1,4 @@
-import { Event } from "./Event";
+import { AppEvent } from "./AppEvent";
 
 // ====================================================== //
 // ===================== Observable ===================== //
@@ -16,14 +16,14 @@ import { Event } from "./Event";
 export abstract class Observable {
   listener: any = {};
 
-  addEventListener(type: string, callback: (event: Event) => void) {
+  addEventListener(type: string, callback: (event: AppEvent) => void) {
     if (this.listener[type] === undefined) {
       this.listener[type] = [];
     }
     this.listener[type].push(callback);
   }
 
-  removeEventListener(type: string, callback: (event: Event) => void) {
+  removeEventListener(type: string, callback: (event: AppEvent) => void) {
     if (this.listener[type] !== undefined) {
       for (let i = 0; i < this.listener[type].length; i++) {
         if (this.listener[type][i] === callback) {
@@ -35,7 +35,7 @@ export abstract class Observable {
   }
 
   notifyAll(type: string, data: any) {
-    const event = new Event(type, data);
+    const event = new AppEvent(type, data);
     if (this.listener[event.type] !== undefined) {
       for (let i = 0; i < this.listener[event.type].length; i++) {
         this.listener[event.type][i](event);
