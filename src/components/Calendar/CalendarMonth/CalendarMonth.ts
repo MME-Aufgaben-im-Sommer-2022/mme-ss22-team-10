@@ -37,17 +37,17 @@ export default class CalendarMonth extends WebComponent {
     }
   }
 
-  onPreviousClicked(): void {
+  onPreviousClicked = () => {
     log("previous");
     this.setMonth(this.monthNumber - 1);
-  }
+  };
 
-  onNextClicked(): void {
+  onNextClicked = () => {
     log("next");
     this.setMonth(this.monthNumber + 1);
-  }
+  };
 
-  setMonth(monthNumber: number): void {
+  setMonth = (monthNumber: number) => {
     const months = [
       "January",
       "February",
@@ -67,5 +67,5 @@ export default class CalendarMonth extends WebComponent {
     log(this.monthText);
 
     this.select("h3")!.innerText = this.monthText;
-  }
+  };
 }

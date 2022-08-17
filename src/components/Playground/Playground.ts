@@ -1,6 +1,7 @@
 import WebComponent from "../../lib/components/WebComponent";
 import html from "./Playground.html";
 import css from "./Playground.css";
+import Calendar from "../Calendar/Calendar/Calendar";
 
 export default class Playground extends WebComponent {
   constructor() {
@@ -12,7 +13,7 @@ export default class Playground extends WebComponent {
   }
 
   onCreate(): void {
-    // write your playground code here
-    // the dev playground won't be appended in production
+    const calendar = new Calendar();
+    document.querySelector<HTMLDivElement>("#app")!.append(calendar);
   }
 }
