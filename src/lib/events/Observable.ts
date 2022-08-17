@@ -6,12 +6,8 @@ import { AppEvent } from "./AppEvent";
 
 // JS-Class by Alexander Bazo (modified)
 
-// Usage:
-// Sending Events:
-// 	1. extend this class
-// 	2. call notifyAll(eventType, eventData) to send an event
-// Listening for Events:
-// 	- call addEventListener(eventType, callback) on an Observable to listen for events
+// Usage guide & examples:
+// https://github.com/MME-Aufgaben-im-Sommer-2022/mme-ss22-team-10/blob/dev/docs/lib/Observable.md
 
 export abstract class Observable {
   listener: any = {};

@@ -7,4 +7,12 @@ That way, they can be accessed from anywhere in the application.
 3. use GlobalState.findModel(), GlobalState.findModels() and GlobalState.getModelById() retrieve models from the store
 4. (don't forget to call GlobalState.init() at the start of the application)
 
-For an example, see [GlobalState](../../src/lib/state/GlobalState.ts)
+Example: 
+```ts
+GlobalState.addState(new State("hi there"));
+
+const retrievedState = GlobalState.findState(
+	(state) => state.value === "hi there",
+	string
+);
+```
