@@ -1,15 +1,15 @@
 import ExampleModel from "./models/ExampleModel";
 import CalendarModel, { Years } from "./models/CalendarModel";
-import {
-  generateRandomAscendingArray,
-  generateRandomLoremIpsum,
-} from "../lib/utils";
 import { info } from "../lib/utils/Logger";
 import EditorModel, {
   BlockContent,
   BlockContentInputType,
 } from "./models/EditorModel";
 import UserSettingsModel, { Template } from "./models/UserSettingsModel";
+import {
+  generateRandomAscendingArray,
+  generateRandomLoremIpsum,
+} from "../lib/utils";
 
 // `DataManager` is a singleton, in which you define functions to fetch/save Models.
 
