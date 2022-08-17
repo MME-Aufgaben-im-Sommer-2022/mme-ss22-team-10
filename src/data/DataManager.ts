@@ -9,6 +9,7 @@ import EditorModel, {
   BlockContent,
   BlockContentInputType,
 } from "./models/EditorModel";
+import UserSettingsModel, { Template } from "./models/UserSettingsModel";
 
 // `DataManager` is a singleton, in which you define functions to fetch/save Models.
 
@@ -49,6 +50,18 @@ export default class DataManager {
     info("Saving editor model:", editorModel);
     return Promise.resolve();
   }
+  // User Settings Model
+
+  static async getUserSettingsModel(): Promise<UserSettingsModel> {
+    return this.generateMockUserSettingsModel();
+  }
+
+  static async saveUserSettingsModel(
+    userSettingsModel: UserSettingsModel
+  ): Promise<void> {
+    info("Saving user settings model:", userSettingsModel);
+    return Promise.resolve();
+  }
 
   // MOCK DATA
 
@@ -83,5 +96,26 @@ export default class DataManager {
       });
     }
     return new EditorModel(day, blockContents);
+  }
+
+  // User Settings Model
+
+  private static generateMockUserSettingsModel(): UserSettingsModel {
+    const template: Template = [
+      {
+        title: "Title 1",
+        inputType: BlockContentInputType.FreeText,
+      },
+      {
+        title: "Title 2",
+        inputType: BlockContentInputType.FreeText,
+      },
+      {
+        title: "Title 3",
+        inputType: BlockContentInputType.FreeText,
+      },
+    ];
+
+    return new UserSettingsModel("user1", "token-xyz", { template });
   }
 }

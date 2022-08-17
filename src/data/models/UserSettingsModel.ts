@@ -1,6 +1,6 @@
 import Model from "../../lib/data/Model";
 
-type Template = Array<TemplateItem>;
+export type Template = Array<TemplateItem>;
 
 export interface TemplateItem {
   title: string;
