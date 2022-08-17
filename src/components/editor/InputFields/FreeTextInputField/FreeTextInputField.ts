@@ -1,7 +1,7 @@
 import WebComponent from "../../../../lib/components/WebComponent";
 import html from "./FreeTextInputField.html";
 import State, { StateChangedEventData } from "../../../../lib/state/State";
-import { BlockContent } from "../../EditorBlock/EditorBlock";
+import { BlockContent } from "../../../../data/models/EditorModel";
 
 export default class FreeTextInputField extends WebComponent {
   inputValueState: State<BlockContent>;

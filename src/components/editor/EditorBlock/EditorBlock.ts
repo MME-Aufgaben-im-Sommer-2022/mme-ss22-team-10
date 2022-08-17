@@ -3,12 +3,7 @@ import html from "./EditorBlock.html";
 import FreeTextInputField from "../InputFields/FreeTextInputField/FreeTextInputField";
 import State, { StateChangedEventData } from "../../../lib/state/State";
 import { AppEvent } from "../../../lib/events/AppEvent";
-
-export interface BlockContent {
-  title: string;
-  inputType: string;
-  inputValue: string;
-}
+import { BlockContent } from "../../../data/models/EditorModel";
 
 export default class EditorBlock extends WebComponent {
   blockContentState: State<BlockContent>;
