@@ -4,8 +4,8 @@
 
 // This class is used to create your custom web components.
 
-// Usage:
-// -> Example can be found in the src/components/ExampleComponent.ts
+// Usage guide & examples:
+// https://github.com/MME-Aufgaben-im-Sommer-2022/mme-ss22-team-10/blob/dev/docs/lib/WebComponent.md
 
 export default abstract class WebComponent extends HTMLElement {
   html: string;

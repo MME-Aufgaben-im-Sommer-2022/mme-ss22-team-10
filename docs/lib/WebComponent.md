@@ -1,7 +1,10 @@
 #### WebComponent
 
+
+This class is used to create your custom web components.
+
 Usage:
-1. Create an html (and css) file for your component in a new folder
+1. Create a html (and css) file for your component in a new folder
 2. Create a new ts class that extends `WebComponent`
 3. Use the component either in HTML or in TypeScript:
     - in HTML: `<my-component></my-component>`

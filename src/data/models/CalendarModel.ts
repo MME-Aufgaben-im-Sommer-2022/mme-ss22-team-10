@@ -13,7 +13,7 @@ import Model from "../../lib/data/Model";
 // -> notes were taken on 1.1.2022, 3.1.2022, 8.2.2022, 19.2.2022
 
 // A guide on how to iterate over Object properties can be found here:
-// TODO: Add link to guide
+// Dev Docs FAQ: https://github.com/MME-Aufgaben-im-Sommer-2022/mme-ss22-team-10/blob/dev/docs/faq/iterating-over-properties.md
 
 type Days = Array<string>;
 

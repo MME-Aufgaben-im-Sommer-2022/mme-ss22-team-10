@@ -1,12 +1,27 @@
 #### State
 
 `State` is a wrapper class that allows you to make any existing object observable (not just Models).
+
+Usage:
+
 1. use `new State(value)` to create a new `State` object
 2. call `.addEventListener` to subscribe to changes
 3. call `.value` to get the current value
 4. call `.value = newValue` to update the value
 
-For an example, see [State](../../src/lib/state/State.ts)
+Example:
+```ts
+let exampleState = new State("some data");
+
+// listen for State.STATE_CHANGE_EVENT events
+exampleState.addEventListener(State.STATE_CHANGE_EVENT, (data) => {}) 
+
+// get the value of the State object and print it (-> "some data")
+log(exampleState.value)
+
+// set the value of the State object (-> automatically notifies all listeners)
+exampleState.value = "new data" 
+```
 
 ##### Creating new States from existing State values
 

@@ -5,7 +5,9 @@ import State from "../state/State";
 // ====================================================== //
 
 // A model is a basic data structure that can be used to store data.
-// Extend it to create your own models. To get/set model values use States (DO NOT USE RAW MODELS) in your application.
+
+// Usage guide & examples:
+// https://github.com/MME-Aufgaben-im-Sommer-2022/mme-ss22-team-10/blob/dev/docs/lib/Model.md
 
 export default abstract class Model {
   private state: State<this> | undefined;
