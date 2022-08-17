@@ -42,7 +42,7 @@ export default class DataManager {
 
   // Editor Model
 
-  static async getEditorModel(): Promise<EditorModel> {
+  static async getEditorModel(date: Date): Promise<EditorModel> {
     return this.generateMockEditorModel();
   }
 
