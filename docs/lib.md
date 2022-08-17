@@ -55,6 +55,52 @@ For an example, see [Model](/src/data/models/ExampleModel.ts)
 3. call `liveData.value` to get the current value
 4. call `liveData.value = newValue` to update the value
 
+##### Creating new States from existing State values
+
+Sometimes, it is necessary to create a new State from an existing State. E.g. when you only care about a specific part of the state value:
+
+```ts
+existingState = new State({
+  randomProp = 0,
+  interestingProp = "interesting" // <- this is the interesting part of the state
+})
+```
+
+To create a new state from this existing state, which only contains the property "interestingProp", use the `.createSubState("propertyKey")` function:
+```ts
+// the propertyKey parameter is a string of what you would usually type 
+// to get the property form the state object
+// here, we want to get the existingState.value.interestingProp property,
+// so we type "value.interestingProp"
+newState = existingState.createSubState("value.interestingProp")
+```
+
+To access nested properties, use the dot notation:
+
+```ts
+existingState = new State({
+  randomProp = 0,
+  nestedObject : {
+    interestingProp = "interesting" // <- the interesting part of the state
+  };
+
+// to access nested values, join them with a dot
+newState = existingState.createSubState("value.nestedObject.interestingProp");
+```
+
+Accessing Array values also works via the dot notation:
+
+```ts
+existingState = new State({
+  randomProp = 0,
+  nestedArray : [
+    "interesting", // <- the interesting part of the state
+  ];
+
+// access the first element of the array:
+newState = existingState.createSubState("value.nestedArray.0");
+```
+
 For an example, see [State](/src/lib/state/State.ts)
 
 #### GlobalState

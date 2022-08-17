@@ -20,7 +20,7 @@ export default class FreeTextInputField extends WebComponent {
     this.$input = this.select("input")!;
     this.$input.value = this.inputValueState.value.inputValue;
 
-    this.$input.addEventListener("keydown", this.onInputChanged);
+    this.$input.addEventListener("input", this.onInputChanged);
     this.inputValueState.addEventListener("change", (event) =>
       this.onInputValueStateChanged(event.data)
     );
