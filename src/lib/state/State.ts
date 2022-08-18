@@ -52,17 +52,16 @@ export default class State<T> extends Observable {
             ? (key as string).split("___")[1]
             : key;
 
-        if (object[realKey] !== value) {
-          const oldValue = object[realKey];
-          object[realKey] = value;
-
+        const oldValue = object[realKey];
+        object[realKey] = value;
+        log(this.id);
+        if (!wasTriggeredBySubState)
           this.onChange({
             oldPropertyValue: oldValue,
             newPropertyValue: object[realKey],
             propertyName: p + "." + realKey.toString(),
             wasTriggeredBySubState: wasTriggeredBySubState,
           });
-        }
 
         return true;
       },
@@ -84,7 +83,7 @@ export default class State<T> extends Observable {
         const prop = object[key];
         if (typeof prop === "undefined") {
           return undefined;
-        } else if (!prop.isProxy) {
+        } else if (!prop["isProxy"]) {
           if (typeof prop === "object") {
             return this.createProxy(prop, p + "." + key.toString());
           }
@@ -109,33 +108,15 @@ export default class State<T> extends Observable {
         propertyName: "value",
         wasTriggeredBySubState: false,
       });
-      this.parentState?.updateParentValue(
-        this.propNameInParentState!,
-        this.val
-      );
+      // this.parentState?.updateParentValue(
+      //   this.propNameInParentState!,
+      //   this.val
+      // );
     }
-  }
-
-  private updateParentValue(propertyName: string, value: any) {
-    const props = propertyName.split(".");
-    props.shift();
-    let oldValue = undefined;
-    props.reduce((obj, prop, index) => {
-      if (index === props.length - 1) {
-        oldValue = obj[prop];
-        // set the value without triggering the
-        obj["cu___" + prop] = value;
-      }
-      return obj[prop];
-    }, this.val);
   }
 
   private onChange = (data: StateChangedEventData) => {
     this.notifyAll(STATE_CHANGE_EVENT, data);
-  };
-
-  private onChildChange = (data: StateChangedEventData) => {
-    this.notifyAll(CHILD_CHANGE_EVENT, data);
   };
 
   private generateId() {
@@ -165,16 +146,10 @@ export default class State<T> extends Observable {
 
     subState.setParentState(this, key);
 
-    const onStateChange = (event) => {
-      const data = event.data as StateChangedEventData,
-        isPropertyOfSubState = data.propertyName.startsWith(key);
-
-      if (
-        isPropertyOfSubState &&
-        !data.wasTriggeredBySubState &&
-        !(data.propertyName === key && key === "value")
-      ) {
-        const propertyKeys = data.propertyName.split("."),
+    const updateSubState = (event) => {
+        const data = event.data as StateChangedEventData,
+          isPropertyOfSubState = data.propertyName.startsWith(key),
+          propertyKeys = data.propertyName.split("."),
           relativeKeys = [
             propertyKeys[0],
             ...propertyKeys.slice(subStateKeys.length, propertyKeys.length),
@@ -182,13 +157,63 @@ export default class State<T> extends Observable {
           subStateEventData = Object.assign({}, data, {
             propertyName: relativeKeys,
           });
-        subState.notifyAll(STATE_CHANGE_EVENT, subStateEventData);
-      }
-    };
 
-    this.addEventListener(STATE_CHANGE_EVENT, onStateChange);
+        if (
+          isPropertyOfSubState &&
+          !data.wasTriggeredBySubState
+          // maybe check equality of event value here
+        ) {
+          if (typeof subStateValue !== "object") {
+            // the subState is a primitive
+            // -> we need to update the value
+            subState.value = subStateEventData.newPropertyValue;
+          }
+          // now we notify the substate
+          subState.notifyAll(STATE_CHANGE_EVENT, subStateEventData);
+        }
+      },
+      onSubStateChanged = (event) => {
+        // the sub state changed, we need to do some updates
+        const data = event.data as StateChangedEventData;
+        log("sub state changed!");
+        if (
+          data.propertyName === "value" &&
+          typeof data.oldPropertyValue !== "object"
+        ) {
+          this.updateFromSubState(key, data.newPropertyValue);
+        } else {
+          this.notifySubStateChanged(key, data.oldPropertyValue);
+        }
+      };
+
+    this.addEventListener(STATE_CHANGE_EVENT, updateSubState);
+    subState.addEventListener(STATE_CHANGE_EVENT, onSubStateChanged);
     return subState;
   };
+
+  private updateFromSubState(propertyName: string, value: any) {
+    let oldValue = undefined;
+    const props = propertyName.split(".");
+    props.shift();
+    props.reduce((obj, prop, index) => {
+      if (index === props.length - 1) {
+        oldValue = obj[prop];
+        // set the value without triggering the
+        obj["cu___" + prop] = value;
+      }
+      return obj[prop];
+    }, this.val);
+    this.notifySubStateChanged(propertyName, oldValue);
+  }
+
+  private notifySubStateChanged(propertyName: string, oldValue: any) {
+    this.notifyAll(STATE_CHANGE_EVENT, {
+      oldPropertyValue: oldValue,
+      newPropertyValue: this.val,
+      propertyName: propertyName,
+      wasTriggeredBySubState: true,
+    });
+  }
 
   private setParentState(state: State<unknown> | null, propName: string) {
     this.parentState = state;
