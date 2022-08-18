@@ -10,6 +10,7 @@ import {
   generateRandomAscendingArray,
   generateRandomLoremIpsum,
 } from "../lib/utils";
+import ApiClient from "./api/ApiClient";
 
 // `DataManager` is a singleton, in which you define functions to fetch/save Models.
 
@@ -17,8 +18,11 @@ import {
 // https://github.com/MME-Aufgaben-im-Sommer-2022/mme-ss22-team-10/blob/dev/docs/lib/DataManager.md
 
 export default class DataManager {
+  private static apiClient: ApiClient;
+
   static async init() {
-    // Do init stuff here, e.g. db connection
+    this.apiClient = new ApiClient();
+    this.apiClient.logInUser();
   }
 
   // Write methods to fetch or save data to Database etc here
