@@ -12,6 +12,8 @@ import { Observable } from "../events/Observable";
 export default class State<T> extends Observable {
   static STATE_CHANGE_EVENT = "change";
   private val!: T;
+  private parentState: State<unknown> | null = null;
+  private propNameInParentState: string | null = null;
 
   id = ""; // unique id that identifies any state
   private static stateCounts: Map<string, number> = new Map<string, number>();
@@ -92,6 +94,13 @@ export default class State<T> extends Observable {
         newPropertyValue: this.val,
         propertyName: "value",
       });
+      if (typeof oldValue !== "object") {
+        this.parentState?.notifyAll(State.STATE_CHANGE_EVENT, {
+          oldPropertyValue: oldValue,
+          newPropertyValue: this.val,
+          propertyName: this.propNameInParentState,
+        });
+      }
     }
   }
 
@@ -124,6 +133,8 @@ export default class State<T> extends Observable {
       }, this),
       subState = new State(subStateValue);
 
+    subState.setParentState(this, key);
+
     this.addEventListener(State.STATE_CHANGE_EVENT, (event) => {
       const data = event.data as StateChangedEventData,
         isPropertyOfSubState = data.propertyName.startsWith(key);
@@ -142,6 +153,11 @@ export default class State<T> extends Observable {
     });
     return subState;
   };
+
+  private setParentState(state: State<unknown> | null, propName: string) {
+    this.parentState = state;
+    this.propNameInParentState = propName;
+  }
 }
 
 export interface StateChangedEventData {
