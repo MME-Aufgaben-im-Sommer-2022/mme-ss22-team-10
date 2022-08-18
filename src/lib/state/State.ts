@@ -18,7 +18,6 @@ import { log } from "../utils/Logger";
 export default class State<T> extends Observable {
   private val!: T;
   private parentState: State<unknown> | null = null;
-  private propNameInParentState: string | null = null;
 
   id = ""; // unique id that identifies any state
   private static stateCounts: Map<string, number> = new Map<string, number>();
@@ -29,39 +28,55 @@ export default class State<T> extends Observable {
     this.setValue(value);
   }
 
+  private getTopState(): State<unknown> {
+    let topState = this.parentState;
+    while (topState && topState.parentState !== null) {
+      topState = topState.parentState;
+    }
+    return topState ? topState : this;
+  }
+
   private setValue(_value: T): void {
+    const topState = this.getTopState(),
+      proxyMaker = topState ? topState.createProxy : this.createProxy;
     this.val =
       typeof _value === "object"
-        ? this.createProxy(_value as Record<string, unknown>, "value")
+        ? proxyMaker(_value as Record<string, unknown>, "value")
         : _value;
   }
 
-  private createProxy(
+  private createProxy = (
     value: Record<string, unknown>,
     parentPropertyName: string
-  ): T {
-    return new Proxy(value, this.proxyHandler(parentPropertyName)) as T;
-  }
+  ): T => {
+    {
+      return new Proxy(value, this.proxyHandler(parentPropertyName)) as T;
+    }
+  };
 
   private proxyHandler = (p: string) => {
     return {
       set: (object: any, key: string | symbol, value: any) => {
         const wasTriggeredBySubState =
-            typeof key === "string" ? key.split("___")[0] === "cu" : false,
+            typeof key === "string" ? key.split("___").length > 1 : false,
+          triggerStateId = wasTriggeredBySubState
+            ? key.split("___")[0]
+            : this.id,
           realKey = wasTriggeredBySubState
             ? (key as string).split("___")[1]
             : key;
-
+        //log("set in state id: ", this.id, triggerStateId);
         const oldValue = object[realKey];
         object[realKey] = value;
-        log(this.id);
-        if (!wasTriggeredBySubState)
-          this.onChange({
-            oldPropertyValue: oldValue,
-            newPropertyValue: object[realKey],
-            propertyName: p + "." + realKey.toString(),
-            wasTriggeredBySubState: wasTriggeredBySubState,
-          });
+
+        this.onChange({
+          oldPropertyValue: oldValue,
+          newPropertyValue: object[realKey],
+          propertyName: p + "." + realKey.toString(),
+          wasTriggeredBySubState: wasTriggeredBySubState,
+          triggerStateId: triggerStateId,
+          respondents: [this.id],
+        });
 
         return true;
       },
@@ -107,6 +122,8 @@ export default class State<T> extends Observable {
         newPropertyValue: this.val,
         propertyName: "value",
         wasTriggeredBySubState: false,
+        triggerStateId: this.id,
+        respondents: [this.id],
       });
       // this.parentState?.updateParentValue(
       //   this.propNameInParentState!,
@@ -119,7 +136,7 @@ export default class State<T> extends Observable {
     this.notifyAll(STATE_CHANGE_EVENT, data);
   };
 
-  private generateId() {
+  private generateId = () => {
     const name = this.constructor.name;
     let count = State.stateCounts.get(name);
     if (count === undefined) {
@@ -128,7 +145,7 @@ export default class State<T> extends Observable {
     State.stateCounts.set(name, count + 1);
     this.id = name + "-" + count;
     Object.freeze(this.id);
-  }
+  };
 
   // creates a new state from a property of this state.
   // use this, if you want to create a new state from an existing state.
@@ -158,66 +175,63 @@ export default class State<T> extends Observable {
             propertyName: relativeKeys,
           });
 
-        if (
-          isPropertyOfSubState &&
-          !data.wasTriggeredBySubState
-          // maybe check equality of event value here
-        ) {
-          if (typeof subStateValue !== "object") {
-            // the subState is a primitive
-            // -> we need to update the value
-            subState.value = subStateEventData.newPropertyValue;
+        if (isPropertyOfSubState) {
+          if (data.wasTriggeredBySubState) {
+            if (data.triggerStateId !== this.id) {
+              // now we notify the substate
+              subStateEventData.respondents.push(this.id);
+              subState.notifyAll(STATE_CHANGE_EVENT, subStateEventData);
+            }
+          } else {
+            // now we notify the substate
+            subStateEventData.respondents.push(this.id);
+            subState.notifyAll(STATE_CHANGE_EVENT, subStateEventData);
           }
-          // now we notify the substate
-          subState.notifyAll(STATE_CHANGE_EVENT, subStateEventData);
         }
       },
       onSubStateChanged = (event) => {
         // the sub state changed, we need to do some updates
+
         const data = event.data as StateChangedEventData;
-        log("sub state changed!");
+        //log("sub state changed", data, this.id);
         if (
           data.propertyName === "value" &&
-          typeof data.oldPropertyValue !== "object"
+          !data.respondents.includes(this.id)
         ) {
-          this.updateFromSubState(key, data.newPropertyValue);
-        } else {
-          this.notifySubStateChanged(key, data.oldPropertyValue);
+          if (typeof data.oldPropertyValue !== "object") {
+            this.updateTopState(key, data);
+          } else {
+            //log("notifying all");
+            this.getTopState().notifyAll(STATE_CHANGE_EVENT, data);
+          }
         }
       };
-
     this.addEventListener(STATE_CHANGE_EVENT, updateSubState);
     subState.addEventListener(STATE_CHANGE_EVENT, onSubStateChanged);
+
     return subState;
   };
 
-  private updateFromSubState(propertyName: string, value: any) {
+  private updateTopState(propertyName: string, data: StateChangedEventData) {
     let oldValue = undefined;
     const props = propertyName.split(".");
     props.shift();
-    props.reduce((obj, prop, index) => {
-      if (index === props.length - 1) {
-        oldValue = obj[prop];
-        // set the value without triggering the
-        obj["cu___" + prop] = value;
-      }
-      return obj[prop];
-    }, this.val);
-    this.notifySubStateChanged(propertyName, oldValue);
-  }
-
-  private notifySubStateChanged(propertyName: string, oldValue: any) {
-    this.notifyAll(STATE_CHANGE_EVENT, {
-      oldPropertyValue: oldValue,
-      newPropertyValue: this.val,
-      propertyName: propertyName,
-      wasTriggeredBySubState: true,
-    });
+    try {
+      props.reduce((obj, prop, index) => {
+        if (index === props.length - 1) {
+          oldValue = obj[prop];
+          // set the value without triggering the
+          obj[data.triggerStateId + "___" + prop] = data.newPropertyValue;
+        }
+        return obj[prop];
+      }, this.val);
+    } catch (e) {
+      throw new ChangedParentStateError(propertyName, this, data);
+    }
   }
 
   private setParentState(state: State<unknown> | null, propName: string) {
     this.parentState = state;
-    this.propNameInParentState = propName;
   }
 }
 
@@ -236,6 +250,25 @@ export class InvalidStateKeyError<T> extends Error {
     
     Detailed error:
     ${subStateKey} could not be found in "value":${JSON.stringify(state.value)}
+    `;
+  }
+}
+
+export class ChangedParentStateError extends Error {
+  constructor(
+    propertyName: string,
+    state: State<unknown>,
+    data: StateChangedEventData
+  ) {
+    super();
+    this.message = `The property "${propertyName}", which is referenced by a SubState cannot be found in the Parent state anymore.
+    
+    Did you change the value of the parent state using state.value = ... ?
+    
+    Detailed error:
+    Parent state value: "value: ${JSON.stringify(state.value)}"
+    Missing property: ${JSON.stringify(propertyName)}
+    State change event data: ${JSON.stringify(data)}
     `;
   }
 }

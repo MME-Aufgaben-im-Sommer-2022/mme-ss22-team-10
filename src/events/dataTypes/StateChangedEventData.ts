@@ -3,6 +3,8 @@ export interface StateChangedEventData {
   newPropertyValue?: any; // may be undefined if the property is deleted
   propertyName: string; // equals "value" if the whole state is changed
   wasTriggeredBySubState?: boolean; // true if the change was triggered by a sub state
+  triggerStateId: string; // the state that triggered the change
+  respondents: string[]; // the states that are listening to the change
 }
 
 export const STATE_CHANGE_EVENT = "change";
