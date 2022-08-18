@@ -1,6 +1,5 @@
 import { Observable } from "../events/Observable";
 import {
-  CHILD_CHANGE_EVENT,
   STATE_CHANGE_EVENT,
   StateChangedEventData,
 } from "../../events/dataTypes/StateChangedEventData";
@@ -65,18 +64,20 @@ export default class State<T> extends Observable {
           realKey = wasTriggeredBySubState
             ? (key as string).split("___")[1]
             : key;
-        //log("set in state id: ", this.id, triggerStateId);
-        const oldValue = object[realKey];
-        object[realKey] = value;
 
-        this.onChange({
-          oldPropertyValue: oldValue,
-          newPropertyValue: object[realKey],
-          propertyName: p + "." + realKey.toString(),
-          wasTriggeredBySubState: wasTriggeredBySubState,
-          triggerStateId: triggerStateId,
-          respondents: [this.id],
-        });
+        const oldValue = object[realKey];
+        if (oldValue !== value) {
+          object[realKey] = value;
+
+          this.onChange({
+            oldPropertyValue: oldValue,
+            newPropertyValue: object[realKey],
+            propertyName: p + "." + realKey.toString(),
+            wasTriggeredBySubState: wasTriggeredBySubState,
+            triggerStateId: triggerStateId,
+            respondents: [triggerStateId],
+          });
+        }
 
         return true;
       },
@@ -175,7 +176,11 @@ export default class State<T> extends Observable {
             propertyName: relativeKeys,
           });
 
-        if (isPropertyOfSubState) {
+        if (
+          isPropertyOfSubState &&
+          (!data.respondents.includes(this.id) ||
+            data.triggerStateId === this.id)
+        ) {
           if (data.wasTriggeredBySubState) {
             if (data.triggerStateId !== this.id) {
               // now we notify the substate
@@ -191,7 +196,7 @@ export default class State<T> extends Observable {
       },
       onSubStateChanged = (event) => {
         // the sub state changed, we need to do some updates
-
+        //log("sub state changed", event.data, this.id);
         const data = event.data as StateChangedEventData;
         //log("sub state changed", data, this.id);
         if (

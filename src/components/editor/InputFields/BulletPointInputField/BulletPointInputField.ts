@@ -31,6 +31,9 @@ export default class BulletPointInputField extends WebComponent {
       "change",
       this.onBulletPointsStateChanged
     );
+    this.inputValueState.addEventListener((event) => {
+      log(event);
+    });
   }
 
   private onBulletPointsStateChanged = () => {
