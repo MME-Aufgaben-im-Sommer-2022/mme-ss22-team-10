@@ -1,8 +1,5 @@
 import { Observable } from "../events/Observable";
-import {
-  STATE_CHANGE_EVENT,
-  StateChangedEventData,
-} from "../../events/dataTypes/StateChangedEventData";
+import { StateChangedEventData } from "../../events/dataTypes/StateChangedEventData";
 import { log } from "../utils/Logger";
 import ObservableSlim from "observable-slim";
 
@@ -16,19 +13,19 @@ import ObservableSlim from "observable-slim";
 // https://github.com/MME-Aufgaben-im-Sommer-2022/mme-ss22-team-10/blob/dev/docs/lib/State.md
 
 export default class State<T> extends Observable {
-  private val: T;
+  private val: ProxyConstructor | T;
 
-  constructor(public val: T) {
+  constructor(value: T) {
     super();
-    log("State", "constructor", "val:", val);
+    log("State", "constructor", "val:", value);
     this.val =
-      typeof val === "object"
-        ? ObservableSlim.create(val, false, this.onValueChange)
-        : val;
+      typeof value === "object"
+        ? ObservableSlim.create(value, false, this.onValueChange)
+        : value;
   }
 
   get value(): T {
-    return this.val;
+    return this.val as T;
   }
 
   set value(val: T) {
@@ -52,9 +49,15 @@ export default class State<T> extends Observable {
           return val;
         }
         throw new InvalidStateKeyError(key, this);
-      }, this),
-      subState = new State(subStateValue.__getTarget);
-    return subState;
+      }, this);
+    if (typeof subStateValue === "object") {
+      // eslint-disable-next-line no-underscore-dangle
+      const subState = new State(subStateValue.__getTarget);
+      return subState;
+    }
+    throw new Error(
+      "SubStates of properties that are Primitives are not supported yet."
+    );
   }
 }
 
