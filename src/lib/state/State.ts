@@ -1,4 +1,5 @@
 import { Observable } from "../events/Observable";
+import { log } from "../utils/Logger";
 
 // ====================================================== //
 // ====================== State ====================== //
@@ -89,16 +90,19 @@ export default class State<T> extends Observable {
     if (this.val !== value) {
       const oldValue = this.val;
       this.setValue(value);
+      log(`State ${this.id} changed: ${oldValue} -> ${value}`);
       this.onChange({
         oldPropertyValue: oldValue,
         newPropertyValue: this.val,
         propertyName: "value",
       });
       if (typeof oldValue !== "object") {
+        log(`ping parent`);
         this.parentState?.notifyAll(State.STATE_CHANGE_EVENT, {
           oldPropertyValue: oldValue,
           newPropertyValue: this.val,
           propertyName: this.propNameInParentState,
+          wasTriggeredBySubState: true,
         });
       }
     }
@@ -139,7 +143,7 @@ export default class State<T> extends Observable {
       const data = event.data as StateChangedEventData,
         isPropertyOfSubState = data.propertyName.startsWith(key);
 
-      if (isPropertyOfSubState) {
+      if (isPropertyOfSubState && !data.wasTriggeredBySubState) {
         const propertyKeys = data.propertyName.split("."),
           relativeKeys = [
             propertyKeys[0],
@@ -164,6 +168,7 @@ export interface StateChangedEventData {
   oldPropertyValue?: any; // may be undefined if the property is new
   newPropertyValue?: any; // may be undefined if the property is deleted
   propertyName: string; // equals "value" if the whole state is changed
+  wasTriggeredBySubState?: boolean; // true if the change was triggered by a sub state
 }
 
 // custom error type for invalid state keys
