@@ -92,10 +92,7 @@ export default class DataManager {
       blockContents.push({
         title: `Title ${i}`,
         inputType: BlockContentInputType.BulletPoint,
-        inputValue: `hey there
-        irs 
-        sdfff
-        ddd`,
+        inputValue: `hey there`,
       });
     }
     return new EditorModel(day, blockContents);

@@ -6,3 +6,4 @@ export interface StateChangedEventData {
 }
 
 export const STATE_CHANGE_EVENT = "change";
+export const CHILD_CHANGE_EVENT = "child-change";

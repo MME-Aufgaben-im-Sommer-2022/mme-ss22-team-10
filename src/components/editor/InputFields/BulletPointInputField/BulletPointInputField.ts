@@ -1,11 +1,8 @@
 import WebComponent from "../../../../lib/components/WebComponent";
 import html from "./BulletPointInputField.html";
 import State from "../../../../lib/state/State";
-import EditableListItem from "../../EditableListItem/EditableListItem";
-import {
-  EDITOR_INPUT_FINISH_EDITING_EVENT,
-  EditorInputFinishEditingEventData,
-} from "../../../../events/dataTypes/EditorInputFinishEditingEventData";
+import EditableListItem from "../../ListItems/EditableListItem/EditableListItem";
+import { log } from "../../../../lib/utils/Logger";
 
 export default class BulletPointInputField extends WebComponent {
   inputValueState: State<string>;
@@ -37,7 +34,9 @@ export default class BulletPointInputField extends WebComponent {
   }
 
   private onBulletPointsStateChanged = () => {
+    // update the original string state
     this.inputValueState.value = this.bulletPointsState.value.join("\n");
+    log("ALL bullet points changed", this.bulletPointsState.value);
   };
 
   private $initHtml(): void {
@@ -46,26 +45,20 @@ export default class BulletPointInputField extends WebComponent {
   }
 
   private $appendBulletPoints = () => {
-    this.bulletPointsState.value.forEach((bulletPoint, index) => {
-      this.$bulletPointContainer.appendChild(
-        this.$createBulletPoint(bulletPoint, index)
-      );
+    this.bulletPointsState.value.forEach((_, index) => {
+      this.$bulletPointContainer.appendChild(this.$createBulletPoint(index));
     });
   };
 
-  private $createBulletPoint = (
-    bulletPoint: string,
-    index: number
-  ): EditableListItem => {
-    const $bulletPoint = new EditableListItem(bulletPoint);
-    $bulletPoint.addEventListener(
-      EDITOR_INPUT_FINISH_EDITING_EVENT,
-      (event: Event) => {
-        const data = (event as CustomEvent)
-          .detail as EditorInputFinishEditingEventData;
-        this.bulletPointsState.value[index] = data.newInputValue;
-      }
-    );
+  private $createBulletPoint = (bulletPointIndex: number): EditableListItem => {
+    const bulletPointState = this.bulletPointsState.createSubState(
+        `value.${bulletPointIndex}`
+      ),
+      $bulletPoint = new EditableListItem(bulletPointState);
+
+    bulletPointState.addEventListener("change", (event) => {
+      log("SINGLE bullet point changed", event.data);
+    });
     return $bulletPoint;
   };
 }

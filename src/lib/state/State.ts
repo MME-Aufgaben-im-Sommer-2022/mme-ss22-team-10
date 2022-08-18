@@ -1,8 +1,10 @@
 import { Observable } from "../events/Observable";
 import {
+  CHILD_CHANGE_EVENT,
   STATE_CHANGE_EVENT,
   StateChangedEventData,
 } from "../../events/dataTypes/StateChangedEventData";
+import { log } from "../utils/Logger";
 
 // ====================================================== //
 // ====================== State ====================== //
@@ -44,15 +46,24 @@ export default class State<T> extends Observable {
   private proxyHandler = (p: string) => {
     return {
       set: (object: any, key: string | symbol, value: any) => {
-        if (object[key] !== value) {
-          const oldValue = object[key];
-          object[key] = value;
+        const wasTriggeredBySubState =
+            typeof key === "string" ? key.split("___")[0] === "cu" : false,
+          realKey = wasTriggeredBySubState
+            ? (key as string).split("___")[1]
+            : key;
+
+        if (object[realKey] !== value) {
+          const oldValue = object[realKey];
+          object[realKey] = value;
+
           this.onChange({
             oldPropertyValue: oldValue,
-            newPropertyValue: object[key],
-            propertyName: p + "." + key.toString(),
+            newPropertyValue: object[realKey],
+            propertyName: p + "." + realKey.toString(),
+            wasTriggeredBySubState: wasTriggeredBySubState,
           });
         }
+
         return true;
       },
 
@@ -96,20 +107,35 @@ export default class State<T> extends Observable {
         oldPropertyValue: oldValue,
         newPropertyValue: this.val,
         propertyName: "value",
+        wasTriggeredBySubState: false,
       });
-      if (typeof oldValue !== "object") {
-        this.parentState?.notifyAll(STATE_CHANGE_EVENT, {
-          oldPropertyValue: oldValue,
-          newPropertyValue: this.val,
-          propertyName: this.propNameInParentState,
-          wasTriggeredBySubState: true,
-        });
-      }
+      this.parentState?.updateParentValue(
+        this.propNameInParentState!,
+        this.val
+      );
     }
+  }
+
+  private updateParentValue(propertyName: string, value: any) {
+    const props = propertyName.split(".");
+    props.shift();
+    let oldValue = undefined;
+    props.reduce((obj, prop, index) => {
+      if (index === props.length - 1) {
+        oldValue = obj[prop];
+        // set the value without triggering the
+        obj["cu___" + prop] = value;
+      }
+      return obj[prop];
+    }, this.val);
   }
 
   private onChange = (data: StateChangedEventData) => {
     this.notifyAll(STATE_CHANGE_EVENT, data);
+  };
+
+  private onChildChange = (data: StateChangedEventData) => {
+    this.notifyAll(CHILD_CHANGE_EVENT, data);
   };
 
   private generateId() {
@@ -139,11 +165,15 @@ export default class State<T> extends Observable {
 
     subState.setParentState(this, key);
 
-    this.addEventListener(STATE_CHANGE_EVENT, (event) => {
+    const onStateChange = (event) => {
       const data = event.data as StateChangedEventData,
         isPropertyOfSubState = data.propertyName.startsWith(key);
 
-      if (isPropertyOfSubState && !data.wasTriggeredBySubState) {
+      if (
+        isPropertyOfSubState &&
+        !data.wasTriggeredBySubState &&
+        !(data.propertyName === key && key === "value")
+      ) {
         const propertyKeys = data.propertyName.split("."),
           relativeKeys = [
             propertyKeys[0],
@@ -154,7 +184,9 @@ export default class State<T> extends Observable {
           });
         subState.notifyAll(STATE_CHANGE_EVENT, subStateEventData);
       }
-    });
+    };
+
+    this.addEventListener(STATE_CHANGE_EVENT, onStateChange);
     return subState;
   };
 

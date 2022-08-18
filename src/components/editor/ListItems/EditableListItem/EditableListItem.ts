@@ -1,25 +1,23 @@
-import WebComponent from "../../../lib/components/WebComponent";
+import WebComponent from "../../../../lib/components/WebComponent";
 import html from "./EditableListItem.html";
-import EventBus from "../../../lib/events/EventBus";
-import { AppEvent } from "../../../lib/events/AppEvent";
+import EventBus from "../../../../lib/events/EventBus";
+import { AppEvent } from "../../../../lib/events/AppEvent";
 import {
   CLOSE_ALL_EDITOR_INPUTS_EVENT,
   CloseAllEditorInputsEventData,
-} from "../../../events/dataTypes/CloseAllEditorInputsEventData";
-import {
-  EDITOR_INPUT_FINISH_EDITING_EVENT,
-  EditorInputFinishEditingEventData,
-} from "../../../events/dataTypes/EditorInputFinishEditingEventData";
+} from "../../../../events/dataTypes/CloseAllEditorInputsEventData";
+import State from "../../../../lib/state/State";
+import { info, log, trace } from "../../../../lib/utils/Logger";
 
 export default class EditableListItem extends WebComponent {
   $textPreview!: HTMLSpanElement;
   $textInput!: HTMLInputElement;
 
-  private textValue: string;
+  private textValueState: State<string>;
 
-  constructor(textValue: string) {
+  constructor(textValueState: State<string>) {
     super(html);
-    this.textValue = textValue;
+    this.textValueState = textValueState;
   }
 
   get htmlTagName(): string {
@@ -34,8 +32,8 @@ export default class EditableListItem extends WebComponent {
   private $initHtml(): void {
     this.$textPreview = this.select(".text-preview")!;
     this.$textInput = this.select(".text-input")!;
-    this.$textPreview.innerText = this.textValue;
-    this.$textInput.value = this.textValue;
+    this.$textPreview.innerText = this.textValueState.value;
+    this.$textInput.value = this.textValueState.value;
     this.toggleMode(true);
   }
 
@@ -45,24 +43,26 @@ export default class EditableListItem extends WebComponent {
       this.toggleMode(false);
     });
     this.$textInput.addEventListener("click", (event) => {
-      event.stopPropagation();
+      event.stopPropagation(); // catch click event so it doesn't propagate to Editor
     });
-    this.$textInput.addEventListener("input", this.$onTextInputChanged);
+
+    this.textValueState.addEventListener("change", (event) => {
+      log("EditableListItem textValueState", event.data);
+    });
+    // Toggle mode when global event is received
     EventBus.addEventListener(
       CLOSE_ALL_EDITOR_INPUTS_EVENT,
       (event: AppEvent) => this.$onCloseAllEditorInputFields(event.data)
     );
   }
 
-  private $onTextInputChanged = (event: Event) => {
-    this.textValue = (event.target as HTMLInputElement).value;
-  };
-
   private $onCloseAllEditorInputFields = (
     data: CloseAllEditorInputsEventData
   ) => {
     if (data.triggerWebComponentId !== this.getWebComponentId()) {
-      this.toggleMode(true);
+      if (this.$textPreview.hidden) {
+        this.toggleMode(true);
+      }
     }
   };
 
@@ -71,24 +71,21 @@ export default class EditableListItem extends WebComponent {
     this.$textInput.hidden = doShowTextPreview;
 
     if (doShowTextPreview) {
-      this.$onFinishEditing();
+      this.showTextPreview();
     } else {
-      this.$onStartEditing();
+      this.showTextInput();
     }
   };
 
-  private $onStartEditing = () => {
-    this.textValue = this.$textInput.value;
-    this.$textPreview.innerText = this.textValue;
+  private showTextPreview = () => {
+    this.textValueState.value = this.$textInput.value;
+    this.$textPreview.innerText = this.textValueState.value;
+  };
+
+  private showTextInput = () => {
+    this.$textInput.value = this.textValueState.value;
     EventBus.notifyAll(CLOSE_ALL_EDITOR_INPUTS_EVENT, {
       triggerWebComponentId: this.getWebComponentId(),
     });
-  };
-
-  private $onFinishEditing = () => {
-    this.$textInput.value = this.textValue;
-    this.notifyAll(EDITOR_INPUT_FINISH_EDITING_EVENT, {
-      newInputValue: this.textValue,
-    } as EditorInputFinishEditingEventData);
   };
 }
