@@ -8,11 +8,16 @@
 // https://github.com/MME-Aufgaben-im-Sommer-2022/mme-ss22-team-10/blob/dev/docs/lib/WebComponent.md
 
 export default abstract class WebComponent extends HTMLElement {
+  private static totalWebComponents = 0;
+
   html: string;
   css: string;
 
+  private webComponentId!: number; // unique id for each web component
+
   protected constructor(html?: string, css?: string) {
     super();
+    this.setId();
     this.html = html ?? "";
     this.css = css ?? "";
     this.attachShadow({ mode: "open" });
@@ -21,6 +26,10 @@ export default abstract class WebComponent extends HTMLElement {
   // Called, when the component is connected to the DOM
   // Override this method in your component to add listeners, set data, etc.
   abstract onCreate(): void;
+
+  onDestroy() {
+    // override this method in your component to clean up listeners, etc.
+  }
 
   // Returns the HTML tag name of the component
   // Example: A component <example-component /> would return "example-component"
@@ -56,6 +65,10 @@ export default abstract class WebComponent extends HTMLElement {
     this.onCreate();
   }
 
+  async disconnectedCallback() {
+    this.onDestroy();
+  }
+
   loadStylesheet() {
     if (this.css !== "") {
       const style = document.createElement("style");
@@ -70,5 +83,15 @@ export default abstract class WebComponent extends HTMLElement {
       template.innerHTML = this.html;
       this.root.appendChild(template.content.cloneNode(true));
     }
+  }
+
+  private setId() {
+    WebComponent.totalWebComponents++;
+    this.webComponentId = WebComponent.totalWebComponents;
+    Object.freeze(this.webComponentId);
+  }
+
+  getWebComponentId(): number {
+    return this.webComponentId;
   }
 }

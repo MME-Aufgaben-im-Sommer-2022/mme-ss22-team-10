@@ -47,7 +47,7 @@ export default class DataManager {
   }
 
   static async saveEditorModel(editorModel: EditorModel): Promise<void> {
-    info("Saving editor model:", editorModel);
+    info("Saving Editor model:", editorModel);
     return Promise.resolve();
   }
   // User Settings Model
@@ -91,8 +91,11 @@ export default class DataManager {
     for (let i = 0; i < NUM_BLOCKS; i++) {
       blockContents.push({
         title: `Title ${i}`,
-        inputType: BlockContentInputType.FreeText,
-        inputValue: generateRandomLoremIpsum(50),
+        inputType: BlockContentInputType.BulletPoint,
+        inputValue: `hey there
+        irs 
+        sdfff
+        ddd`,
       });
     }
     return new EditorModel(day, blockContents);

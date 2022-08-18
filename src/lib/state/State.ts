@@ -1,5 +1,8 @@
 import { Observable } from "../events/Observable";
-import { log } from "../utils/Logger";
+import {
+  STATE_CHANGE_EVENT,
+  StateChangedEventData,
+} from "../../events/dataTypes/StateChangedEventData";
 
 // ====================================================== //
 // ====================== State ====================== //
@@ -11,7 +14,6 @@ import { log } from "../utils/Logger";
 // https://github.com/MME-Aufgaben-im-Sommer-2022/mme-ss22-team-10/blob/dev/docs/lib/State.md
 
 export default class State<T> extends Observable {
-  static STATE_CHANGE_EVENT = "change";
   private val!: T;
   private parentState: State<unknown> | null = null;
   private propNameInParentState: string | null = null;
@@ -90,15 +92,13 @@ export default class State<T> extends Observable {
     if (this.val !== value) {
       const oldValue = this.val;
       this.setValue(value);
-      log(`State ${this.id} changed: ${oldValue} -> ${value}`);
       this.onChange({
         oldPropertyValue: oldValue,
         newPropertyValue: this.val,
         propertyName: "value",
       });
       if (typeof oldValue !== "object") {
-        log(`ping parent`);
-        this.parentState?.notifyAll(State.STATE_CHANGE_EVENT, {
+        this.parentState?.notifyAll(STATE_CHANGE_EVENT, {
           oldPropertyValue: oldValue,
           newPropertyValue: this.val,
           propertyName: this.propNameInParentState,
@@ -109,7 +109,7 @@ export default class State<T> extends Observable {
   }
 
   private onChange = (data: StateChangedEventData) => {
-    this.notifyAll(State.STATE_CHANGE_EVENT, data);
+    this.notifyAll(STATE_CHANGE_EVENT, data);
   };
 
   private generateId() {
@@ -139,7 +139,7 @@ export default class State<T> extends Observable {
 
     subState.setParentState(this, key);
 
-    this.addEventListener(State.STATE_CHANGE_EVENT, (event) => {
+    this.addEventListener(STATE_CHANGE_EVENT, (event) => {
       const data = event.data as StateChangedEventData,
         isPropertyOfSubState = data.propertyName.startsWith(key);
 
@@ -152,7 +152,7 @@ export default class State<T> extends Observable {
           subStateEventData = Object.assign({}, data, {
             propertyName: relativeKeys,
           });
-        subState.notifyAll(State.STATE_CHANGE_EVENT, subStateEventData);
+        subState.notifyAll(STATE_CHANGE_EVENT, subStateEventData);
       }
     });
     return subState;
@@ -162,13 +162,6 @@ export default class State<T> extends Observable {
     this.parentState = state;
     this.propNameInParentState = propName;
   }
-}
-
-export interface StateChangedEventData {
-  oldPropertyValue?: any; // may be undefined if the property is new
-  newPropertyValue?: any; // may be undefined if the property is deleted
-  propertyName: string; // equals "value" if the whole state is changed
-  wasTriggeredBySubState?: boolean; // true if the change was triggered by a sub state
 }
 
 // custom error type for invalid state keys

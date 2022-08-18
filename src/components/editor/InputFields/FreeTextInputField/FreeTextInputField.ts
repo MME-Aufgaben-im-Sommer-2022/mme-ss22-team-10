@@ -1,13 +1,12 @@
 import WebComponent from "../../../../lib/components/WebComponent";
 import html from "./FreeTextInputField.html";
-import State, { StateChangedEventData } from "../../../../lib/state/State";
-import { BlockContent } from "../../../../data/models/EditorModel";
+import State from "../../../../lib/state/State";
 
 export default class FreeTextInputField extends WebComponent {
-  inputValueState: State<BlockContent>;
+  inputValueState: State<string>;
   $input!: HTMLInputElement;
 
-  constructor(inputValueState: State<BlockContent>) {
+  constructor(inputValueState: State<string>) {
     super(html);
     this.inputValueState = inputValueState;
   }
@@ -17,26 +16,20 @@ export default class FreeTextInputField extends WebComponent {
   }
 
   onCreate(): void {
-    this.$input = this.select("input")!;
-    this.$input.value = this.inputValueState.value.inputValue;
-
-    this.$input.addEventListener("input", this.onInputChanged);
-    this.inputValueState.addEventListener("change", (event) =>
-      this.onInputValueStateChanged(event.data)
-    );
+    this.$initHtml();
+    this.initListeners();
   }
 
-  onInputChanged = (event: Event) => {
-    this.inputValueState.value.inputValue = (
-      event.target as HTMLInputElement
-    ).value;
-  };
+  private $initHtml(): void {
+    this.$input = this.select("input")!;
+    this.$input.value = this.inputValueState.value;
+  }
 
-  private onInputValueStateChanged = (data: StateChangedEventData) => {
-    if (data.propertyName === "value.inputValue") {
-      if (this.$input.value !== data.newPropertyValue) {
-        this.$input.value = data.newPropertyValue ? data.newPropertyValue : "";
-      }
-    }
+  private initListeners(): void {
+    this.$input.addEventListener("input", this.$onInputChanged);
+  }
+
+  private $onInputChanged = (event: Event) => {
+    this.inputValueState.value = (event.target as HTMLInputElement).value;
   };
 }
