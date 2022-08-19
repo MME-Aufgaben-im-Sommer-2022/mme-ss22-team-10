@@ -5,21 +5,11 @@ import DataManager from "../../data/DataManager";
 // ===================== GlobalState ===================== //
 // ====================================================== //
 
-// GlobalState is a singleton that should be used to store states, which are being shared by the entire application
+// GlobalState is a singleton that should be used to store states,
+// which are being shared by the entire application
 
-// Usage:
-// - Call GlobalState.init() at the start of the application to initialize states
-// - Use GlobalState.addModel() to add states to the store
-// - Use GlobalState.findModel(), GlobalState.findModels() and GlobalState.getModelById() retrieve states from the store
-
-// Example:
-// import GlobalState from "./data/GlobalState";
-// GlobalState.init();
-// GlobalState.addState(new State("hi there"));
-// const retrievedState = GlobalState.findState(
-// 	(state) => state.value === "hi there",
-// 	string
-// );
+// Usage guide & examples:
+// https://github.com/MME-Aufgaben-im-Sommer-2022/mme-ss22-team-10/blob/dev/docs/lib/GlobalState.md
 
 export default class GlobalState {
   private static states: Map<string, State<any>> = new Map<

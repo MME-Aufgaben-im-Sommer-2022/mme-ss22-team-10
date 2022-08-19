@@ -6,18 +6,8 @@ import { Observable } from "../events/Observable";
 
 // Wrapper class to make any object/primitive observable
 
-// Usage:
-// 1. create a new State object: new State(data)
-// 2. to listen for changes, call addEventListener(State.STATE_CHANGE_EVENT, callback) on the State object
-// 3. to get the value of the State object, call exampleState.value
-// 4. to set the value of the State object, call exampleState.value = newValue
-
-// Example:
-// import { State } from "./State";
-// let exampleState = new State("some data");
-// exampleState.addEventListener(State.STATE_CHANGE_EVENT, (data) => {...}) // listen for State.STATE_CHANGE_EVENT events
-// log(exampleState.value) // get the value of the State object and print it (-> "some data")
-// exampleState.value = "new data" // set the value of the State object (-> automatically notifies all listeners)
+// Usage guide & examples:
+// https://github.com/MME-Aufgaben-im-Sommer-2022/mme-ss22-team-10/blob/dev/docs/lib/State.md
 
 export default class State<T> extends Observable {
   static STATE_CHANGE_EVENT = "change";
