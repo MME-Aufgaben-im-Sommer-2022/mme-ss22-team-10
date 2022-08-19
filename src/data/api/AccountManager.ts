@@ -1,73 +1,44 @@
-import { Account, Client } from "appwrite";
+import { Account, Client, Models } from "appwrite";
+import { TemplateItem } from "../models/UserSettingsModel";
 
 export default class AccountManager {
   account: Account;
   sessionId: string;
+  userName: string;
+  userId: string;
+  template: Array<TemplateItem>;
 
   constructor(client: Client) {
     this.account = new Account(client);
     this.sessionId = "";
+    this.userId = "";
+    this.userName = "";
+    this.template = [];
   }
 
-  createNewAccount(email: string, password: string, name: string) {
-    const promise: Promise<any> = this.account.create(
-      "unique()",
-      email,
-      password,
-      name
-    );
-    promise.then(
-      (response) => {
-        console.log(response);
-        this.createNewAccountSession(email, password);
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
+  async createNewAccount(
+    email: string,
+    password: string,
+    name: string
+  ): Promise<Models.User<Models.Preferences>> {
+    return this.account.create("unique()", email, password, name);
   }
 
   // login User
-  createNewAccountSession(email: string, password: string) {
-    const promise: Promise<any> = this.account.createEmailSession(
-      email,
-      password
-    );
-    promise.then(
-      (response) => {
-        // returns session Object : https://appwrite.io/docs/models/session
-        console.log(response);
-        this.sessionId = response.$id;
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
+  async createNewAccountSession(
+    email: string,
+    password: string
+  ): Promise<Models.Session> {
+    return this.account.createEmailSession(email, password);
   }
 
   // get currently logged in user data
-  getAccountData() {
-    const promise: Promise<any> = this.account.get();
-    promise.then(
-      (response) => {
-        console.log(response);
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
+  async getAccountData(): Promise<Models.User<Models.Preferences>> {
+    return this.account.get();
   }
 
   // logs out user
-  deleteAccountSession() {
-    const promise: Promise<any> = this.account.deleteSession(this.sessionId);
-    promise.then(
-      (response) => {
-        console.log(response);
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
+  async deleteAccountSession(): Promise<any> {
+    return this.account.deleteSession(this.sessionId);
   }
 }

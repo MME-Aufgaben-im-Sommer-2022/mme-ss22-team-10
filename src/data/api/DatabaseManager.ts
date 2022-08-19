@@ -1,4 +1,4 @@
-import { Client, Databases } from "appwrite";
+import { Client, Databases, Models } from "appwrite";
 
 export default class DatabaseManager {
   database: Databases;
@@ -7,51 +7,25 @@ export default class DatabaseManager {
     this.database = new Databases(client, databaseId);
   }
 
-  createNewDocument(collection: string, data: any) {
-    const promise: Promise<any> = this.database.createDocument(
-      collection,
-      "unique()",
-      data
-    );
-    promise.then(
-      (response) => {
-        console.log(response);
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
+  async createNewDocument(
+    collection: string,
+    data: any
+  ): Promise<Models.Document> {
+    return this.database.createDocument(collection, "unique()", data);
   }
 
-  listDocuments(database: string, collection: string, query: any) {
-    const promise: Promise<any> = this.database.createDocument(
-      database,
-      collection,
-      query
-    );
-    promise.then(
-      (response) => {
-        console.log(response);
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
+  async listDocuments(
+    collection: string,
+    query: Array<any>
+  ): Promise<Models.DocumentList<Models.Document>> {
+    return this.database.listDocuments(collection, query);
   }
 
-  updateDocument(collection: string, document: string, data: any) {
-    const promise: Promise<any> = this.database.updateDocument(
-      collection,
-      document,
-      data
-    );
-    promise.then(
-      (response) => {
-        console.log(response);
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
+  async updateDocument(
+    collection: string,
+    document: string,
+    data: any
+  ): Promise<Models.Document> {
+    return this.database.updateDocument(collection, document, data);
   }
 }
