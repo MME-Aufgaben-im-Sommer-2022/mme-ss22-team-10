@@ -5,7 +5,7 @@ import State from "../../../lib/state/State";
 import EditorModel from "../../../data/models/EditorModel";
 import EventBus from "../../../lib/events/EventBus";
 import { CLOSE_ALL_EDITOR_INPUTS_EVENT } from "../../../events/dataTypes/CloseAllEditorInputsEventData";
-
+import css from "./Editor.css";
 export default class Editor extends WebComponent {
   editorModelState: State<EditorModel>;
 
@@ -13,7 +13,7 @@ export default class Editor extends WebComponent {
   $editorBlocksContainer!: HTMLDivElement;
 
   constructor(editorModelState: State<EditorModel>) {
-    super(html);
+    super(html, css);
     this.editorModelState = editorModelState;
   }
 

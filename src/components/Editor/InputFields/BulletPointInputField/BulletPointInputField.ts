@@ -1,20 +1,31 @@
 import WebComponent from "../../../../lib/components/WebComponent";
 import html from "./BulletPointInputField.html";
 import State from "../../../../lib/state/State";
-import LiveTextInput from "../../ListItems/LiveTextInput/LiveTextInput";
-import { log } from "../../../../lib/utils/Logger";
+import LiveTextInput from "../../atomics/LiveTextInput/LiveTextInput";
 import { StateChangedEventData } from "../../../../events/dataTypes/StateChangedEventData";
 
+// Input field for bullet point lists
+
+// Necessary constructor parameters:
+// - inputValueState:
+//   - a string, that contains all bullet point items, separated by newlines (\n)
+//   - the state is updated the user finishes editing an item
+
 export default class BulletPointInputField extends WebComponent {
-  inputValueState: State<string>;
-  bulletPointsState: State<Array<string>>;
-  $bulletPointContainer!: HTMLUListElement;
+  private $bulletPointContainer!: HTMLUListElement;
+
+  // the whole list of bullet points as single string, separated by newlines (\n)
+  private readonly inputValueState: State<string>;
+  // the split up bullet points (e.g. ["item 1", "item 2"])
+  private readonly bulletPointsState: State<Array<string>>;
 
   constructor(inputValueState: State<string>) {
     super(html);
     this.inputValueState = inputValueState;
     this.bulletPointsState = new State<Array<string>>(
-      this.inputValueState.value.split("\n")
+      this.inputValueState.value
+        .split("\n")
+        .map((inputValue) => inputValue.trim())
     );
   }
 
@@ -26,22 +37,6 @@ export default class BulletPointInputField extends WebComponent {
     this.$initHtml();
     this.initListeners();
   }
-
-  private initListeners(): void {
-    this.bulletPointsState.addEventListener(
-      "change",
-      this.onBulletPointsStateChanged
-    );
-    this.inputValueState.addEventListener("change", (event) => {
-      log(event);
-    });
-  }
-
-  private onBulletPointsStateChanged = () => {
-    // update the original string state
-    this.inputValueState.value = this.bulletPointsState.value.join("\n");
-    log("ALL bullet points changed", this.bulletPointsState.value);
-  };
 
   private $initHtml(): void {
     this.$bulletPointContainer = this.select(".bullet-point-container")!;
@@ -55,16 +50,30 @@ export default class BulletPointInputField extends WebComponent {
   };
 
   private $createBulletPoint = (bulletPointIndex: number): LiveTextInput => {
+    // create a new state for each bullet point item
     const bulletPointState = new State(
         this.bulletPointsState.value[bulletPointIndex]
       ),
-      $bulletPoint = new LiveTextInput(bulletPointState);
+      $bulletPoint = new LiveTextInput(bulletPointState, true);
 
+    // when one of the new states changes, update the original state
     bulletPointState.addEventListener("change", (event) => {
       this.bulletPointsState.value[bulletPointIndex] = (
         event.data as StateChangedEventData
       ).newValue;
     });
     return $bulletPoint;
+  };
+
+  private initListeners(): void {
+    this.bulletPointsState.addEventListener(
+      "change",
+      this.onBulletPointsStateChanged
+    );
+  }
+
+  private onBulletPointsStateChanged = () => {
+    // update the original string state, when an item is changed
+    this.inputValueState.value = this.bulletPointsState.value.join("\n");
   };
 }

@@ -1,17 +1,28 @@
 import WebComponent from "../../../../lib/components/WebComponent";
 import html from "./CheckListInputField.html";
 import State from "../../../../lib/state/State";
-import { log } from "../../../../lib/utils/Logger";
-import CheckListItem from "../../ListItems/CheckListItem/CheckListItem";
+import CheckListItem from "../../atomics/CheckListItem/CheckListItem";
+
+// Input field for check list items
+
+// Necessary constructor parameters:
+// - inputValueState:
+//   - a string, that contains all checklist items, separated by newlines (\n)
+//     - checked items are prefixed with a "1___"
+//     - unchecked items are prefixed with a "0___"
+//   - the state is updated the user finishes editing an item
 
 export default class CheckListInputField extends WebComponent {
-  inputValueState: State<string>;
-  checkListStates: State<Array<string>>;
-  $checkListContainer!: HTMLUListElement;
+  private $checkListContainer!: HTMLUListElement;
 
-  private static CHECK_LIST_CONTENT_SEPARATOR = "___";
-  private static CHECK_LIST_IS_CHECKED_MARK = "1";
-  private static CHECK_LIST_IS_UNCHECKED_MARK = "0";
+  // the whole list of checklist items as single string, separated by newlines (\n)
+  private readonly inputValueState: State<string>;
+  // the split up bullet points (e.g. ["1___item 1", "0___item 2"])
+  private readonly checkListStates: State<Array<string>>;
+
+  static readonly CHECK_LIST_CONTENT_SEPARATOR = "___";
+  static readonly CHECK_LIST_IS_CHECKED_MARK = "1";
+  static readonly CHECK_LIST_IS_UNCHECKED_MARK = "0";
 
   constructor(inputValueState: State<string>) {
     super(html);
@@ -30,19 +41,6 @@ export default class CheckListInputField extends WebComponent {
     this.initListeners();
   }
 
-  private initListeners(): void {
-    this.checkListStates.addEventListener(
-      "change",
-      this.onBulletPointsStateChanged
-    );
-  }
-
-  private onBulletPointsStateChanged = () => {
-    // update the original string state
-    this.inputValueState.value = this.checkListStates.value.join("\n");
-    log("ALL bullet points changed", this.checkListStates.value);
-  };
-
   private $initHtml(): void {
     this.$checkListContainer = this.select(".check-list-container")!;
     this.$appendCheckListItems();
@@ -55,16 +53,26 @@ export default class CheckListInputField extends WebComponent {
   };
 
   private $createCheckListItem = (checkListIndex: number): CheckListItem => {
-    const [isChecked, checkListContent] = this.checkListStates.value[
-        checkListIndex
-      ].split(CheckListInputField.CHECK_LIST_CONTENT_SEPARATOR),
+    const checkListItemString = this.checkListStates.value[checkListIndex],
+      [isChecked, checkListContent] = checkListItemString.split(
+        CheckListInputField.CHECK_LIST_CONTENT_SEPARATOR
+      ),
       isCheckedState = new State(
         isChecked.trim() === CheckListInputField.CHECK_LIST_IS_CHECKED_MARK
       ),
       checkListContentState = new State(checkListContent.trim()),
       $checkListItem = new CheckListItem(checkListContentState, isCheckedState);
 
-    log("created check list item from string", isChecked, checkListContent);
+    if (isChecked === undefined || checkListContent === undefined) {
+      throw new InvalidCheckListItemError(
+        this.checkListStates.value[checkListIndex],
+        this.inputValueState.value,
+        isChecked,
+        checkListContent
+      );
+    }
+
+    // listen for changes and update the original state
     isCheckedState.addEventListener("change", () =>
       this.onCheckListItemChanged(
         checkListIndex,
@@ -82,6 +90,18 @@ export default class CheckListInputField extends WebComponent {
     return $checkListItem;
   };
 
+  private initListeners(): void {
+    this.checkListStates.addEventListener(
+      "change",
+      this.onBulletPointsStateChanged
+    );
+  }
+
+  private onBulletPointsStateChanged = () => {
+    // update the original string state
+    this.inputValueState.value = this.checkListStates.value.join("\n");
+  };
+
   private onCheckListItemChanged = (
     checkListIndex: number,
     isChecked: boolean,
@@ -93,4 +113,26 @@ export default class CheckListInputField extends WebComponent {
         : CheckListInputField.CHECK_LIST_IS_UNCHECKED_MARK
     }${CheckListInputField.CHECK_LIST_CONTENT_SEPARATOR}${checkListContent}`;
   };
+}
+
+export class InvalidCheckListItemError extends Error {
+  constructor(
+    checkListItem: string,
+    fullCheckListString: string,
+    isChecked: string | undefined,
+    content: string | undefined
+  ) {
+    super(`Invalid check list item: ${checkListItem}
+    
+    Is the item of the following format?
+    - ${CheckListInputField.CHECK_LIST_IS_CHECKED_MARK}${CheckListInputField.CHECK_LIST_CONTENT_SEPARATOR}example content
+    - ${CheckListInputField.CHECK_LIST_IS_UNCHECKED_MARK}${CheckListInputField.CHECK_LIST_CONTENT_SEPARATOR}example content
+    
+    Detailed error:
+    - fullCheckListString: ${fullCheckListString}
+    - checkListItem: ${checkListItem}
+    - isChecked: ${isChecked}
+    - content: ${content}
+    `);
+  }
 }

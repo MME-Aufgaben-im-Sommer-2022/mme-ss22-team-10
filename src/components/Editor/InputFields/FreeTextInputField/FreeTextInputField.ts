@@ -1,10 +1,21 @@
 import WebComponent from "../../../../lib/components/WebComponent";
 import html from "./FreeTextInputField.html";
 import State from "../../../../lib/state/State";
+import LiveTextInput from "../../atomics/LiveTextInput/LiveTextInput";
+
+// Input field for free text
+// (= a wrapper around LiveTextInput)
+
+// Necessary constructor parameters:
+// - inputValueState:
+//   - a string, that contains the text to edit
+//   - the state is updated the user finishes editing the text
 
 export default class FreeTextInputField extends WebComponent {
-  inputValueState: State<string>;
-  $input!: HTMLInputElement;
+  private $inputFieldContainer!: HTMLInputElement;
+  private $liveTextInput!: LiveTextInput;
+
+  private readonly inputValueState: State<string>;
 
   constructor(inputValueState: State<string>) {
     super(html);
@@ -17,19 +28,13 @@ export default class FreeTextInputField extends WebComponent {
 
   onCreate(): void {
     this.$initHtml();
-    this.initListeners();
   }
 
   private $initHtml(): void {
-    this.$input = this.select("input")!;
-    this.$input.value = this.inputValueState.value;
+    this.$inputFieldContainer = this.select(
+      ".free-text-input-field-container"
+    )!;
+    this.$liveTextInput = new LiveTextInput(this.inputValueState, false);
+    this.$inputFieldContainer.appendChild(this.$liveTextInput);
   }
-
-  private initListeners(): void {
-    this.$input.addEventListener("input", this.$onInputChanged);
-  }
-
-  private $onInputChanged = (event: Event) => {
-    this.inputValueState.value = (event.target as HTMLInputElement).value;
-  };
 }

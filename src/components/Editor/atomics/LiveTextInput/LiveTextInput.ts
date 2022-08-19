@@ -7,37 +7,72 @@ import {
   CloseAllEditorInputsEventData,
 } from "../../../../events/dataTypes/CloseAllEditorInputsEventData";
 import State from "../../../../lib/state/State";
-import { log } from "../../../../lib/utils/Logger";
+import css from "./LiveTextInput.css";
+
+// HTML element that serves as the main text input field
+
+// Necessary constructor parameters:
+// - isSingleLine:
+//    - true: for list items etc.
+//    - false: for free text
+// - textValueState:
+//    - a state of type string, changes when user finishes editing
 
 export default class LiveTextInput extends WebComponent {
-  $textPreview!: HTMLSpanElement;
-  $textInput!: HTMLInputElement;
+  private $textPreview!: HTMLSpanElement;
+  private $textInput!: HTMLInputElement;
 
-  private textValueState: State<string>;
+  private readonly isSingleLine: boolean;
+  private readonly textValueState: State<string>;
 
-  constructor(textValueState: State<string>) {
-    super(html);
+  constructor(textValueState: State<string>, isSingleLine: boolean) {
+    super(html, css);
     this.textValueState = textValueState;
+    this.isSingleLine = isSingleLine;
   }
 
   get htmlTagName(): string {
-    return "editable-list-item";
+    return "live-text-input";
   }
 
   onCreate(): void {
     this.$initHtml();
-    this.$initListeners();
+    this.initListeners();
+
+    if (this.isSingleLine) {
+      this.$setSingleLine();
+    } else {
+      this.$setMultiLine();
+    }
+
+    this.toggleMode(true);
   }
 
   private $initHtml(): void {
     this.$textPreview = this.select(".text-preview")!;
     this.$textInput = this.select(".text-input")!;
+
     this.$textPreview.innerText = this.textValueState.value;
     this.$textInput.value = this.textValueState.value;
-    this.toggleMode(true);
   }
 
-  private $initListeners(): void {
+  private $setSingleLine = () => {
+    this.$textInput.setAttribute("rows", "1");
+    this.$textInput.classList.add("single-line");
+
+    this.$textInput.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        this.toggleMode(true);
+      }
+    });
+  };
+
+  private $setMultiLine = () => {
+    this.$textInput.classList.add("multi-line");
+  };
+
+  private initListeners(): void {
     this.$textPreview.addEventListener("click", (event) => {
       event.stopPropagation();
       this.toggleMode(false);
@@ -46,9 +81,6 @@ export default class LiveTextInput extends WebComponent {
       event.stopPropagation(); // catch click event so it doesn't propagate to Editor
     });
 
-    this.textValueState.addEventListener("change", (event) => {
-      log("EditableListItem textValueState", event.data);
-    });
     // Toggle mode when global event is received
     EventBus.addEventListener(
       CLOSE_ALL_EDITOR_INPUTS_EVENT,
