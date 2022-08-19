@@ -5,12 +5,20 @@ import CalendarDay from "../CalendarDay/CalendarDay";
 import { log } from "../../../lib/utils/Logger";
 
 export default class CalendarMonth extends WebComponent {
-  monthNumber = 0;
-  monthText = "";
-  day = 0;
+  entriesForCurrentMonth: Array<string>;
+  currentMonthText: string;
+  currentMonthNumber: number;
+  currentMonthNumberText: string;
 
-  constructor() {
+  constructor(
+    entriesForCurrentMonth: Array<string>,
+    currentMonthText: string,
+    currentMonthNumber: number
+  ) {
     super(html, css);
+    this.entriesForCurrentMonth = entriesForCurrentMonth;
+    this.currentMonthText = currentMonthText;
+    this.currentMonthNumber = currentMonthNumber;
   }
 
   // override htmlTagName to return the tag name our component
@@ -20,52 +28,46 @@ export default class CalendarMonth extends WebComponent {
   }
 
   onCreate(): void {
-    const date: Date = new Date();
-    this.monthNumber = date.getMonth() + 1;
-    this.day = date.getDay();
-    this.monthText = date.getUTCMonth().toString();
-    for (let i = 1; i <= 30; i++) {
-      this.select(".days")!.append(
-        new CalendarDay(this.day + "." + this.monthNumber)
-      );
-      this.setMonth(this.monthNumber);
-      this.select(".previous")!.addEventListener(
-        "click",
-        this.onPreviousClicked
-      );
-      this.select(".next")!.addEventListener("click", this.onNextClicked);
+    log(this.entriesForCurrentMonth);
+    this.formatMonth();
+    for (let i = 0; i < this.entriesForCurrentMonth.length; i++) {
+      if (parseInt(this.entriesForCurrentMonth[i]) < 10) {
+        this.select(".days")!.append(
+          new CalendarDay(
+            "0" +
+              this.entriesForCurrentMonth[i] +
+              "." +
+              this.currentMonthNumberText
+          )
+        );
+      } else {
+        this.select(".days")!.append(
+          new CalendarDay(
+            this.entriesForCurrentMonth[i] + "." + this.currentMonthNumberText
+          )
+        );
+      }
+    }
+    this.select(".previous")!.addEventListener("click", this.onPreviousClicked);
+    this.select(".next")!.addEventListener("click", this.onNextClicked);
+    this.select("h3")!.innerText = this.currentMonthText;
+  }
+
+  formatMonth(): void {
+    if (this.currentMonthNumber < 10) {
+      this.currentMonthNumberText = "0" + this.currentMonthNumber;
+    } else {
+      this.currentMonthNumberText = this.currentMonthNumber.toString();
     }
   }
 
   onPreviousClicked = () => {
     log("previous");
-    this.setMonth(this.monthNumber - 1);
+    //this.setMonth(this.monthNumber - 1);
   };
 
   onNextClicked = () => {
     log("next");
-    this.setMonth(this.monthNumber + 1);
-  };
-
-  setMonth = (monthNumber: number) => {
-    const months = [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
-    ];
-
-    this.monthText = months[monthNumber - 1];
-    log(this.monthText);
-
-    this.select("h3")!.innerText = this.monthText;
+    //this.setMonth(this.monthNumber + 1);
   };
 }
