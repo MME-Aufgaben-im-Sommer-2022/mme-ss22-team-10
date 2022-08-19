@@ -1,6 +1,6 @@
 import { ObservableSlimChanges } from "../lib/state/State";
 
-export interface StateChanged extends ObservableSlimChanges {
+export interface StateChangedData extends ObservableSlimChanges {
   triggerStateId: string; // the state that triggered the change
 }
 

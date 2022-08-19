@@ -1,4 +1,4 @@
-export interface CloseAllEditorInputs {
+export interface CloseAllEditorInputsData {
   triggerWebComponentId: number; // id of the web component that triggered the event
 }
 

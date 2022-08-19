@@ -1,5 +1,5 @@
 import { Observable } from "../events/Observable";
-import { StateChanged } from "../../events/StateChanged";
+import { StateChangedData } from "../../events/StateChanged";
 //import { log } from "../utils/Logger";
 import ObservableSlim from "observable-slim";
 
@@ -103,7 +103,11 @@ export class InvalidStateKeyError<T> extends Error {
 }
 
 export class ChangedParentStateError extends Error {
-  constructor(propertyName: string, state: State<unknown>, data: StateChanged) {
+  constructor(
+    propertyName: string,
+    state: State<unknown>,
+    data: StateChangedData
+  ) {
     super();
     this.message = `The property "${propertyName}", which is referenced by a SubState cannot be found in the Parent state anymore.
     

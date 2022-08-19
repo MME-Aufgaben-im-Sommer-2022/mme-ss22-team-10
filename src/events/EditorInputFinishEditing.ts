@@ -1,4 +1,4 @@
-export interface EditorInputFinishEditing {
+export interface EditorInputFinishEditingData {
   newInputValue: string; // the new value of the input
 }
 
