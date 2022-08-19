@@ -19,8 +19,8 @@ import ApiClient from "./api/ApiClient";
 
 export default class DataManager {
   static async init() {
-    ApiClient.init();
-    ApiClient.logInUser();
+    await ApiClient.init();
+    await ApiClient.logInUser();
   }
 
   // Write methods to fetch or save data to Database etc. here
