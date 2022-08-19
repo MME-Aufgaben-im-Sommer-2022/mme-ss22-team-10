@@ -17,11 +17,11 @@ export default class ApiClient {
     this.databaseManager = new DatabaseManager(this.client, Server.DATABASE_ID);
   }
 
-  static async logInUser() {
+  static async logInUser(email: string, password: string) {
     await this.accountManager
       .createNewAccountSession(
-        Server.TEST_USER_EMAIL,
-        Server.TEST_USER_PASSWORD
+        Server.TEST_USER_EMAIL, // email
+        Server.TEST_USER_PASSWORD // password
       )
       .then((response) => {
         this.accountManager.sessionId = response.$id;
