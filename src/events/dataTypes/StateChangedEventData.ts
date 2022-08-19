@@ -1,11 +1,7 @@
-export interface StateChangedEventData {
-  oldPropertyValue?: any; // may be undefined if the property is new
-  newPropertyValue?: any; // may be undefined if the property is deleted
-  propertyName: string; // equals "value" if the whole state is changed
-  wasTriggeredBySubState?: boolean; // true if the change was triggered by a sub state
+import { ObservableSlimChanges } from "../../lib/state/State";
+
+export interface StateChangedEventData extends ObservableSlimChanges {
   triggerStateId: string; // the state that triggered the change
-  respondents: string[]; // the states that are listening to the change
 }
 
 export const STATE_CHANGE_EVENT = "change";
-export const CHILD_CHANGE_EVENT = "child-change";

@@ -22,7 +22,9 @@ export default class EditorBlock extends WebComponent {
   constructor(blockContentState: State<BlockContent>) {
     super(html);
     this.blockContentState = blockContentState;
-    this.inputValueState = blockContentState.createSubState("value.inputValue");
+    this.inputValueState = new State<string>(
+      this.blockContentState.value.inputValue
+    );
   }
 
   get htmlTagName(): string {
@@ -49,6 +51,7 @@ export default class EditorBlock extends WebComponent {
 
     this.inputValueState.addEventListener("change", (event: AppEvent) => {
       log("inputValueState changed", event.data);
+      this.blockContentState.value.inputValue = this.inputValueState.value;
     });
   }
 
@@ -66,9 +69,9 @@ export default class EditorBlock extends WebComponent {
 
   onBlockContentStateChanged = (data: StateChangedEventData) => {
     log("onBlockContentStateChanged", data);
-    if (data.propertyName === "value.title") {
+    if (data.property === "value.title") {
       this.$title.innerHTML = this.blockContentState.value.title;
-    } else if (data.propertyName === "value.inputType") {
+    } else if (data.property === "value.inputType") {
       // ...
     }
   };

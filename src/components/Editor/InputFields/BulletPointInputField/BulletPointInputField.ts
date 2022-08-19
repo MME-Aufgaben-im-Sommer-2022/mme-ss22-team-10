@@ -3,6 +3,7 @@ import html from "./BulletPointInputField.html";
 import State from "../../../../lib/state/State";
 import EditableListItem from "../../ListItems/EditableListItem/EditableListItem";
 import { log } from "../../../../lib/utils/Logger";
+import { StateChangedEventData } from "../../../../events/dataTypes/StateChangedEventData";
 
 export default class BulletPointInputField extends WebComponent {
   inputValueState: State<string>;
@@ -31,7 +32,7 @@ export default class BulletPointInputField extends WebComponent {
       "change",
       this.onBulletPointsStateChanged
     );
-    this.inputValueState.addEventListener((event) => {
+    this.inputValueState.addEventListener("change", (event) => {
       log(event);
     });
   }
@@ -54,13 +55,15 @@ export default class BulletPointInputField extends WebComponent {
   };
 
   private $createBulletPoint = (bulletPointIndex: number): EditableListItem => {
-    const bulletPointState = this.bulletPointsState.createSubState(
-        `value.${bulletPointIndex}`
+    const bulletPointState = new State(
+        this.bulletPointsState.value[bulletPointIndex]
       ),
       $bulletPoint = new EditableListItem(bulletPointState);
 
     bulletPointState.addEventListener("change", (event) => {
-      log("SINGLE bullet point changed", event.data);
+      this.bulletPointsState.value[bulletPointIndex] = (
+        event.data as StateChangedEventData
+      ).newValue;
     });
     return $bulletPoint;
   };

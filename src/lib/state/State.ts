@@ -1,6 +1,6 @@
 import { Observable } from "../events/Observable";
 import { StateChangedEventData } from "../../events/dataTypes/StateChangedEventData";
-import { log } from "../utils/Logger";
+//import { log } from "../utils/Logger";
 import ObservableSlim from "observable-slim";
 
 // ====================================================== //
@@ -14,10 +14,14 @@ import ObservableSlim from "observable-slim";
 
 export default class State<T> extends Observable {
   private val: ProxyConstructor | T;
+  private static stateCount = 0;
+  private readonly id: number;
 
   constructor(value: T) {
     super();
-    log("State", "constructor", "val:", value);
+    State.stateCount++;
+    this.id = State.stateCount;
+
     this.val =
       typeof value === "object"
         ? ObservableSlim.create(value, false, this.onValueChange)
@@ -29,16 +33,34 @@ export default class State<T> extends Observable {
   }
 
   set value(val: T) {
+    const previousValue = this.val;
     if (typeof val !== "object") {
       this.val = val;
     } else {
       this.val = ObservableSlim.create(val, false, this.onValueChange);
     }
-    this.onValueChange({});
+    this.onValueChange([
+      {
+        type: "update",
+        property: "",
+        currentPath: "",
+        jsonPointer: "",
+        target: this.val,
+        // eslint-disable-next-line no-underscore-dangle
+        proxy: (this.val as any).__getProxy,
+        previousValue,
+        newValue: this.val,
+      },
+    ]);
   }
 
-  onValueChange = (changes: any) => {
-    this.notifyAll("change", changes);
+  onValueChange = (changes: ObservableSlimChanges[]) => {
+    changes.forEach((change) => {
+      this.notifyAll(
+        "change",
+        Object.assign({}, change, { triggerStateId: this.id })
+      );
+    });
   };
 
   createSubState(key: string): State<any> {
@@ -97,4 +119,17 @@ export class ChangedParentStateError extends Error {
     State change event data: ${JSON.stringify(data)}
     `;
   }
+}
+
+export interface ObservableSlimChanges {
+  type: "add" | "delete" | "update";
+  property: string; // equals "value" if the whole state is changed
+
+  currentPath: string; // path of the property
+  jsonPointer: string; // path as json pointer syntax
+  target: any; // the target object
+  proxy?: ProxyConstructor; // the proxy of the object
+
+  previousValue?: any; // may be undefined if the property is new
+  newValue?: any; // may be undefined if the property is deleted
 }
