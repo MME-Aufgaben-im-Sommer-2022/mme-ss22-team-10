@@ -1,3 +1,9 @@
 .editor-blocks-container {
     width: 30%;
 }
+
+.editor {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
