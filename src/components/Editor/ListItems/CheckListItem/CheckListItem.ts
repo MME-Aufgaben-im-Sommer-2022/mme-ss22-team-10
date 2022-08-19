@@ -1,16 +1,19 @@
 import WebComponent from "../../../../lib/components/WebComponent";
-import EditableListItem from "../EditableListItem/EditableListItem";
+import LiveTextInput from "../LiveTextInput/LiveTextInput";
 import State from "../../../../lib/state/State";
+import html from "./CheckListItem.html";
+import css from "./CheckListItem.css";
 
 export default class CheckListItem extends WebComponent {
+  private $checkListItemContainer!: HTMLDivElement;
   private $checkbox!: HTMLInputElement;
-  private $editableListItem!: EditableListItem;
+  private $editableListItem!: LiveTextInput;
 
-  private textValueState: State<string>;
+  private readonly textValueState: State<string>;
   private isCheckedState: State<boolean>;
 
   constructor(textValue: State<string>, isChecked: State<boolean>) {
-    super();
+    super(html, css);
     this.textValueState = textValue;
     this.isCheckedState = isChecked;
   }
@@ -25,22 +28,27 @@ export default class CheckListItem extends WebComponent {
   }
 
   private $initHtml(): void {
+    this.$checkListItemContainer = this.select(".check-list-item-container")!;
     this.$checkbox = this.select("input")!;
-    this.$checkbox.checked = this.isCheckedState.value;
-    this.$editableListItem = new EditableListItem(this.textValueState);
-    this.select("li")?.appendChild(this.$editableListItem);
+    this.$editableListItem = new LiveTextInput(this.textValueState);
+    this.$checkListItemContainer.appendChild(this.$editableListItem);
+
+    if (this.isCheckedState.value) {
+      this.$checkbox.checked = this.isCheckedState.value;
+      this.onToggleChecked();
+    }
   }
 
-  private initListeners(): void {
-    this.$checkbox.addEventListener("input", this.$onCheckboxChanged);
+  private initListeners = () => {
+    this.$checkbox.addEventListener("change", this.$onCheckboxChanged);
     this.isCheckedState.addEventListener("change", this.onCheckedStateChanged);
-  }
+  };
 
   private $onCheckboxChanged = (event: Event) => {
     this.isCheckedState.value = (event.target as HTMLInputElement).checked;
   };
 
-  private onCheckedStateChanged = (): void => {
+  private onCheckedStateChanged = () => {
     if (this.isCheckedState.value) {
       this.onToggleChecked();
     } else {
@@ -49,10 +57,10 @@ export default class CheckListItem extends WebComponent {
   };
 
   private onToggleChecked = () => {
-    this.classList.add("checked");
+    this.$checkListItemContainer.classList.add("checked");
   };
 
   private onToggleUnchecked = () => {
-    this.classList.remove("checked");
+    this.$checkListItemContainer.classList.remove("checked");
   };
 }

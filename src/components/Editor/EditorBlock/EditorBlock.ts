@@ -10,6 +10,7 @@ import {
 import { log } from "../../../lib/utils/Logger";
 import BulletPointInputField from "../InputFields/BulletPointInputField/BulletPointInputField";
 import { StateChangedEventData } from "../../../events/dataTypes/StateChangedEventData";
+import CheckListInputField from "../InputFields/CheckListInputField/CheckListInputField";
 
 export default class EditorBlock extends WebComponent {
   blockContentState: State<BlockContent>;
@@ -17,7 +18,10 @@ export default class EditorBlock extends WebComponent {
 
   $title!: HTMLSpanElement;
   $inputFieldContainer!: HTMLDivElement;
-  $inputField!: FreeTextInputField | BulletPointInputField;
+  $inputField!:
+    | FreeTextInputField
+    | BulletPointInputField
+    | CheckListInputField;
 
   constructor(blockContentState: State<BlockContent>) {
     super(html);
@@ -60,6 +64,8 @@ export default class EditorBlock extends WebComponent {
       this.$inputField = new FreeTextInputField(this.inputValueState);
     } else if (inputType === BlockContentInputType.BulletPoint) {
       this.$inputField = new BulletPointInputField(this.inputValueState);
+    } else if (inputType === BlockContentInputType.Checkbox) {
+      this.$inputField = new CheckListInputField(this.inputValueState);
     } else {
       throw new Error(`Unknown input type: ${inputType}`);
     }

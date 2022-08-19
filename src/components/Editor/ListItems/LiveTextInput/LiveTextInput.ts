@@ -1,5 +1,5 @@
 import WebComponent from "../../../../lib/components/WebComponent";
-import html from "./EditableListItem.html";
+import html from "./LiveTextInput.html";
 import EventBus from "../../../../lib/events/EventBus";
 import { AppEvent } from "../../../../lib/events/AppEvent";
 import {
@@ -7,9 +7,9 @@ import {
   CloseAllEditorInputsEventData,
 } from "../../../../events/dataTypes/CloseAllEditorInputsEventData";
 import State from "../../../../lib/state/State";
-import { info, log, trace } from "../../../../lib/utils/Logger";
+import { log } from "../../../../lib/utils/Logger";
 
-export default class EditableListItem extends WebComponent {
+export default class LiveTextInput extends WebComponent {
   $textPreview!: HTMLSpanElement;
   $textInput!: HTMLInputElement;
 

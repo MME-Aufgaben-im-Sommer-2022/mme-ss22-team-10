@@ -91,8 +91,9 @@ export default class DataManager {
     for (let i = 0; i < NUM_BLOCKS; i++) {
       blockContents.push({
         title: `Title ${i}`,
-        inputType: BlockContentInputType.BulletPoint,
-        inputValue: `hey there`,
+        inputType: BlockContentInputType.Checkbox,
+        inputValue: `0___unchecked
+        1___checked`,
       });
     }
     return new EditorModel(day, blockContents);
