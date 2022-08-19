@@ -6,11 +6,18 @@ import EditorModel from "../../../data/models/EditorModel";
 import EventBus from "../../../lib/events/EventBus";
 import { CLOSE_ALL_EDITOR_INPUTS_EVENT } from "../../../events/dataTypes/CloseAllEditorInputsEventData";
 import css from "./Editor.css";
-export default class Editor extends WebComponent {
-  editorModelState: State<EditorModel>;
 
-  $editor!: HTMLDivElement;
-  $editorBlocksContainer!: HTMLDivElement;
+// HTML element that serves as the main editor component
+
+// Necessary constructor parameters:
+// - editorModelState:
+//    - a state object that holds the editor model
+
+export default class Editor extends WebComponent {
+  private readonly editorModelState: State<EditorModel>;
+
+  private $editor!: HTMLDivElement;
+  private $editorBlocksContainer!: HTMLDivElement;
 
   constructor(editorModelState: State<EditorModel>) {
     super(html, css);
@@ -29,6 +36,7 @@ export default class Editor extends WebComponent {
   private $initHtml(): void {
     this.$editor = this.select(".editor")!;
     this.$editorBlocksContainer = this.select(".editor-blocks-container")!;
+
     this.editorModelState.value.blockContents.forEach((_, index) => {
       const blockContentState = this.editorModelState.createSubState(
         `value.blockContents.${index}`
@@ -40,6 +48,8 @@ export default class Editor extends WebComponent {
   }
 
   private initListeners(): void {
+    // close all editor inputs when clicking anywhere inside the editor
+    // -> events on input fields are caught by the editor blocks
     this.$editor.addEventListener("click", () => {
       EventBus.notifyAll(CLOSE_ALL_EDITOR_INPUTS_EVENT, {});
     });
