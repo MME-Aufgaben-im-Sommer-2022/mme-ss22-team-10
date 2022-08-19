@@ -52,6 +52,7 @@ export default class DataManager {
     info("Saving editor model:", editorModel);
     return Promise.resolve();
   }
+
   // User Settings Model
 
   static async getUserSettingsModel(): Promise<UserSettingsModel> {
@@ -64,6 +65,7 @@ export default class DataManager {
     userSettingsModel: UserSettingsModel
   ): Promise<void> {
     info("Saving user settings model:", userSettingsModel);
+    ApiClient.updateUserTemplate(userSettingsModel.settings.template);
     return Promise.resolve();
   }
 

@@ -40,23 +40,41 @@ export default class ApiClient {
     return this.accountManager.deleteAccountSession();
   }
 
+  private static getUserTemplateDocument() {
+    return this.databaseManager.listDocuments(Server.COLLECTION_SETTINGS, [
+      Query.equal("userID", this.accountManager.userId),
+    ]);
+  }
+
   private static async setUserTemplate() {
-    await this.databaseManager
-      .listDocuments(Server.COLLECTION_SETTINGS, [
-        Query.equal("userID", this.accountManager.userId),
-      ])
-      .then((response) => {
-        const template = response.documents[0].template;
-        // eslint-disable-next-line guard-for-in
-        for (const i in template) {
-          template[i] = JSON.parse(template[i]);
-        }
-        this.accountManager.template = template;
-      });
+    await this.getUserTemplateDocument().then((response) => {
+      const template = response.documents[0].template;
+      // eslint-disable-next-line guard-for-in
+      for (const i in template) {
+        template[i] = JSON.parse(template[i]);
+      }
+      this.accountManager.template = template;
+    });
   }
 
   static getUserTemplate(): Array<TemplateItem> {
     return this.accountManager.template;
+  }
+
+  static async updateUserTemplate(template: Array<TemplateItem>) {
+    await this.getUserTemplateDocument().then((response) => {
+      const newTemplate: string[] = [];
+      // eslint-disable-next-line guard-for-in
+      for (const i in template) {
+        newTemplate[i] = JSON.stringify(template[i]);
+      }
+      this.databaseManager.updateDocument(
+        Server.COLLECTION_SETTINGS,
+        response.documents[0].$id,
+        { template: newTemplate }
+      );
+    });
+    this.accountManager.template = template;
   }
 
   static getUsername(): string {
