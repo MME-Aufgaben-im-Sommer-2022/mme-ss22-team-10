@@ -30,6 +30,20 @@ export default class CalendarMonth extends WebComponent {
   onCreate(): void {
     log(this.entriesForCurrentMonth);
     this.formatMonth();
+    this.appendCalenderEntry();
+
+    //this.select(".selector h3")!.innerText = this.currentMonthText;
+  }
+
+  formatMonth(): void {
+    if (this.currentMonthNumber < 10) {
+      this.currentMonthNumberText = "0" + this.currentMonthNumber;
+    } else {
+      this.currentMonthNumberText = this.currentMonthNumber.toString();
+    }
+  }
+
+  appendCalenderEntry() {
     for (let i = 0; i < this.entriesForCurrentMonth.length; i++) {
       if (parseInt(this.entriesForCurrentMonth[i]) < 10) {
         this.select(".days")!.append(
@@ -48,26 +62,5 @@ export default class CalendarMonth extends WebComponent {
         );
       }
     }
-    this.select(".previous")!.addEventListener("click", this.onPreviousClicked);
-    this.select(".next")!.addEventListener("click", this.onNextClicked);
-    this.select("h3")!.innerText = this.currentMonthText;
   }
-
-  formatMonth(): void {
-    if (this.currentMonthNumber < 10) {
-      this.currentMonthNumberText = "0" + this.currentMonthNumber;
-    } else {
-      this.currentMonthNumberText = this.currentMonthNumber.toString();
-    }
-  }
-
-  onPreviousClicked = () => {
-    log("previous");
-    //this.setMonth(this.monthNumber - 1);
-  };
-
-  onNextClicked = () => {
-    log("next");
-    //this.setMonth(this.monthNumber + 1);
-  };
 }
