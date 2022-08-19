@@ -4,8 +4,8 @@ import EditorBlock from "../EditorBlock/EditorBlock";
 import State from "../../../lib/state/State";
 import EditorModel from "../../../data/models/EditorModel";
 import EventBus from "../../../lib/events/EventBus";
-import { CLOSE_ALL_EDITOR_INPUTS_EVENT } from "../../../events/dataTypes/CloseAllEditorInputsEventData";
 import css from "./Editor.css";
+import { CLOSE_ALL_EDITOR_INPUTS_EVENT } from "../../../events/CloseAllEditorInputs";
 
 // HTML element that serves as the main editor component
 

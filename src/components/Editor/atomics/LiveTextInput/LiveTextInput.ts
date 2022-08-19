@@ -4,8 +4,8 @@ import EventBus from "../../../../lib/events/EventBus";
 import { AppEvent } from "../../../../lib/events/AppEvent";
 import {
   CLOSE_ALL_EDITOR_INPUTS_EVENT,
-  CloseAllEditorInputsEventData,
-} from "../../../../events/dataTypes/CloseAllEditorInputsEventData";
+  CloseAllEditorInputs,
+} from "../../../../events/CloseAllEditorInputs";
 import State from "../../../../lib/state/State";
 import css from "./LiveTextInput.css";
 
@@ -88,9 +88,7 @@ export default class LiveTextInput extends WebComponent {
     );
   }
 
-  private $onCloseAllEditorInputFields = (
-    data: CloseAllEditorInputsEventData
-  ) => {
+  private $onCloseAllEditorInputFields = (data: CloseAllEditorInputs) => {
     if (data.triggerWebComponentId !== this.getWebComponentId()) {
       if (this.$textPreview.hidden) {
         this.toggleMode(true);

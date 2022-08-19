@@ -2,7 +2,7 @@ import WebComponent from "../../../../lib/components/WebComponent";
 import html from "./BulletPointInputField.html";
 import State from "../../../../lib/state/State";
 import LiveTextInput from "../../atomics/LiveTextInput/LiveTextInput";
-import { StateChangedEventData } from "../../../../events/dataTypes/StateChangedEventData";
+import { StateChanged } from "../../../../events/StateChanged";
 
 // Input field for bullet point lists
 
@@ -59,7 +59,7 @@ export default class BulletPointInputField extends WebComponent {
     // when one of the new states changes, update the original state
     bulletPointState.addEventListener("change", (event) => {
       this.bulletPointsState.value[bulletPointIndex] = (
-        event.data as StateChangedEventData
+        event.data as StateChanged
       ).newValue;
     });
     return $bulletPoint;

@@ -9,7 +9,7 @@ import {
 } from "../../../data/models/EditorModel";
 import { log } from "../../../lib/utils/Logger";
 import BulletPointInputField from "../InputFields/BulletPointInputField/BulletPointInputField";
-import { StateChangedEventData } from "../../../events/dataTypes/StateChangedEventData";
+import { StateChanged } from "../../../events/StateChanged";
 import CheckListInputField from "../InputFields/CheckListInputField/CheckListInputField";
 
 export default class EditorBlock extends WebComponent {
@@ -73,7 +73,7 @@ export default class EditorBlock extends WebComponent {
     this.$inputFieldContainer.appendChild(this.$inputField);
   };
 
-  onBlockContentStateChanged = (data: StateChangedEventData) => {
+  onBlockContentStateChanged = (data: StateChanged) => {
     log("onBlockContentStateChanged", data);
     if (data.property === "value.title") {
       this.$title.innerHTML = this.blockContentState.value.title;
