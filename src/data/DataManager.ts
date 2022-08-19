@@ -55,7 +55,9 @@ export default class DataManager {
   // User Settings Model
 
   static async getUserSettingsModel(): Promise<UserSettingsModel> {
-    return this.generateMockUserSettingsModel();
+    const username = await ApiClient.getUsername(),
+      template = await ApiClient.getUserTemplate();
+    return new UserSettingsModel(username, "token-xyz", { template });
   }
 
   static async saveUserSettingsModel(

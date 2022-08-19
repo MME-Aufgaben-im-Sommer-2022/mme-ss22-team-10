@@ -1,5 +1,5 @@
 import { Server } from "./config";
-import { Client } from "appwrite";
+import { Client, Query } from "appwrite";
 import AccountManager from "./AccountManager";
 import DatabaseManager from "./DatabaseManager";
 import { TemplateItem } from "../models/UserSettingsModel";
@@ -31,6 +31,7 @@ export default class ApiClient {
       .then(async () => {
         await this.accountManager.getAccountData().then(async (response) => {
           this.accountManager.userName = response.name;
+          await this.setUserTemplate();
         });
       });
   }
@@ -38,6 +39,26 @@ export default class ApiClient {
   static async logOutUser(): Promise<any> {
     return this.accountManager.deleteAccountSession();
   }
+
+  private static async setUserTemplate() {
+    await this.databaseManager
+      .listDocuments(Server.COLLECTION_SETTINGS, [
+        Query.equal("userID", this.accountManager.userId),
+      ])
+      .then((response) => {
+        const template = response.documents[0].template;
+        // eslint-disable-next-line guard-for-in
+        for (const i in template) {
+          template[i] = JSON.parse(template[i]);
+        }
+        this.accountManager.template = template;
+      });
+  }
+
+  static getUserTemplate(): Array<TemplateItem> {
+    return this.accountManager.template;
+  }
+
   static getUsername(): string {
     return this.accountManager.userName;
   }
