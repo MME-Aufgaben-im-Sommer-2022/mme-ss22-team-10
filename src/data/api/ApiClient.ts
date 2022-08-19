@@ -24,7 +24,6 @@ export default class ApiClient {
         Server.TEST_USER_PASSWORD
       )
       .then((response) => {
-        // returns session Object : https://appwrite.io/docs/models/session
         this.accountManager.sessionId = response.$id;
         this.accountManager.userId = response.userId;
       })
@@ -49,11 +48,7 @@ export default class ApiClient {
   private static async setUserTemplate() {
     await this.getUserTemplateDocument().then((response) => {
       const template = response.documents[0].template;
-      // eslint-disable-next-line guard-for-in
-      for (const i in template) {
-        template[i] = JSON.parse(template[i]);
-      }
-      this.accountManager.template = template;
+      this.accountManager.template = this.jsonParseArray(template);
     });
   }
 
@@ -63,15 +58,10 @@ export default class ApiClient {
 
   static async updateUserTemplate(template: Array<TemplateItem>) {
     await this.getUserTemplateDocument().then((response) => {
-      const newTemplate: string[] = [];
-      // eslint-disable-next-line guard-for-in
-      for (const i in template) {
-        newTemplate[i] = JSON.stringify(template[i]);
-      }
       this.databaseManager.updateDocument(
         Server.COLLECTION_SETTINGS,
         response.documents[0].$id,
-        { template: newTemplate }
+        { template: this.stringifyArray(template) }
       );
     });
     this.accountManager.template = template;
@@ -79,5 +69,17 @@ export default class ApiClient {
 
   static getUsername(): string {
     return this.accountManager.userName;
+  }
+
+  private static stringifyArray(array: Array<any>): Array<string> {
+    const stringArray: Array<string> = [];
+    array.forEach((entry) => stringArray.push(JSON.stringify(entry)));
+    return stringArray;
+  }
+
+  private static jsonParseArray(array: Array<string>): Array<any> {
+    const objArray: Array<any> = [];
+    array.forEach((entry) => objArray.push(JSON.parse(entry)));
+    return objArray;
   }
 }
