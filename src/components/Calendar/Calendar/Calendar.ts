@@ -2,10 +2,14 @@ import WebComponent from "../../../lib/components/WebComponent";
 import html from "../../Calendar/Calendar/Calendar.html";
 import css from "../../Calendar/Calendar/Calendar.css";
 import CalendarMonth from "../CalendarMonth/CalendarMonth";
+import CalendarModel from "../../../data/models/CalendarModel";
 
 export default class Calendar extends WebComponent {
-  constructor() {
+  calenderModel: CalendarModel;
+
+  constructor(calendarModel: CalendarModel) {
     super(html, css);
+    this.calenderModel = calendarModel;
   }
 
   // override htmlTagName to return the tag name our component
@@ -16,6 +20,12 @@ export default class Calendar extends WebComponent {
 
   onCreate(): void {
     const calendarMonth: CalendarMonth = new CalendarMonth();
+
+
     this.select(".month")!.append(calendarMonth);
+
+
+    .calenderModel.noteDays
+
   }
 }
