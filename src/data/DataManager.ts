@@ -18,14 +18,12 @@ import ApiClient from "./api/ApiClient";
 // https://github.com/MME-Aufgaben-im-Sommer-2022/mme-ss22-team-10/blob/dev/docs/lib/DataManager.md
 
 export default class DataManager {
-  private static apiClient: ApiClient;
-
   static async init() {
-    this.apiClient = new ApiClient();
-    this.apiClient.logInUser();
+    ApiClient.init();
+    ApiClient.logInUser();
   }
 
-  // Write methods to fetch or save data to Database etc here
+  // Write methods to fetch or save data to Database etc. here
 
   // Returns the example model
   static async getExampleModel(): Promise<ExampleModel> {

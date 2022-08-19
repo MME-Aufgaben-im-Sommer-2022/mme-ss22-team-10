@@ -2,13 +2,14 @@ import { Server } from "./config";
 import { Client } from "appwrite";
 import AccountManager from "./AccountManager";
 import DatabaseManager from "./DatabaseManager";
+import { TemplateItem } from "../models/UserSettingsModel";
 
 export default class ApiClient {
-  client: Client;
-  accountManager: AccountManager;
-  databaseManager: DatabaseManager;
+  private static client: Client;
+  private static accountManager: AccountManager;
+  private static databaseManager: DatabaseManager;
 
-  constructor() {
+  static async init() {
     this.client = new Client();
     this.client.setEndpoint(Server.ENDPOINT);
     this.client.setProject(Server.PROJECT_ID);
