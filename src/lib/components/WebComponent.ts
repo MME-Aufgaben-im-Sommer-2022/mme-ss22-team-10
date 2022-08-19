@@ -20,7 +20,6 @@ export default abstract class WebComponent extends HTMLElement {
     this.setId();
     this.html = html ?? "";
     this.css = css ?? "";
-    this.attachShadow({ mode: "open" });
   }
 
   // Called, when the component is connected to the DOM
@@ -41,22 +40,14 @@ export default abstract class WebComponent extends HTMLElement {
     this.dispatchEvent(event);
   }
 
-  // Returns the root element of the component
-  get root(): ShadowRoot {
-    if (this.shadowRoot) {
-      return this.shadowRoot;
-    }
-    throw new Error("WebComponent.root is not available yet");
-  }
-
   // shortcut for this.root.querySelector(selector)
   select<E extends HTMLElement>(selector: string): E | null {
-    return this.root.querySelector(selector);
+    return this.querySelector(selector);
   }
 
   // shortcut for this.root.querySelectorAll(selector)
   selectAll<E extends Element = Element>(selectors: string): NodeListOf<E> {
-    return this.root.querySelectorAll(selectors);
+    return this.querySelectorAll(selectors);
   }
 
   async connectedCallback() {
@@ -73,7 +64,7 @@ export default abstract class WebComponent extends HTMLElement {
     if (this.css !== "") {
       const style = document.createElement("style");
       style.innerHTML = this.css;
-      this.root.appendChild(style);
+      this.appendChild(style);
     }
   }
 
@@ -81,7 +72,7 @@ export default abstract class WebComponent extends HTMLElement {
     if (this.html !== "") {
       const template = document.createElement("template");
       template.innerHTML = this.html;
-      this.root.appendChild(template.content.cloneNode(true));
+      this.appendChild(template.content.cloneNode(true));
     }
   }
 

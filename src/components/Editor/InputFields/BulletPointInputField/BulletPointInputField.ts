@@ -1,8 +1,8 @@
 import WebComponent from "../../../../lib/components/WebComponent";
 import html from "./BulletPointInputField.html";
 import State from "../../../../lib/state/State";
-import LiveTextInput from "../../atomics/LiveTextInput/LiveTextInput";
 import { StateChangedData } from "../../../../events/StateChanged";
+import LiveBulletPointItem from "../../atomics/LiveBulletPointItem/LiveBulletPointItem";
 
 // Input field for bullet point lists
 
@@ -15,15 +15,15 @@ export default class BulletPointInputField extends WebComponent {
   private $bulletPointContainer!: HTMLUListElement;
 
   // the whole list of bullet points as single string, separated by newlines (\n)
-  private readonly inputValueState: State<string>;
+  private readonly bulletPointsListState: State<string>;
   // the split up bullet points (e.g. ["item 1", "item 2"])
   private readonly bulletPointsState: State<Array<string>>;
 
-  constructor(inputValueState: State<string>) {
+  constructor(bulletPointsListState: State<string>) {
     super(html);
-    this.inputValueState = inputValueState;
+    this.bulletPointsListState = bulletPointsListState;
     this.bulletPointsState = new State<Array<string>>(
-      this.inputValueState.value
+      this.bulletPointsListState.value
         .split("\n")
         .map((inputValue) => inputValue.trim())
     );
@@ -49,15 +49,17 @@ export default class BulletPointInputField extends WebComponent {
     });
   };
 
-  private $createBulletPoint = (bulletPointIndex: number): LiveTextInput => {
+  private $createBulletPoint = (
+    bulletPointIndex: number
+  ): LiveBulletPointItem => {
     // create a new state for each bullet point item
-    const bulletPointState = new State(
+    const bulletPointTextValueState = new State(
         this.bulletPointsState.value[bulletPointIndex]
       ),
-      $bulletPoint = new LiveTextInput(bulletPointState, true);
+      $bulletPoint = new LiveBulletPointItem(bulletPointTextValueState);
 
     // when one of the new states changes, update the original state
-    bulletPointState.addEventListener("change", (event) => {
+    bulletPointTextValueState.addEventListener("change", (event) => {
       this.bulletPointsState.value[bulletPointIndex] = (
         event.data as StateChangedData
       ).newValue;
@@ -74,6 +76,6 @@ export default class BulletPointInputField extends WebComponent {
 
   private onBulletPointsStateChanged = () => {
     // update the original string state, when an item is changed
-    this.inputValueState.value = this.bulletPointsState.value.join("\n");
+    this.bulletPointsListState.value = this.bulletPointsState.value.join("\n");
   };
 }

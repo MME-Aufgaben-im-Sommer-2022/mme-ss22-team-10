@@ -1,7 +1,7 @@
 import WebComponent from "../../../../lib/components/WebComponent";
 import html from "./CheckListInputField.html";
 import State from "../../../../lib/state/State";
-import CheckListItem from "../../atomics/CheckListItem/CheckListItem";
+import LiveCheckListItem from "../../atomics/LiveCheckListItem/LiveCheckListItem";
 
 // Input field for check list items
 
@@ -52,7 +52,9 @@ export default class CheckListInputField extends WebComponent {
     });
   };
 
-  private $createCheckListItem = (checkListIndex: number): CheckListItem => {
+  private $createCheckListItem = (
+    checkListIndex: number
+  ): LiveCheckListItem => {
     const checkListItemString = this.checkListStates.value[checkListIndex],
       [isChecked, checkListContent] = checkListItemString.split(
         CheckListInputField.CHECK_LIST_CONTENT_SEPARATOR
@@ -61,7 +63,10 @@ export default class CheckListInputField extends WebComponent {
         isChecked.trim() === CheckListInputField.CHECK_LIST_IS_CHECKED_MARK
       ),
       checkListContentState = new State(checkListContent.trim()),
-      $checkListItem = new CheckListItem(checkListContentState, isCheckedState);
+      $checkListItem = new LiveCheckListItem(
+        checkListContentState,
+        isCheckedState
+      );
 
     if (isChecked === undefined || checkListContent === undefined) {
       throw new InvalidCheckListItemError(

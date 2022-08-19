@@ -1,8 +1,8 @@
 import WebComponent from "../../../../lib/components/WebComponent";
 import LiveTextInput from "../LiveTextInput/LiveTextInput";
 import State from "../../../../lib/state/State";
-import html from "./CheckListItem.html";
-import css from "./CheckListItem.css";
+import html from "./LiveCheckListItem.html";
+import css from "./LiveCheckListItem.css";
 
 // HTML element that serves as single check list item.
 
@@ -14,7 +14,7 @@ import css from "./CheckListItem.css";
 // - isCheckedState:
 //    - a state of type boolean, changes when user toggles checkbox
 
-export default class CheckListItem extends WebComponent {
+export default class LiveCheckListItem extends WebComponent {
   private $checkListItemContainer!: HTMLDivElement;
   private $checkbox!: HTMLInputElement;
   private $liveTextInput!: LiveTextInput;
@@ -38,6 +38,8 @@ export default class CheckListItem extends WebComponent {
   }
 
   private $initHtml(): void {
+    this.classList.add("list-item");
+
     this.$checkListItemContainer = this.select(".check-list-item-container")!;
     this.$checkbox = this.select("input")!;
 

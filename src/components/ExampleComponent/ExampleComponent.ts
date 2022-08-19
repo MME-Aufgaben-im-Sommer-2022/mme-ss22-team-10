@@ -33,7 +33,7 @@ export default class ExampleComponent extends WebComponent {
   // -> this method is called, when the component is connected to the DOM
   onCreate(): void {
     // select the element using querySelector and set the value of the element
-    this.root.querySelector(
+    this.querySelector(
       "h1"
     )!.innerHTML = `Hello ${this.exampleState.value.name}!`;
 
