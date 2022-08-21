@@ -39,6 +39,14 @@ export default class ApiClient {
     return this.accountManager.deleteAccountSession();
   }
 
+  static getUsername(): string {
+    return this.accountManager.userName;
+  }
+
+  static getUserTemplate(): Array<TemplateItem> {
+    return this.accountManager.template;
+  }
+
   private static getUserTemplateDocument() {
     return this.databaseManager.listDocuments(Server.COLLECTION_SETTINGS, [
       Query.equal("userID", this.accountManager.userId),
@@ -70,8 +78,6 @@ export default class ApiClient {
     this.accountManager.template = template;
   }
 
-  static getUsername(): string {
-    return this.accountManager.userName;
   }
 
   private static stringifyArray(array: Array<any>): Array<string> {
