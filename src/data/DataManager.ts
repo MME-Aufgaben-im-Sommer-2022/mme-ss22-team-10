@@ -64,9 +64,15 @@ export default class DataManager {
   static async saveUserSettingsModel(
     userSettingsModel: UserSettingsModel
   ): Promise<void> {
-    info("Saving user settings model:", userSettingsModel);
-    ApiClient.updateUserTemplate(userSettingsModel.settings.template);
-    return Promise.resolve();
+    return await ApiClient.updateUserTemplate(
+      userSettingsModel.settings.template
+    );
+  }
+
+  static async createUserSettingsModel(userSettingsModel: UserSettingsModel) {
+    return await ApiClient.createUserTemplate(
+      userSettingsModel.settings.template
+    );
   }
 
   // MOCK DATA

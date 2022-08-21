@@ -52,8 +52,11 @@ export default class ApiClient {
     });
   }
 
-  static getUserTemplate(): Array<TemplateItem> {
-    return this.accountManager.template;
+  static async createUserTemplate(template: Array<TemplateItem>) {
+    return await this.databaseManager.createNewDocument(
+      Server.COLLECTION_SETTINGS,
+      { userID: this.accountManager.userId, template: template }
+    );
   }
 
   static async updateUserTemplate(template: Array<TemplateItem>) {
