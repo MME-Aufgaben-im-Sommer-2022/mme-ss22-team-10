@@ -28,16 +28,16 @@ export default class Calendar extends WebComponent {
 
   onCreate(): void {
     //let entriesForCurrentMonth;
-    log(this.calendarModelPromise);
+    //log(this.calendarModelPromise);
     this.calendarModelPromise.then((data) => {
       this.data = data;
-      this.getDataForEntries(this.data);
+      this.getDataForCurrentEntries(this.data);
       this.getEntriesForMonth();
     });
     this.buttonListener();
   }
 
-  getDataForEntries(data: CalendarModel): void {
+  getDataForCurrentEntries(data: CalendarModel): void {
     this.currentMonthText = data.today.toLocaleString("default", {
       month: "long",
     });
@@ -58,20 +58,22 @@ export default class Calendar extends WebComponent {
     return undefined;
   }
 
-  getEntriesForMonth() {
+  getEntriesForMonth(): void {
     this.entriesForCurrentMonth = this.getEntryData(this.data);
     this.checkEntries();
   }
 
-  checkEntries() {
+  checkEntries(): void {
     if (this.entriesForCurrentMonth !== undefined) {
       this.showEntries();
     } else {
       log("undefineddd");
+      this.currentMonthNumber -= 1;
+      this.getEntriesForMonth();
     }
   }
 
-  showEntries() {
+  showEntries(): void {
     this.calendarMonth = new CalendarMonth(
       this.entriesForCurrentMonth,
       this.currentMonthText,
@@ -85,6 +87,7 @@ export default class Calendar extends WebComponent {
     log("previous");
     this.currentMonthNumber -= 1;
     log(this.currentMonthNumber);
+    //this.removeMonthEntries();
     this.getEntriesForMonth();
   };
 
@@ -92,16 +95,17 @@ export default class Calendar extends WebComponent {
     log("next");
     this.currentMonthNumber += 1;
     log(this.currentMonthNumber);
+    //this.removeMonthEntries();
     this.getEntriesForMonth();
   };
 
   buttonListener(): void {
     this.select(".previous")!.addEventListener("click", this.onPreviousClicked);
-    this.select(".next")!.addEventListener("click", this.onRemoveButtonClicked);
-    //document.querySelector<HTMLDivElement>("button")!.addEventListener("click", this.onRemoveButtonClicked);
+    this.select(".next")!.addEventListener("click", this.onNextClicked);
   }
 
-  onRemoveButtonClicked() {
-    this.select(".month")?.remove();
+  removeMonthEntries(): void {
+    log("delete");
+    this.select(".month")!.remove();
   }
 }
