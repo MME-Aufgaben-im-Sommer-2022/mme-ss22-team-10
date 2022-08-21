@@ -17,22 +17,18 @@ export default class ApiClient {
     this.databaseManager = new DatabaseManager(this.client, Server.DATABASE_ID);
   }
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   static async logInUser(email: string, password: string) {
-    await this.accountManager
-      .createNewAccountSession(
+    const accountSession = await this.accountManager.createNewAccountSession(
         Server.TEST_USER_EMAIL, // email
         Server.TEST_USER_PASSWORD // password
-      )
-      .then((response) => {
-        this.accountManager.sessionId = response.$id;
-        this.accountManager.userId = response.userId;
-      })
-      .then(async () => {
-        await this.accountManager.getAccountData().then(async (response) => {
-          this.accountManager.userName = response.name;
-          await this.setUserTemplate();
-        });
-      });
+      ),
+      accountData = await this.accountManager.getAccountData();
+    this.accountManager.sessionId = accountSession.$id;
+    this.accountManager.userId = accountSession.userId;
+    this.accountManager.userName = accountData.name;
+    await this.setUserTemplate();
   }
 
   static async logOutUser(): Promise<any> {
@@ -47,20 +43,22 @@ export default class ApiClient {
     return this.accountManager.template;
   }
 
-  private static getUserTemplateDocument() {
-    return this.databaseManager.listDocuments(Server.COLLECTION_SETTINGS, [
-      Query.equal("userID", this.accountManager.userId),
-    ]);
+  private static async getUserSettingsDocument(): Promise<Models.Document> {
+    const userSettings = await this.databaseManager.listDocuments(
+      Server.COLLECTION_SETTINGS,
+      [Query.equal("userID", this.accountManager.userId)]
+    );
+    return userSettings.documents[0];
   }
 
   private static async setUserTemplate() {
-    await this.getUserTemplateDocument().then((response) => {
-      const template = response.documents[0].template;
-      this.accountManager.template = this.jsonParseArray(template);
-    });
+    const userSettings = await this.getUserSettingsDocument();
+    this.accountManager.template = this.jsonParseArray(userSettings.template);
   }
 
-  static async createUserTemplate(template: Array<TemplateItem>) {
+  static async createUserTemplate(
+    template: Array<TemplateItem>
+  ): Promise<Models.Document> {
     return await this.databaseManager.createNewDocument(
       Server.COLLECTION_SETTINGS,
       { userID: this.accountManager.userId, template: template }
@@ -68,14 +66,20 @@ export default class ApiClient {
   }
 
   static async updateUserTemplate(template: Array<TemplateItem>) {
-    await this.getUserTemplateDocument().then((response) => {
+    const userSettings = await this.getUserSettingsDocument();
+    this.databaseManager.updateDocument(
+      Server.COLLECTION_SETTINGS,
+      userSettings.$id,
+      { template: this.stringifyArray(template) }
+    );
+    this.accountManager.template = template;
+  }
       this.databaseManager.updateDocument(
-        Server.COLLECTION_SETTINGS,
-        response.documents[0].$id,
-        { template: this.stringifyArray(template) }
+        Server.COLLECTION_BLOCK_CONTENTS,
+        blockContentDocument.$id,
+        blockContent
       );
     });
-    this.accountManager.template = template;
   }
 
   }
