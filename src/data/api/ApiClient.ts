@@ -9,6 +9,8 @@ export default class ApiClient {
   private static client: Client;
   private static accountManager: AccountManager;
   private static databaseManager: DatabaseManager;
+  private static userId: string;
+  private static sessionId: string;
 
   static async init() {
     this.client = new Client();
@@ -18,43 +20,62 @@ export default class ApiClient {
     this.databaseManager = new DatabaseManager(this.client, Server.DATABASE_ID);
   }
 
+  static async logInUser(email: string, password: string) {
+    const sessionExpired = await this.localSessionIsExpired();
+    if (sessionExpired) {
+      await this.createNewSession(email, password);
+    }
+  }
+
+  private static async localSessionIsExpired(): Promise<boolean> {
+    this.sessionId = localStorage.getItem("sessionId")!;
+    if (this.sessionId !== null) {
+      const sessionPromise = await this.accountManager.getAccountSession(
+        this.sessionId
+      );
+      this.userId = sessionPromise.userId;
+      return new Date(sessionPromise.expire * 1000) <= new Date();
+    }
+    return true;
+  }
+
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  static async logInUser(email: string, password: string) {
+  static async createNewSession(email: string, password: string) {
     const accountSession = await this.accountManager.createNewAccountSession(
-        Server.TEST_USER_EMAIL, // email
-        Server.TEST_USER_PASSWORD // password
-      ),
-      accountData = await this.accountManager.getAccountData();
-    this.accountManager.sessionId = accountSession.$id;
-    this.accountManager.userId = accountSession.userId;
-    this.accountManager.userName = accountData.name;
-    await this.setUserTemplate();
+      Server.TEST_USER_EMAIL, // email
+      Server.TEST_USER_PASSWORD // password
+    );
+    this.sessionId = accountSession.$id;
+    this.userId = accountSession.userId;
+    localStorage.setItem("sessionId", accountSession.$id);
+    localStorage.setItem("userId", accountSession.userId);
   }
 
   static async logOutUser(): Promise<any> {
-    return this.accountManager.deleteAccountSession();
+    this.userId = "";
+    this.sessionId = "";
+    localStorage.removeItem("sessionId");
+    localStorage.removeItem("userId");
+    return this.accountManager.deleteAccountSession(this.sessionId);
   }
 
-  static getUsername(): string {
-    return this.accountManager.userName;
-  }
-
-  static getUserTemplate(): Array<TemplateItem> {
-    return this.accountManager.template;
+  static async getUsername(): Promise<string> {
+    const accountData = await this.accountManager.getAccountData();
+    return accountData.name;
   }
 
   private static async getUserSettingsDocument(): Promise<Models.Document> {
     const userSettings = await this.databaseManager.listDocuments(
       Server.COLLECTION_SETTINGS,
-      [Query.equal("userID", this.accountManager.userId)]
+      [Query.equal("userID", this.userId)]
     );
     return userSettings.documents[0];
   }
 
-  private static async setUserTemplate() {
+  static async getUserTemplate() {
     const userSettings = await this.getUserSettingsDocument();
-    this.accountManager.template = this.jsonParseArray(userSettings.template);
+    return this.jsonParseArray(userSettings.template);
   }
 
   static async createUserTemplate(
@@ -62,7 +83,7 @@ export default class ApiClient {
   ): Promise<Models.Document> {
     return await this.databaseManager.createNewDocument(
       Server.COLLECTION_SETTINGS,
-      { userID: this.accountManager.userId, template: template }
+      { userID: this.userId, template: template }
     );
   }
 
@@ -73,7 +94,6 @@ export default class ApiClient {
       userSettings.$id,
       { template: this.stringifyArray(template) }
     );
-    this.accountManager.template = template;
   }
 
   private static async getNoteDocument(day: Date): Promise<Models.Document> {
@@ -116,7 +136,7 @@ export default class ApiClient {
     const noteDocument = await this.databaseManager.createNewDocument(
       Server.COLLECTION_NOTES,
       {
-        userID: this.accountManager.userId,
+        userID: this.userId,
         day: this.convertDateToString(editorModel.day),
       }
     );
