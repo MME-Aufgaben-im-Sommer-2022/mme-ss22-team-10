@@ -1,8 +1,9 @@
 import { Server } from "./config";
-import { Client, Query } from "appwrite";
+import { Client, Models, Query } from "appwrite";
 import AccountManager from "./AccountManager";
 import DatabaseManager from "./DatabaseManager";
 import { TemplateItem } from "../models/UserSettingsModel";
+import EditorModel from "../models/EditorModel";
 
 export default class ApiClient {
   private static client: Client;
@@ -74,6 +75,35 @@ export default class ApiClient {
     );
     this.accountManager.template = template;
   }
+
+  private static async getNoteDocument(day: Date): Promise<Models.Document> {
+    const noteDocument = await this.databaseManager.listDocuments(
+      Server.COLLECTION_NOTES,
+      [Query.equal("day", this.convertDateToString(day))]
+    );
+    return noteDocument.documents[0];
+  }
+
+  private static async getBlockContentsDocuments(
+    noteID: string
+  ): Promise<any[]> {
+    const blockContents = await this.databaseManager.listDocuments(
+      Server.COLLECTION_BLOCK_CONTENTS,
+      [Query.equal("noteID", noteID)]
+    );
+    return blockContents.documents;
+  }
+
+  private static async getBlockContentDocument(
+    noteID: string,
+    title: string
+  ): Promise<Models.Document> {
+    const blockContents = await this.databaseManager.listDocuments(
+      Server.COLLECTION_BLOCK_CONTENTS,
+      [Query.equal("noteID", noteID), Query.equal("title", title)]
+    );
+    return blockContents.documents[0];
+  }
       this.databaseManager.updateDocument(
         Server.COLLECTION_BLOCK_CONTENTS,
         blockContentDocument.$id,
@@ -82,6 +112,12 @@ export default class ApiClient {
     });
   }
 
+  private static convertDateToString(date: Date): string {
+    return [
+      date.getFullYear(),
+      date.getMonth() < 10 ? "0" + (date.getMonth() + 1) : date.getMonth(),
+      date.getDate() < 10 ? "0" + date.getDate() : date.getDate(),
+    ].join("");
   }
 
   private static stringifyArray(array: Array<any>): Array<string> {
