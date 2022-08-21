@@ -45,16 +45,19 @@ export default class DataManager {
   // Editor Model
 
   static async getEditorModel(date: Date): Promise<EditorModel> {
-    return this.generateMockEditorModel();
+    const editorNotes = await ApiClient.getEditorNotes(date);
+    return new EditorModel(editorNotes.day, editorNotes.blockContents);
   }
 
   static async saveEditorModel(editorModel: EditorModel): Promise<void> {
-    info("Saving editor model:", editorModel);
-    return Promise.resolve();
+    return await ApiClient.updateEditorNotes(editorModel);
+  }
+
+  static async createEditorModel(editorModel: EditorModel): Promise<void> {
+    return await ApiClient.createEditorNotes(editorModel);
   }
 
   // User Settings Model
-
   static async getUserSettingsModel(): Promise<UserSettingsModel> {
     const username = await ApiClient.getUsername(),
       template = await ApiClient.getUserTemplate();

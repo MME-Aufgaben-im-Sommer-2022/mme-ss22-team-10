@@ -104,6 +104,39 @@ export default class ApiClient {
     );
     return blockContents.documents[0];
   }
+
+  static async getEditorNotes(date: Date) {
+    const noteDocument = await this.getNoteDocument(date),
+      day = new Date(noteDocument.$createdAt * 1000),
+      blockContents = await this.getBlockContentsDocuments(noteDocument.$id);
+    return { day: day, blockContents: blockContents };
+  }
+
+  static async createEditorNotes(editorModel: EditorModel) {
+    const noteDocument = await this.databaseManager.createNewDocument(
+      Server.COLLECTION_NOTES,
+      {
+        userID: this.accountManager.userId,
+        day: this.convertDateToString(editorModel.day),
+      }
+    );
+    editorModel.blockContents.forEach(async (blockContent) => {
+      this.databaseManager.createNewDocument(Server.COLLECTION_BLOCK_CONTENTS, {
+        noteID: noteDocument.$id,
+        title: blockContent.title,
+        inputType: blockContent.inputType,
+        inputValue: blockContent.inputValue,
+      });
+    });
+  }
+
+  static async updateEditorNotes(editorModel: EditorModel) {
+    const noteDocument = await this.getNoteDocument(editorModel.day);
+    editorModel.blockContents.forEach(async (blockContent) => {
+      const blockContentDocument = await this.getBlockContentDocument(
+        noteDocument.$id,
+        blockContent.title
+      );
       this.databaseManager.updateDocument(
         Server.COLLECTION_BLOCK_CONTENTS,
         blockContentDocument.$id,
