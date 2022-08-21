@@ -14,6 +14,10 @@ export default class Calendar extends WebComponent {
   currentYear: string;
   data: CalendarModel;
   entriesForCurrentMonth: any;
+  onNextButtonClicked = false;
+  onPreviousButtonClicked = false;
+
+  $monthTitle!: HTMLHeadElement;
 
   constructor(calendarModelPromise: Promise<CalendarModel>) {
     super(html, css);
@@ -27,8 +31,10 @@ export default class Calendar extends WebComponent {
   }
 
   onCreate(): void {
-    //let entriesForCurrentMonth;
-    //log(this.calendarModelPromise);
+    this.$initHtml();
+    this.initListeners();
+
+    log(this.calendarModelPromise);
     this.calendarModelPromise.then((data) => {
       this.data = data;
       this.getDataForCurrentEntries(this.data);
@@ -37,19 +43,29 @@ export default class Calendar extends WebComponent {
     this.buttonListener();
   }
 
+  private $initHtml(): void {
+    this.$monthTitle = this.select(".selector h3")!;
+  }
+
+  private initListeners(): void {}
+
   getDataForCurrentEntries(data: CalendarModel): void {
-    this.currentMonthText = data.today.toLocaleString("default", {
-      month: "long",
-    });
     this.currentYear = data.today.getFullYear().toString();
     this.currentMonthNumber = data.today.getMonth() + 1;
+    this.changeMonthTitle(this.currentMonthNumber);
+  }
+
+  changeMonthTitle(monthNumber: number): void {
+    let date: Date = new Date();
+    date.setMonth(monthNumber - 1);
+    this.currentMonthText = date.toLocaleString("default", { month: "long" });
   }
 
   getEntryData(data: CalendarModel): Array<string> | undefined {
-    this.select(".selector h3")!.innerText = this.currentMonthText;
+    this.$monthTitle.innerText = this.currentMonthText;
     //log(this.currentYear);
-    log(this.currentMonthNumber);
-    log(data.noteDays[this.currentYear][this.currentMonthNumber]);
+    //log(this.currentMonthNumber);
+    //log(data.noteDays[this.currentYear][this.currentMonthNumber]);
     if (
       data.noteDays[this.currentYear][this.currentMonthNumber] !== undefined
     ) {
@@ -65,10 +81,14 @@ export default class Calendar extends WebComponent {
 
   checkEntries(): void {
     if (this.entriesForCurrentMonth !== undefined) {
+      this.changeMonthTitle(this.currentMonthNumber);
+      log(this.onNextButtonClicked);
+      log(this.onPreviousButtonClicked);
       this.showEntries();
     } else {
       log("undefineddd");
       this.currentMonthNumber -= 1;
+      this.changeMonthTitle(this.currentMonthNumber);
       this.getEntriesForMonth();
     }
   }
@@ -80,22 +100,32 @@ export default class Calendar extends WebComponent {
       this.currentMonthNumber
     );
     log(this.calendarMonth);
+    if (
+      this.onNextButtonClicked === true ||
+      this.onPreviousButtonClicked === true
+    ) {
+      this.removeMonthEntries();
+      this.onNextButtonClicked = false;
+      this.onPreviousButtonClicked = false;
+    }
     this.select(".month")!.append(this.calendarMonth);
   }
 
   onPreviousClicked = () => {
+    this.onPreviousButtonClicked = true;
     log("previous");
     this.currentMonthNumber -= 1;
     log(this.currentMonthNumber);
-    //this.removeMonthEntries();
+    this.removeMonthEntries();
     this.getEntriesForMonth();
   };
 
   onNextClicked = () => {
+    this.onNextButtonClicked = true;
     log("next");
     this.currentMonthNumber += 1;
     log(this.currentMonthNumber);
-    //this.removeMonthEntries();
+    this.removeMonthEntries();
     this.getEntriesForMonth();
   };
 
