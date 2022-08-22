@@ -43,9 +43,15 @@ export default class DataManager {
   }
 
   // Editor Model
-
   static async getEditorModel(date: Date): Promise<EditorModel> {
-    const editorNotes = await ApiClient.getEditorNotes(date);
+    let editorNotes;
+    try {
+      editorNotes = await ApiClient.getEditorNotes(date);
+    } catch (e) {
+      const editorModel = await this.createEditorModelFromTemplate();
+      await ApiClient.createEditorNotes(editorModel);
+      return editorModel;
+    }
     return new EditorModel(editorNotes.day, editorNotes.blockContents);
   }
 
@@ -53,8 +59,17 @@ export default class DataManager {
     return await ApiClient.updateEditorNotes(editorModel);
   }
 
-  static async createEditorModel(editorModel: EditorModel): Promise<void> {
-    return await ApiClient.createEditorNotes(editorModel);
+  private static async createEditorModelFromTemplate(): Promise<EditorModel> {
+    const blockContents: Array<BlockContent> = [],
+      promise = await DataManager.getUserSettingsModel();
+    promise.settings.template.forEach((entry) => {
+      blockContents.push(<BlockContent>{
+        title: entry.title,
+        inputType: entry.inputType,
+        inputValue: "",
+      });
+    });
+    return new EditorModel(new Date(), blockContents);
   }
 
   // User Settings Model

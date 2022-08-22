@@ -3,7 +3,7 @@ import { Client, Models, Query } from "appwrite";
 import AccountManager from "./AccountManager";
 import DatabaseManager from "./DatabaseManager";
 import { TemplateItem } from "../models/UserSettingsModel";
-import EditorModel from "../models/EditorModel";
+import EditorModel, { BlockContent } from "../models/EditorModel";
 
 export default class ApiClient {
   private static client: Client;
@@ -106,12 +106,20 @@ export default class ApiClient {
 
   private static async getBlockContentsDocuments(
     noteID: string
-  ): Promise<any[]> {
-    const blockContents = await this.databaseManager.listDocuments(
-      Server.COLLECTION_BLOCK_CONTENTS,
-      [Query.equal("noteID", noteID)]
-    );
-    return blockContents.documents;
+  ): Promise<Array<BlockContent>> {
+    const blockContents: Array<BlockContent> = [],
+      promise = await this.databaseManager.listDocuments(
+        Server.COLLECTION_BLOCK_CONTENTS,
+        [Query.equal("noteID", noteID)]
+      );
+    promise.documents.forEach((entry) => {
+      blockContents.push(<BlockContent>{
+        title: entry.title,
+        inputType: entry.inputType,
+        inputValue: "",
+      });
+    });
+    return blockContents;
   }
 
   private static async getBlockContentDocument(
