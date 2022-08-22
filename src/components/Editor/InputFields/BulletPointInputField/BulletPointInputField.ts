@@ -13,6 +13,8 @@ import LiveBulletPointItem from "../../atomics/LiveBulletPointItem/LiveBulletPoi
 
 export default class BulletPointInputField extends WebComponent {
   private $bulletPointContainer!: HTMLUListElement;
+  private $newBulletPointInputContainer!: HTMLLIElement;
+  private $newBulletPointInput!: HTMLInputElement;
 
   // the whole list of bullet points as single string, separated by newlines (\n)
   private readonly bulletPointsListState: State<string>;
@@ -40,12 +42,19 @@ export default class BulletPointInputField extends WebComponent {
 
   private $initHtml(): void {
     this.$bulletPointContainer = this.select(".bullet-point-container")!;
+    this.$newBulletPointInputContainer = this.select(
+      ".new-bullet-point-input-container"
+    )!;
+    this.$newBulletPointInput = this.select(".new-bullet-point-input")!;
     this.$appendBulletPoints();
   }
 
   private $appendBulletPoints = () => {
     this.bulletPointsState.value.forEach((_, index) => {
-      this.$bulletPointContainer.appendChild(this.$createBulletPoint(index));
+      this.$bulletPointContainer.insertBefore(
+        this.$createBulletPoint(index),
+        this.$newBulletPointInputContainer
+      );
     });
   };
 
@@ -68,6 +77,12 @@ export default class BulletPointInputField extends WebComponent {
   };
 
   private initListeners(): void {
+    this.$newBulletPointInput.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        this.$addNewBulletPointItem();
+      }
+    });
+
     this.bulletPointsState.addEventListener(
       "change",
       this.onBulletPointsStateChanged
@@ -77,5 +92,17 @@ export default class BulletPointInputField extends WebComponent {
   private onBulletPointsStateChanged = () => {
     // update the original string state, when an item is changed
     this.bulletPointsListState.value = this.bulletPointsState.value.join("\n");
+  };
+
+  private $addNewBulletPointItem = () => {
+    const newBulletPoint = this.$newBulletPointInput.value.trim();
+    if (newBulletPoint.length > 0) {
+      this.bulletPointsState.value.push(newBulletPoint);
+      this.$bulletPointContainer.insertBefore(
+        this.$createBulletPoint(this.bulletPointsState.value.length - 1),
+        this.$newBulletPointInputContainer
+      );
+      this.$newBulletPointInput.value = "";
+    }
   };
 }

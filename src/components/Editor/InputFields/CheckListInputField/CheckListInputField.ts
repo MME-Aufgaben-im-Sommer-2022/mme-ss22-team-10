@@ -14,6 +14,8 @@ import LiveCheckListItem from "../../atomics/LiveCheckListItem/LiveCheckListItem
 
 export default class CheckListInputField extends WebComponent {
   private $checkListContainer!: HTMLUListElement;
+  private $newCheckListItemInputContainer!: HTMLLIElement;
+  private $newCheckListItemInput!: HTMLInputElement;
 
   // the whole list of checklist items as single string, separated by newlines (\n)
   private readonly inputValueState: State<string>;
@@ -43,12 +45,20 @@ export default class CheckListInputField extends WebComponent {
 
   private $initHtml(): void {
     this.$checkListContainer = this.select(".check-list-container")!;
+    this.$newCheckListItemInputContainer = this.select(
+      ".new-check-list-item-input-container"
+    )!;
+    this.$newCheckListItemInput = this.select(".new-check-list-item-input")!;
+
     this.$appendCheckListItems();
   }
 
   private $appendCheckListItems = () => {
     this.checkListStates.value.forEach((_, index) => {
-      this.$checkListContainer.appendChild(this.$createCheckListItem(index));
+      this.$checkListContainer.insertBefore(
+        this.$createCheckListItem(index),
+        this.$newCheckListItemInputContainer
+      );
     });
   };
 
@@ -100,6 +110,27 @@ export default class CheckListInputField extends WebComponent {
       "change",
       this.onBulletPointsStateChanged
     );
+    this.$newCheckListItemInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        this.addNewCheckListItem();
+      }
+    });
+  }
+
+  private addNewCheckListItem(): void {
+    const newCheckListItem = this.$newCheckListItemInput.value.trim();
+    if (newCheckListItem.length > 0) {
+      this.checkListStates.value.push(
+        CheckListInputField.CHECK_LIST_IS_UNCHECKED_MARK +
+          CheckListInputField.CHECK_LIST_CONTENT_SEPARATOR +
+          newCheckListItem
+      );
+      this.$checkListContainer.insertBefore(
+        this.$createCheckListItem(this.checkListStates.value.length - 1),
+        this.$newCheckListItemInputContainer
+      );
+      this.$newCheckListItemInput.value = "";
+    }
   }
 
   private onBulletPointsStateChanged = () => {
