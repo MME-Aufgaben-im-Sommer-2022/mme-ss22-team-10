@@ -19,4 +19,6 @@ export default class CalendarDay extends WebComponent {
   onCreate(): void {
     this.select("h3")!.innerText = this.entryDate;
   }
+
+  // ToDo: Methode, die zurückgibt, ob es geklickt wurde und wenn ja ihr Datum zurückgibt
 }

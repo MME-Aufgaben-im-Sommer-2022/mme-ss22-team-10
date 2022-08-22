@@ -62,5 +62,11 @@ export default class CalendarMonth extends WebComponent {
         );
       }
     }
+    document.querySelectorAll(".days").forEach((day) => {
+      day.addEventListener("click", (event) => {
+        let value: string = this.select(".calendarDay h3")!.innerText;
+        log("item clicked" + value);
+      });
+    });
   }
 }
