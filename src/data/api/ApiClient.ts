@@ -99,7 +99,10 @@ export default class ApiClient {
   private static async getNoteDocument(day: Date): Promise<Models.Document> {
     const noteDocument = await this.databaseManager.listDocuments(
       Server.COLLECTION_NOTES,
-      [Query.equal("day", this.convertDateToString(day))]
+      [
+        Query.equal("day", this.convertDateToString(day)),
+        Query.equal("userID", this.userId),
+      ]
     );
     return noteDocument.documents[0];
   }
