@@ -94,6 +94,21 @@ export default class DataManager {
   }
 
   // MOCK DATA
+  private static async generateMockDatabaseData() {
+    const months: Array<string> = ["1", "2", "3", "4", "5", "6", "7", "8"];
+    months.forEach((month) => {
+      const days: Array<string> = generateRandomAscendingArray(28, 1);
+      days.forEach(async (day) => {
+        const date = new Date(day + "." + month + ".2022"),
+          editorModel = this.generateMockEditorModel(date);
+        try {
+          await ApiClient.createEditorNotes(editorModel);
+        } catch (e) {
+          ApiClient.updateEditorNotes(editorModel);
+        }
+      });
+    });
+  }
 
   // Calendar Model
   private static generateMockCalendarModel(): CalendarModel {
@@ -112,10 +127,9 @@ export default class DataManager {
   }
 
   // Editor Model
-
-  private static generateMockEditorModel(): EditorModel {
+  private static generateMockEditorModel(date: Date): EditorModel {
     const NUM_BLOCKS = 3,
-      day = new Date(),
+      day = date,
       blockContents: Array<BlockContent> = [];
 
     for (let i = 0; i < NUM_BLOCKS; i++) {
@@ -129,7 +143,6 @@ export default class DataManager {
   }
 
   // User Settings Model
-
   private static generateMockUserSettingsModel(): UserSettingsModel {
     const template: Template = [
       {
