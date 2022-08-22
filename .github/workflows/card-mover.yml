@@ -1,44 +1,13 @@
 on:
   issues:
     types: [labeled]
-
 jobs:
-  automate-issues-labels:
+  Move_Labeled_Issue_On_Project_Board:
     runs-on: ubuntu-latest
     steps:
-      - name: Move to Backlog
-        uses: bishalrai96/Project_Card_Automation@master
+      - uses: konradpabjan/move-labeled-or-milestoned-issue@v2.0
         with:
-          repo-token: "${{ secrets.GITHUB_TOKEN }}"
-          label: "📋 Backlog"
-          column: "📋 Backlog"
-          remove-label: "🔖 Ready,🏗 In progress,👀 In review,✅ Done"
-      - name: Move to Ready
-        uses: bishalrai96/Project_Card_Automation@master
-        with:
-          repo-token: "${{ secrets.GITHUB_TOKEN }}"
-          label: "🔖 Ready"
-          column: "🔖 Ready"
-          remove-label: "📋 Backlog,🏗 In progress,👀 In review,✅ Done"
-      - name: Move to In Progress
-        uses: bishalrai96/Project_Card_Automation@master
-        with:
-          repo-token: "${{ secrets.GITHUB_TOKEN }}"
-          label: "🏗 In progress"
-          column: "🏗 In progress"
-          remove-label: "📋 Backlog,🔖 Ready,👀 In review,✅ Done"
-      - name: Move to In review
-        uses: bishalrai96/Project_Card_Automation@master
-        with:
-          repo-token: "${{ secrets.GITHUB_TOKEN }}"
-          label: "👀 In review"
-          column: "👀 In review"
-          remove-label: " 📋 Backlog,🔖 Ready,🏗 In progress,✅ Done"
-      - name: Move to Done
-        uses: bishalrai96/Project_Card_Automation@master
-        with:
-          repo-token: "${{ secrets.GITHUB_TOKEN }}"
-          label: "✅ Done"
-          column: "✅ Done"
-          remove-label: " 📋 Backlog,🔖 Ready,🏗 In progress,👀 In review"
-
+          action-token: "${{ secrets.MY_TOKEN }}"
+          project-url: "https://github.com/orgs/github/projects/1"
+          column-name: "👀 In review"
+          label-name: "👀 In review"
