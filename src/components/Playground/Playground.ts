@@ -1,14 +1,23 @@
+/* eslint-disable */
+// @ts-nocheck
 import WebComponent from "../../lib/components/WebComponent";
 import html from "./Playground.html";
 import css from "./Playground.css";
 import State from "../../lib/state/State";
-import Editor from "../Editor/Editor/Editor";
 import { info, log, trace } from "../../lib/utils/Logger";
 import { AppEvent } from "../../lib/events/AppEvent";
 import DataManager from "../../data/DataManager";
-import { BlockContentInputType } from "../../data/models/EditorModel";
+import EditorModel, {
+  BlockContent,
+  BlockContentInputType,
+} from "../../data/models/EditorModel";
+import Editor from "../Editor/Editor/Editor";
+import { generateRandomLoremIpsum } from "../../lib/utils";
+import { StateChangedData } from "../../events/StateChanged";
+import Home from "../Home/Home";
 
 export default class Playground extends WebComponent {
+  editor: Editor;
   constructor() {
     super(html, css);
   }
@@ -27,12 +36,16 @@ export default class Playground extends WebComponent {
         blockContentsState = editorModelState.createSubState(
           "value.blockContents"
         ),
-        firstBlockInputState = new State("heyyy");
-
-      log(editorModelState, blockContentsState, firstBlockInputState);
+        firstBlockInputState = new State("fdf");
 
       editorModelState.addEventListener("change", (event: AppEvent) => {
         log("editorModel changed", event.data);
+        const data = event.data as StateChangedData;
+        if (data.property === "") {
+          this.editor.remove();
+          this.editor = new Editor(editorModelState);
+          this.select("div")!.appendChild(this.editor);
+        }
       });
 
       blockContentsState.addEventListener("change", (event: AppEvent) => {
@@ -48,7 +61,7 @@ export default class Playground extends WebComponent {
         button3 = this.select("#button-3");
 
       button1?.addEventListener("click", () => {
-        editorModelState.value.blockContents[0].inputValue = "hello";
+        editorModelState.value = this.createOtherFakeEditor();
       });
 
       button2.addEventListener("click", () => {
@@ -60,23 +73,53 @@ export default class Playground extends WebComponent {
       });
 
       button3.addEventListener("click", () => {
-        editorModelState.value.blockContents[0].inputValue = "FROM DA TOP";
+        editorModelState.value.blockContents = [];
       });
 
-      /*      const editor = new Editor(editorModelState);
-      this.select("div")!.appendChild(editor);
-      this.select("button")!.addEventListener("click", () => {
-        log("click");
-        editorModelState.value.blockContents[0] = {
-          inputType: BlockContentInputType.BulletPoint,
-          title: "Bullet Point",
-          inputValue: "",
-        };
-      });
-
-      editorModelState.addEventListener("change", (event: AppEvent) => {
-        info("editorModel changed", event.data);
-      });*/
+      // this.createEditor(editorModelState);
+      const home = new Home();
+      this.select("div")!.appendChild(home);
     });
+  }
+
+  private createEditor(editorModelState: State<EditorModel>): void {
+    this.editor = new Editor(editorModelState);
+    this.select("div")!.appendChild(this.editor);
+    this.select("button")!.addEventListener("click", () => {
+      log("click");
+      editorModelState.value.blockContents[0] = {
+        inputType: BlockContentInputType.BulletPoint,
+        title: "Bullet Point",
+        inputValue: "",
+      };
+    });
+
+    editorModelState.addEventListener("change", (event: AppEvent) => {
+      info("editorModel changed", event.data);
+    });
+  }
+
+  private createOtherFakeEditor(): EditorModel {
+    const day = new Date(),
+      blockContents: Array<BlockContent> = [];
+
+    blockContents.push({
+      title: `Title 1 new`,
+      inputType: BlockContentInputType.Checkbox,
+      inputValue: `1___unchecked
+        0___checked`,
+    });
+    blockContents.push({
+      title: `Title 2 new`,
+      inputType: BlockContentInputType.FreeText,
+      inputValue: generateRandomLoremIpsum(100),
+    });
+    blockContents.push({
+      title: `Title 3`,
+      inputType: BlockContentInputType.FreeText,
+      inputValue: `fsdfffffffffffffffffffff`,
+    });
+
+    return new EditorModel(day, blockContents);
   }
 }

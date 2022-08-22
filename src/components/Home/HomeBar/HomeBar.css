@@ -1,0 +1,10 @@
+#home-bar-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+
+#home-bar-container > #greet-text {
+    margin-right: auto;
+}

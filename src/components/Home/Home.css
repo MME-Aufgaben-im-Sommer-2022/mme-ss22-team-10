@@ -1,0 +1,9 @@
+#home-container {
+    display: flex;
+    flex-direction: column;
+}
+
+#home-container-content {
+    display: flex;
+    flex-direction: row;
+}
