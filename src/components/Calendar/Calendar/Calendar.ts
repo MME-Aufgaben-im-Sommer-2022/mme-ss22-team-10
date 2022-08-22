@@ -82,11 +82,11 @@ export default class Calendar extends WebComponent {
   checkEntries(): void {
     if (this.entriesForCurrentMonth !== undefined) {
       this.changeMonthTitle(this.currentMonthNumber);
-      log(this.onNextButtonClicked);
-      log(this.onPreviousButtonClicked);
+      //log(this.onNextButtonClicked);
+      //log(this.onPreviousButtonClicked);
       this.showEntries();
     } else {
-      log("undefineddd");
+      log("keine Einträge vorhanden" + this.currentMonthNumber);
       this.currentMonthNumber -= 1;
       this.changeMonthTitle(this.currentMonthNumber);
       this.getEntriesForMonth();
@@ -99,11 +99,12 @@ export default class Calendar extends WebComponent {
       this.currentMonthText,
       this.currentMonthNumber
     );
-    log(this.calendarMonth);
+    //log(this.calendarMonth);
     if (
       this.onNextButtonClicked === true ||
       this.onPreviousButtonClicked === true
     ) {
+      log(this.currentMonthNumber);
       this.removeMonthEntries();
       this.onNextButtonClicked = false;
       this.onPreviousButtonClicked = false;
@@ -113,18 +114,18 @@ export default class Calendar extends WebComponent {
 
   onPreviousClicked = () => {
     this.onPreviousButtonClicked = true;
-    log("previous");
+    //log("previous");
     this.currentMonthNumber -= 1;
-    log(this.currentMonthNumber);
+    //log(this.currentMonthNumber);
     this.removeMonthEntries();
     this.getEntriesForMonth();
   };
 
   onNextClicked = () => {
     this.onNextButtonClicked = true;
-    log("next");
+    //log("next");
     this.currentMonthNumber += 1;
-    log(this.currentMonthNumber);
+    //log(this.currentMonthNumber);
     this.removeMonthEntries();
     this.getEntriesForMonth();
   };
@@ -136,6 +137,6 @@ export default class Calendar extends WebComponent {
 
   removeMonthEntries(): void {
     log("delete");
-    this.select(".month")!.remove();
+    //this.select(".month")!.remove();
   }
 }
