@@ -178,6 +178,20 @@ export default class ApiClient {
     });
   }
 
+  static async deleteEditorNotes(noteId: string) {
+    const blockContents = await this.databaseManager.listDocuments(
+      Server.COLLECTION_BLOCK_CONTENTS,
+      [Query.equal("noteID", noteId)]
+    );
+    this.databaseManager.deleteDocument(Server.COLLECTION_NOTES, noteId);
+    blockContents.documents.forEach((blockContent) => {
+      this.databaseManager.deleteDocument(
+        Server.COLLECTION_BLOCK_CONTENTS,
+        blockContent.$id
+      );
+    });
+  }
+
   private static convertUnixTimestampToDate(timestamp: number): Date {
     return new Date(timestamp * 1000);
   }
