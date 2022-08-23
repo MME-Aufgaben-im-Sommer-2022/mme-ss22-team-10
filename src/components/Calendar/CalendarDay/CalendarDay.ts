@@ -1,7 +1,7 @@
 import WebComponent from "../../../lib/components/WebComponent";
 import html from "../../Calendar/CalendarDay/CalendarDay.html";
 import css from "../../Calendar/CalendarDay/CalendarDay.css";
-import { log } from "../../../lib/utils/Logger";
+import EventBus from "../../../lib/events/EventBus";
 
 export default class CalendarDay extends WebComponent {
   entryDate;
@@ -20,9 +20,8 @@ export default class CalendarDay extends WebComponent {
   onCreate(): void {
     this.select("h3")!.innerText = this.entryDate;
     this.addEventListener("click", () => {
-      log("listener works");
+      EventBus.notifyAll("calenderEntryClicked", this.entryDate);
+      //log("listener works");
     });
   }
-
-  // ToDo: Methode, die zurückgibt, ob es geklickt wurde und wenn ja ihr Datum zurückgibt
 }

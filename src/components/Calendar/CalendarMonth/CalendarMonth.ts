@@ -8,18 +8,19 @@ export default class CalendarMonth extends WebComponent {
   entriesForCurrentMonth: Array<string>;
   currentMonthNumber: number;
   currentMonthNumberText!: string;
+  currentYear!: string;
 
   constructor(
     entriesForCurrentMonth: Array<string>,
-    currentMonthNumber: number
+    currentMonthNumber: number,
+    currentYear: string
   ) {
     super(html, css);
     this.entriesForCurrentMonth = entriesForCurrentMonth;
     this.currentMonthNumber = currentMonthNumber;
+    this.currentYear = currentYear;
   }
 
-  // override htmlTagName to return the tag name our component
-  // -> <example-component /> can be used in the html to create a new instance of this component
   get htmlTagName(): string {
     return "calendar-month";
   }
@@ -28,8 +29,6 @@ export default class CalendarMonth extends WebComponent {
     log(this.entriesForCurrentMonth);
     this.formatMonth();
     this.appendCalenderEntry();
-
-    //this.select(".selector h3")!.innerText = this.currentMonthText;
   }
 
   formatMonth(): void {
@@ -48,13 +47,19 @@ export default class CalendarMonth extends WebComponent {
             "0" +
               this.entriesForCurrentMonth[i] +
               "." +
-              this.currentMonthNumberText
+              this.currentMonthNumberText +
+              "." +
+              this.currentYear
           )
         );
       } else {
         this.select(".days")!.append(
           new CalendarDay(
-            this.entriesForCurrentMonth[i] + "." + this.currentMonthNumberText
+            this.entriesForCurrentMonth[i] +
+              "." +
+              this.currentMonthNumberText +
+              "." +
+              this.currentYear
           )
         );
       }

@@ -36,8 +36,9 @@ export default class Calendar extends WebComponent {
     log(this.calendarModelPromise);
     this.calendarModelPromise.then((data) => {
       this.data = data;
-      this.getDataForCurrentEntries(this.data);
-      this.getEntriesForMonth();
+      this.getDataForFirstEntries(this.data);
+      this.setUpFirstEntries();
+      //this.getEntriesForMonth();
     });
     this.initListeners();
   }
@@ -46,13 +47,38 @@ export default class Calendar extends WebComponent {
     this.$monthTitle = this.select(".selector h3")!;
   }
 
-  getDataForCurrentEntries(data: CalendarModel): void {
+  private initListeners(): void {
+    this.select(".previous")!.addEventListener("click", this.onPreviousClicked);
+    this.select(".next")!.addEventListener("click", this.onNextClicked);
+  }
+
+  private setUpFirstEntries() {
+    this.entriesForCurrentMonth = this.getEntryData(this.data);
+    if (this.entriesForCurrentMonth !== undefined) {
+      this.showEntries();
+    } else {
+      this.createEntry();
+    }
+  }
+
+  private createEntry(): void {
+    const currentDate: Array<string> = [];
+    currentDate.push(this.data.today.getDate() + "");
+    this.calendarMonth = new CalendarMonth(
+      currentDate,
+      this.currentMonthNumber,
+      this.currentYear
+    );
+    this.select(".month")!.append(this.calendarMonth);
+  }
+
+  private getDataForFirstEntries(data: CalendarModel): void {
     this.currentYear = data.today.getFullYear().toString();
     this.currentMonthNumber = data.today.getMonth() + 1;
     this.changeMonthTitle(this.currentMonthNumber);
   }
 
-  changeMonthTitle(monthNumber: number): void {
+  private changeMonthTitle(monthNumber: number): void {
     log("change Month Description" + this.currentMonthNumber);
     const date: Date = new Date();
     date.setMonth(monthNumber - 1);
@@ -60,12 +86,12 @@ export default class Calendar extends WebComponent {
     this.currentMonthText = date.toLocaleString("default", { month: "long" });
   }
 
-  getEntriesForMonth(): void {
+  private getEntriesForMonth(): void {
     this.entriesForCurrentMonth = this.getEntryData(this.data);
     this.checkEntries();
   }
 
-  getEntryData(data: CalendarModel): Array<string> | undefined {
+  private getEntryData(data: CalendarModel): Array<string> | undefined {
     //log(this.currentYear);
     //log(this.currentMonthNumber);
     //log(data.noteDays[this.currentYear][this.currentMonthNumber]);
@@ -77,7 +103,7 @@ export default class Calendar extends WebComponent {
     return undefined;
   }
 
-  checkEntries(): void {
+  private checkEntries(): void {
     if (this.entriesForCurrentMonth !== undefined) {
       this.changeMonthTitle(this.currentMonthNumber);
       this.$monthTitle.innerText = this.currentMonthText;
@@ -92,10 +118,11 @@ export default class Calendar extends WebComponent {
     }
   }
 
-  showEntries(): void {
+  private showEntries(): void {
     this.calendarMonth = new CalendarMonth(
       this.entriesForCurrentMonth,
-      this.currentMonthNumber
+      this.currentMonthNumber,
+      this.currentYear
     );
     //log(this.calendarMonth);
     this.select(".month")!.append(this.calendarMonth);
@@ -118,11 +145,6 @@ export default class Calendar extends WebComponent {
     this.removeMonthEntries();
     this.getEntriesForMonth();
   };
-
-  initListeners(): void {
-    this.select(".previous")!.addEventListener("click", this.onPreviousClicked);
-    this.select(".next")!.addEventListener("click", this.onNextClicked);
-  }
 
   removeMonthEntries = () => {
     //log("delete");
