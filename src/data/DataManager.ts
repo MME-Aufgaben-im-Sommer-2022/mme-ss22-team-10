@@ -99,7 +99,7 @@ export default class DataManager {
     months.forEach((month) => {
       const days: Array<string> = generateRandomAscendingArray(28, 1);
       days.forEach(async (day) => {
-        const date = new Date(day + "." + month + ".2022"),
+        const date = new Date("2022-0" + month + "-0" + day),
           editorModel = this.generateMockEditorModel(date);
         try {
           await ApiClient.createEditorNotes(editorModel);
