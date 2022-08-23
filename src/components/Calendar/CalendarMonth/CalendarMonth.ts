@@ -2,7 +2,6 @@ import WebComponent from "../../../lib/components/WebComponent";
 import html from "../../Calendar/CalendarMonth/CalendarMonth.html";
 import css from "../../Calendar/CalendarMonth/CalendarMonth.css";
 import CalendarDay from "../CalendarDay/CalendarDay";
-import { log } from "../../../lib/utils/Logger";
 
 export default class CalendarMonth extends WebComponent {
   entriesForCurrentMonth: Array<string>;
@@ -26,12 +25,12 @@ export default class CalendarMonth extends WebComponent {
   }
 
   onCreate(): void {
-    log(this.entriesForCurrentMonth);
+    //log(this.entriesForCurrentMonth);
     this.formatMonth();
     this.appendCalenderEntry();
   }
 
-  formatMonth(): void {
+  private formatMonth(): void {
     if (this.currentMonthNumber < 10) {
       this.currentMonthNumberText = "0" + this.currentMonthNumber;
     } else {
@@ -39,7 +38,7 @@ export default class CalendarMonth extends WebComponent {
     }
   }
 
-  appendCalenderEntry() {
+  private appendCalenderEntry() {
     for (let i = 0; i < this.entriesForCurrentMonth.length; i++) {
       if (parseInt(this.entriesForCurrentMonth[i]) < 10) {
         this.select(".days")!.append(

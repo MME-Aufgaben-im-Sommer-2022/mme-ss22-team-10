@@ -21,7 +21,6 @@ export default class CalendarDay extends WebComponent {
     this.select("h3")!.innerText = this.entryDate;
     this.addEventListener("click", () => {
       EventBus.notifyAll("calenderEntryClicked", this.entryDate);
-      //log("listener works");
     });
   }
 }
