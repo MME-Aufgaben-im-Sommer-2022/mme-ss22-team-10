@@ -140,9 +140,8 @@ export default class ApiClient {
 
   static async getEditorNotes(date: Date) {
     const noteDocument = await this.getNoteDocument(date),
-      day = this.convertUnixTimestampToDate(noteDocument.$createdAt),
       blockContents = await this.getBlockContentsDocuments(noteDocument.$id);
-    return { day: day, blockContents: blockContents };
+    return { day: date, blockContents: blockContents };
   }
 
   static async createEditorNotes(editorModel: EditorModel) {
