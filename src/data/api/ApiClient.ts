@@ -198,7 +198,9 @@ export default class ApiClient {
   private static convertDateToString(date: Date): string {
     return [
       date.getFullYear(),
-      date.getMonth() < 10 ? "0" + (date.getMonth() + 1) : date.getMonth(),
+      date.getMonth() + 1 < 10
+        ? "0" + (date.getMonth() + 1)
+        : date.getMonth() + 1,
       date.getDate() < 10 ? "0" + date.getDate() : date.getDate(),
     ].join("-");
   }
