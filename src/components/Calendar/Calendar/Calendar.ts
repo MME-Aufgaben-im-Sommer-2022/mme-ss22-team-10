@@ -84,6 +84,7 @@ export default class Calendar extends WebComponent {
     date.setMonth(monthNumber - 1);
     log("after change" + this.currentMonthNumber);
     this.currentMonthText = date.toLocaleString("default", { month: "long" });
+    this.$monthTitle.innerText = this.currentMonthText;
   }
 
   private getEntriesForMonth(): void {
@@ -106,7 +107,7 @@ export default class Calendar extends WebComponent {
   private checkEntries(): void {
     if (this.entriesForCurrentMonth !== undefined) {
       this.changeMonthTitle(this.currentMonthNumber);
-      this.$monthTitle.innerText = this.currentMonthText;
+
       //log(this.onNextButtonClicked);
       //log(this.onPreviousButtonClicked);
       this.showEntries();
