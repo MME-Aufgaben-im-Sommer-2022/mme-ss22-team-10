@@ -6,18 +6,15 @@ import { log } from "../../../lib/utils/Logger";
 
 export default class CalendarMonth extends WebComponent {
   entriesForCurrentMonth: Array<string>;
-  currentMonthText: string;
   currentMonthNumber: number;
-  currentMonthNumberText: string;
+  currentMonthNumberText!: string;
 
   constructor(
     entriesForCurrentMonth: Array<string>,
-    currentMonthText: string,
     currentMonthNumber: number
   ) {
     super(html, css);
     this.entriesForCurrentMonth = entriesForCurrentMonth;
-    this.currentMonthText = currentMonthText;
     this.currentMonthNumber = currentMonthNumber;
   }
 
@@ -62,11 +59,5 @@ export default class CalendarMonth extends WebComponent {
         );
       }
     }
-    document.querySelectorAll(".days").forEach((day) => {
-      day.addEventListener("click", (event) => {
-        let value: string = this.select(".calendarDay h3")!.innerText;
-        log("item clicked" + value);
-      });
-    });
   }
 }
