@@ -1,7 +1,7 @@
 import WebComponent from "../../../../lib/components/WebComponent";
 import html from "./FreeTextInputField.html";
 import State from "../../../../lib/state/State";
-import LiveTextInput from "../../atomics/LiveTextInput/LiveTextInput";
+import LiveTextInput from "../../../atomics/LiveTextInput/LiveTextInput";
 
 // Input field for free text
 // (= a wrapper around LiveTextInput)

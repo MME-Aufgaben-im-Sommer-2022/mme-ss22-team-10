@@ -1,5 +1,5 @@
-import WebComponent from "../../../../lib/components/WebComponent";
-import State from "../../../../lib/state/State";
+import WebComponent from "../../../lib/components/WebComponent";
+import State from "../../../lib/state/State";
 import html from "./LiveBulletPointItem.html";
 import LiveTextInput from "../LiveTextInput/LiveTextInput";
 

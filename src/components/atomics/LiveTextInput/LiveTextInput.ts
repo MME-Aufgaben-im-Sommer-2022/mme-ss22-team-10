@@ -1,12 +1,12 @@
-import WebComponent from "../../../../lib/components/WebComponent";
+import WebComponent from "../../../lib/components/WebComponent";
 import html from "./LiveTextInput.html";
-import EventBus from "../../../../lib/events/EventBus";
-import { AppEvent } from "../../../../lib/events/AppEvent";
+import EventBus from "../../../lib/events/EventBus";
+import { AppEvent } from "../../../lib/events/AppEvent";
 import {
   CLOSE_ALL_EDITOR_INPUTS_EVENT,
   CloseAllEditorInputsData,
-} from "../../../../events/CloseAllEditorInputs";
-import State from "../../../../lib/state/State";
+} from "../../../events/CloseAllEditorInputs";
+import State from "../../../lib/state/State";
 import css from "./LiveTextInput.css";
 
 // HTML element that serves as the main text input field

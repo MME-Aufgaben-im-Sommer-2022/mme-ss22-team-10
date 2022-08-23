@@ -1,6 +1,6 @@
-import WebComponent from "../../../../lib/components/WebComponent";
+import WebComponent from "../../../lib/components/WebComponent";
 import LiveTextInput from "../LiveTextInput/LiveTextInput";
-import State from "../../../../lib/state/State";
+import State from "../../../lib/state/State";
 import html from "./LiveCheckListItem.html";
 import css from "./LiveCheckListItem.css";
 

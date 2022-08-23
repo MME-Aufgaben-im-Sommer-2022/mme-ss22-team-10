@@ -1,7 +1,7 @@
 import WebComponent from "../../../../lib/components/WebComponent";
 import html from "./CheckListInputField.html";
 import State from "../../../../lib/state/State";
-import LiveCheckListItem from "../../atomics/LiveCheckListItem/LiveCheckListItem";
+import LiveCheckListItem from "../../../atomics/LiveCheckListItem/LiveCheckListItem";
 
 // Input field for check list items
 

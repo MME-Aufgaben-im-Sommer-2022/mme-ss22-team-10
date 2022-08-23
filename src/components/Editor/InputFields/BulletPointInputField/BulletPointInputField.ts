@@ -2,7 +2,7 @@ import WebComponent from "../../../../lib/components/WebComponent";
 import html from "./BulletPointInputField.html";
 import State from "../../../../lib/state/State";
 import { StateChangedData } from "../../../../events/StateChanged";
-import LiveBulletPointItem from "../../atomics/LiveBulletPointItem/LiveBulletPointItem";
+import LiveBulletPointItem from "../../../atomics/LiveBulletPointItem/LiveBulletPointItem";
 
 // Input field for bullet point lists
 

@@ -15,6 +15,8 @@ import Editor from "../Editor/Editor/Editor";
 import { generateRandomLoremIpsum } from "../../lib/utils";
 import { StateChangedData } from "../../events/StateChanged";
 import Home from "../Home/Home";
+import { Topic } from "../../data/models/TemplateConfigurationModel";
+import TopicTitleSelection from "../TemplateConfiguration/TopicTitleSelection/TopicTitleSelection";
 
 export default class Playground extends WebComponent {
   editor: Editor;
@@ -72,13 +74,24 @@ export default class Playground extends WebComponent {
         log(firstBlockInputState.value);
       });
 
-      button3.addEventListener("click", () => {
-        editorModelState.value.blockContents = [];
-      });
-
       // this.createEditor(editorModelState);
-      const home = new Home();
-      this.select("div")!.appendChild(home);
+      //const home = new Home();
+      //this.select("div")!.appendChild(home);
+      const topic: Topic = {
+          name: "Topic 1",
+          titles: ["Title 1", "Title 2", "Title 3"],
+        },
+        topicState = new State(topic),
+        selectionIndexState = new State(0),
+        topicTitleSelection = new TopicTitleSelection(
+          topicState,
+          selectionIndexState
+        );
+      this.select("div")!.appendChild(topicTitleSelection);
+
+      button3.addEventListener("click", () => {
+        selectionIndexState.value = 1;
+      });
     });
   }
 

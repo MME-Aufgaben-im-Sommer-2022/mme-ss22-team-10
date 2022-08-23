@@ -5,7 +5,7 @@ export interface Topic {
   titles: Array<string>;
 }
 
-export default class TemplateModel extends Model {
+export default class TemplateConfigurationModel extends Model {
   topics: Array<Topic>;
 
   constructor(topics: Array<Topic>) {
