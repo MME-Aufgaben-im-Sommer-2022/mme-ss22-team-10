@@ -34,7 +34,9 @@ export default class ApiClient {
         this.sessionId
       );
       this.userId = sessionPromise.userId;
-      return new Date(sessionPromise.expire * 1000) <= new Date();
+      return (
+        this.convertUnixTimestampToDate(sessionPromise.expire) <= new Date()
+      );
     }
     return true;
   }
@@ -138,7 +140,7 @@ export default class ApiClient {
 
   static async getEditorNotes(date: Date) {
     const noteDocument = await this.getNoteDocument(date),
-      day = new Date(noteDocument.$createdAt * 1000),
+      day = this.convertUnixTimestampToDate(noteDocument.$createdAt),
       blockContents = await this.getBlockContentsDocuments(noteDocument.$id);
     return { day: day, blockContents: blockContents };
   }
@@ -174,6 +176,10 @@ export default class ApiClient {
         blockContent
       );
     });
+  }
+
+  private static convertUnixTimestampToDate(timestamp: number): Date {
+    return new Date(timestamp * 1000);
   }
 
   private static convertDateToString(date: Date): string {
