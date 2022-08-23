@@ -102,8 +102,8 @@ export default class ApiClient {
     const noteDocument = await this.databaseManager.listDocuments(
       Server.COLLECTION_NOTES,
       [
-        Query.equal("day", this.convertDateToString(day)),
         Query.equal("userID", this.userId),
+        Query.equal("day", this.convertDateToString(day)),
       ]
     );
     return noteDocument.documents[0];
