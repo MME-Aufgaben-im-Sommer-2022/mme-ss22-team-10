@@ -28,4 +28,8 @@ export default class DatabaseManager {
   ): Promise<Models.Document> {
     return this.database.updateDocument(collection, document, data);
   }
+
+  async deleteDocument(collection: string, document: string) {
+    return this.database.deleteDocument(collection, document);
+  }
 }
