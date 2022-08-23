@@ -1,19 +1,19 @@
 import WebComponent from "../../../lib/components/WebComponent";
 import { Topic } from "../../../data/models/TemplateConfigurationModel";
 import State from "../../../lib/state/State";
-import html from "./TopicTitleSelection.html";
+import html from "./TopicConfiguration.html";
 
-export default class TopicTitleSelection extends WebComponent {
-  private readonly topicState: State<Topic>;
-  private readonly selectionIndexState: State<number>;
+export default class TopicConfiguration extends WebComponent {
+  private readonly topic: Topic;
+  private readonly selectedTopicsState: State<Array<string>>;
 
   private $topicTitleSelectionContainer!: HTMLDivElement;
   private $topicName!: HTMLSpanElement;
 
-  constructor(topicState: State<Topic>, selectionIndexState: State<number>) {
+  constructor(topic: Topic, selectedTopicsState: State<Array<string>>) {
     super(html);
-    this.topicState = topicState;
-    this.selectionIndexState = selectionIndexState;
+    this.topic = topic;
+    this.selectedTopicsState = selectedTopicsState;
   }
 
   get htmlTagName(): string {
@@ -30,22 +30,22 @@ export default class TopicTitleSelection extends WebComponent {
       ".topic-title-selection-container"
     )!;
     this.$topicName = this.select(".topic-name")!;
-    this.$topicName.innerHTML = this.topicState.value.name;
+    this.$topicName.innerHTML = this.topic.name;
     this.$appendRadioButtons();
   }
 
   private initListener(): void {
-    this.selectionIndexState.addEventListener(
+    this.selectedTopicsState.addEventListener(
       "change",
       this.$updateRadioButtons
     );
   }
 
   $appendRadioButtons(): void {
-    this.topicState.value.titles.forEach((title, index) => {
+    this.topic.titles.forEach((title) => {
       const radioButton = document.createElement("input"),
         label = document.createElement("label");
-      radioButton.type = "radio";
+      radioButton.type = "checkbox";
       radioButton.name = "topic-title";
       radioButton.value = title;
       this.$topicTitleSelectionContainer.appendChild(radioButton);
@@ -54,7 +54,7 @@ export default class TopicTitleSelection extends WebComponent {
       this.$topicTitleSelectionContainer.appendChild(label);
 
       radioButton.addEventListener("change", () =>
-        this.$onSelectRadioButton(index)
+        this.$onSelectRadioButton(radioButton.value)
       );
     });
 
@@ -63,14 +63,18 @@ export default class TopicTitleSelection extends WebComponent {
 
   private $updateRadioButtons = () => {
     const radioButtons: NodeList =
-      this.$topicTitleSelectionContainer.querySelectorAll("input[type=radio]");
-    radioButtons.forEach((radioButton, index) => {
+      this.$topicTitleSelectionContainer.querySelectorAll(
+        "input[type=checkbox]"
+      );
+    radioButtons.forEach((radioButton) => {
       (radioButton as HTMLInputElement).checked =
-        index === this.selectionIndexState.value;
+        this.selectedTopicsState.value.includes(
+          (radioButton as HTMLInputElement).value
+        );
     });
   };
 
-  $onSelectRadioButton = (index: number) => {
-    this.selectionIndexState.value = index;
+  $onSelectRadioButton = (value: string) => {
+    this.selectedTopicsState.value.push(value);
   };
 }
