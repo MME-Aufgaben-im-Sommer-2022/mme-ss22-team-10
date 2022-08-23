@@ -18,7 +18,7 @@ export default class DatabaseManager {
     collection: string,
     query: Array<any>
   ): Promise<Models.DocumentList<Models.Document>> {
-    return this.database.listDocuments(collection, query);
+    return this.database.listDocuments(collection, query, 100);
   }
 
   async updateDocument(
