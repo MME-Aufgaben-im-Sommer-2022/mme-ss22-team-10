@@ -20,51 +20,41 @@ export default class ApiClient {
     this.databaseManager = new DatabaseManager(this.client, Server.DATABASE_ID);
   }
 
-  static async logInUser(email: string, password: string) {
-    const sessionExpired = await this.localSessionIsExpired();
-    if (sessionExpired) {
-      await this.createNewSession(email, password);
-    }
+  static connectSession(session: Models.Session) {
+    this.sessionId = session.$id;
+    this.userId = session.userId;
+    localStorage.setItem("sessionId", this.sessionId);
+    localStorage.setItem("userId", this.userId);
   }
 
-  private static async localSessionIsExpired(): Promise<boolean> {
-    this.sessionId = localStorage.getItem("sessionId")!;
-    if (this.sessionId !== null) {
-      const sessionPromise = await this.accountManager.getAccountSession(
-        this.sessionId
-      );
-      this.userId = sessionPromise.userId;
-      return (
-        this.convertUnixTimestampToDate(sessionPromise.expire) <= new Date()
-      );
-    }
-    return true;
-  }
-
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  static async createNewSession(email: string, password: string) {
-    const accountSession = await this.accountManager.createNewAccountSession(
-      Server.TEST_USER_EMAIL, // email
-      Server.TEST_USER_PASSWORD // password
-    );
-    this.sessionId = accountSession.$id;
-    this.userId = accountSession.userId;
-    localStorage.setItem("sessionId", accountSession.$id);
-    localStorage.setItem("userId", accountSession.userId);
-  }
-
-  static async logOutUser(): Promise<any> {
+  static async disconnectCurrentSession() {
+    await this.removeSession(this.sessionId);
     this.userId = "";
     this.sessionId = "";
     localStorage.removeItem("sessionId");
     localStorage.removeItem("userId");
-    return this.accountManager.deleteAccountSession(this.sessionId);
   }
 
-  static async getUsername(): Promise<string> {
-    const accountData = await this.accountManager.getAccountData();
-    return accountData.name;
+  static async getSession(sessionId: string): Promise<Models.Session> {
+    return this.accountManager.getAccountSession(sessionId);
+  }
+
+  static async createNewSession(
+    _email: string,
+    _password: string
+  ): Promise<Models.Session> {
+    return await this.accountManager.createNewAccountSession(
+      Server.TEST_USER_EMAIL,
+      Server.TEST_USER_PASSWORD
+    );
+  }
+
+  private static async removeSession(sessionId: string): Promise<any> {
+    return this.accountManager.deleteAccountSession(sessionId);
+  }
+
+  static async getAccountData(): Promise<Models.User<Models.Preferences>> {
+    return this.accountManager.getAccountData();
   }
 
   private static async getUserSettingsDocument(): Promise<Models.Document> {

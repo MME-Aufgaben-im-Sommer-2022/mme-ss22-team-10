@@ -12,15 +12,14 @@ import {
 } from "../lib/utils";
 import ApiClient from "./api/ApiClient";
 
-// `DataManager` is a singleton, in which you define functions to fetch/save Models.
+// `DataManager` is a singleton, in which you define functions to fetch/save/delete Models.
 
 // Usage guide & examples:
 // https://github.com/MME-Aufgaben-im-Sommer-2022/mme-ss22-team-10/blob/dev/docs/lib/DataManager.md
-
 export default class DataManager {
   static async init() {
     await ApiClient.init();
-    await ApiClient.logInUser("email", "password");
+    await this.logInUser("email", "password");
   }
 
   // Write methods to fetch or save data to Database etc. here
@@ -29,6 +28,16 @@ export default class DataManager {
   static async getExampleModel(): Promise<ExampleModel> {
     // would query database here or other networking stuff
     return new ExampleModel("John", 0);
+  static async logInUser(email: string, password: string) {
+    if (localStorage.getItem("sessionId")) {
+      const session = await ApiClient.getSession(localStorage.sessionId);
+      // if session is expired, create new one
+      if (this.convertNumberToDate(session.expire) > new Date()) {
+        await ApiClient.createNewSession(email, password);
+      } else {
+        ApiClient.connectSession(session);
+      }
+    }
   }
 
   // Calendar Model
