@@ -3,7 +3,7 @@ import TemplateConfigurationModel from "../../data/models/TemplateConfigurationM
 import State from "../../lib/state/State";
 import { Template } from "../../data/models/UserSettingsModel";
 import TopicConfiguration from "./TopicConfiguration/TopicConfiguration";
-import html from "./TemplateConfiguration.html";
+import html from "./TemplateConfigurator.html";
 import { BlockContentInputType } from "../../data/models/EditorModel";
 import InputTypeConfiguration from "./InputTypeConfiguration/InputTypeConfiguration";
 import { log } from "../../lib/utils/Logger";
@@ -13,7 +13,7 @@ enum TemplateConfigurationProgress {
   SELECT_INPUT_TYPES,
 }
 
-export default class TemplateConfiguration extends WebComponent {
+export default class TemplateConfigurator extends WebComponent {
   private readonly templateConfigurationModelState: State<TemplateConfigurationModel>;
   private readonly selectedTitlesState: State<Array<string>> = new State([]);
   private readonly selectedInputTypesState: State<
@@ -119,7 +119,17 @@ export default class TemplateConfiguration extends WebComponent {
       TemplateConfigurationProgress.SELECT_INPUT_TYPES;
   };
 
-  private $onFinishTemplateConfiguration = () => {};
+  private $onFinishTemplateConfiguration = () => {
+    const template: Template = this.selectedTitlesState.value.map(
+      (title, index) => {
+        return {
+          title,
+          inputType: this.selectedInputTypesState.value[index],
+        };
+      }
+    );
+    this.onFinishConfiguration(template);
+  };
 
   private $onBackToTopicConfiguration = () => {
     this.templateConfigurationProgressState.value =
