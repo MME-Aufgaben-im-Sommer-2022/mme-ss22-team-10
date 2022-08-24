@@ -1,9 +1,9 @@
-import WebComponent from "../../../lib/components/WebComponent";
-import html from "./InputTypeConfiguration.html";
-import State from "../../../lib/state/State";
-import { BlockContentInputType } from "../../../data/models/EditorModel";
+import WebComponent from "../../../../lib/components/WebComponent";
+import html from "./InputTypeConfiguratorItem.html";
+import State from "../../../../lib/state/State";
+import { BlockContentInputType } from "../../../../data/models/EditorModel";
 
-export default class InputTypeConfiguration extends WebComponent {
+export default class InputTypeConfiguratorItem extends WebComponent {
   private readonly topicTitle: string;
   private readonly selectedInputTypeState: State<BlockContentInputType>;
 

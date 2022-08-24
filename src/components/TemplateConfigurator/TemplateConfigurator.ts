@@ -2,11 +2,10 @@ import WebComponent from "../../lib/components/WebComponent";
 import TemplateConfigurationModel from "../../data/models/TemplateConfigurationModel";
 import State from "../../lib/state/State";
 import { Template } from "../../data/models/UserSettingsModel";
-import TopicConfiguration from "./TopicConfiguration/TopicConfiguration";
 import html from "./TemplateConfigurator.html";
 import { BlockContentInputType } from "../../data/models/EditorModel";
-import InputTypeConfiguration from "./InputTypeConfiguration/InputTypeConfiguration";
-import { log } from "../../lib/utils/Logger";
+import TopicConfigurator from "./TopicConfigurator/TopicConfigurator";
+import InputTypeConfigurator from "./InputTypeConfigurator/InputTypeConfigurator";
 
 enum TemplateConfigurationProgress {
   SELECT_TOPICS,
@@ -27,14 +26,11 @@ export default class TemplateConfigurator extends WebComponent {
 
   private readonly onFinishConfiguration: (template: Template) => void;
 
-  private $topicConfiguration!: HTMLDivElement;
-  private $topicConfigurationElementsContainer!: HTMLDivElement;
-  private $finishTopicConfigurationButton!: HTMLButtonElement;
+  private $topicConfiguratorContainer!: HTMLDivElement;
+  private $topicConfigurator!: TopicConfigurator;
 
-  private $inputTypeConfiguration!: HTMLDivElement;
-  private $inputTypeConfigurationElementsContainer!: HTMLDivElement;
-  private $backToTopicConfigurationButton!: HTMLButtonElement;
-  private $finishTemplateConfigurationButton!: HTMLButtonElement;
+  private $inputTypeConfiguratorContainer!: HTMLDivElement;
+  private $inputTypeConfigurator!: InputTypeConfigurator;
 
   constructor(
     templateConfigurationModelState: State<TemplateConfigurationModel>,
@@ -56,37 +52,36 @@ export default class TemplateConfigurator extends WebComponent {
   }
 
   $initHtml(): void {
-    this.$topicConfiguration = this.select("#topic-configuration")!;
-    this.$topicConfigurationElementsContainer = this.select(
-      "#topic-configuration-elements-container"
+    this.$topicConfiguratorContainer = this.select("#topic-configuration")!;
+    this.$topicConfigurator = new TopicConfigurator(
+      this.templateConfigurationModelState,
+      this.selectedTitlesState
+    );
+    this.$topicConfiguratorContainer.appendChild(this.$topicConfigurator);
+
+    this.$inputTypeConfiguratorContainer = this.select(
+      "#input-type-configuration"
     )!;
-    this.$finishTopicConfigurationButton = this.select(
-      "#finish-topic-configuration-button"
-    )!;
-    this.$inputTypeConfiguration = this.select("#input-type-configuration")!;
-    this.$inputTypeConfigurationElementsContainer = this.select(
-      "#input-type-configuration-elements-container"
-    )!;
-    this.$backToTopicConfigurationButton = this.select(
-      "#back-to-topic-configuration-button"
-    )!;
-    this.$finishTemplateConfigurationButton = this.select(
-      "#finish-template-configuration-button"
-    )!;
-    this.$appendTopicConfigurations();
+    this.$inputTypeConfigurator = new InputTypeConfigurator(
+      this.selectedTitlesState,
+      this.selectedInputTypesState
+    );
+    this.$inputTypeConfiguratorContainer.appendChild(
+      this.$inputTypeConfigurator
+    );
   }
 
   private $initHtmlListener(): void {
-    this.$finishTopicConfigurationButton.addEventListener(
-      "click",
+    this.$topicConfigurator.addEventListener(
+      TopicConfigurator.FINISH_TOPIC_CONFIGURATION_EVENT,
       this.$onFinishTopicConfiguration
     );
-    this.$backToTopicConfigurationButton.addEventListener(
-      "click",
+    this.$inputTypeConfigurator.addEventListener(
+      InputTypeConfigurator.BACK_BUTTON_CLICKED_EVENT,
       this.$onBackToTopicConfiguration
     );
-    this.$finishTemplateConfigurationButton.addEventListener(
-      "click",
+    this.$inputTypeConfigurator.addEventListener(
+      InputTypeConfigurator.NEXT_BUTTON_CLICKED_EVENT,
       this.$onFinishTemplateConfiguration
     );
   }
@@ -103,14 +98,12 @@ export default class TemplateConfigurator extends WebComponent {
       this.templateConfigurationProgressState.value ===
       TemplateConfigurationProgress.SELECT_TOPICS
     ) {
-      this.$topicConfiguration.hidden = false;
-      this.$inputTypeConfiguration.hidden = true;
-      this.$inputTypeConfigurationElementsContainer.innerHTML = "";
-      this.selectedInputTypesState.value = [];
+      this.$topicConfiguratorContainer.hidden = false;
+      this.$inputTypeConfiguratorContainer.hidden = true;
     } else {
-      this.$topicConfiguration.hidden = true;
-      this.$inputTypeConfiguration.hidden = false;
-      this.$appendInputTypeConfigurations();
+      this.$topicConfiguratorContainer.hidden = true;
+      this.$inputTypeConfigurator.refresh();
+      this.$inputTypeConfiguratorContainer.hidden = false;
     }
   };
 
@@ -120,6 +113,7 @@ export default class TemplateConfigurator extends WebComponent {
   };
 
   private $onFinishTemplateConfiguration = () => {
+    this.selectedInputTypesState.value = [];
     const template: Template = this.selectedTitlesState.value.map(
       (title, index) => {
         return {
@@ -135,37 +129,4 @@ export default class TemplateConfigurator extends WebComponent {
     this.templateConfigurationProgressState.value =
       TemplateConfigurationProgress.SELECT_TOPICS;
   };
-
-  private $appendTopicConfigurations(): void {
-    this.templateConfigurationModelState.value.topics.forEach((topic) => {
-      const topicConfiguration = new TopicConfiguration(
-        topic,
-        this.selectedTitlesState
-      );
-      this.$topicConfigurationElementsContainer.appendChild(topicConfiguration);
-    });
-  }
-
-  private $appendInputTypeConfigurations(): void {
-    this.selectedTitlesState.value.forEach((title, index) => {
-      log("appending");
-      const selectedInputTypeState = new State<BlockContentInputType>(
-          BlockContentInputType.FreeText
-        ),
-        inputTypeConfiguration = new InputTypeConfiguration(
-          title,
-          selectedInputTypeState
-        );
-      this.selectedInputTypesState.value.push(selectedInputTypeState.value);
-
-      selectedInputTypeState.addEventListener("change", () => {
-        this.selectedInputTypesState.value[index] =
-          selectedInputTypeState.value;
-      });
-
-      this.$inputTypeConfigurationElementsContainer.appendChild(
-        inputTypeConfiguration
-      );
-    });
-  }
 }

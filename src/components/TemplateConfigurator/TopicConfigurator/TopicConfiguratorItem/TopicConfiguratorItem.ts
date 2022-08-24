@@ -1,9 +1,9 @@
-import WebComponent from "../../../lib/components/WebComponent";
-import { Topic } from "../../../data/models/TemplateConfigurationModel";
-import State from "../../../lib/state/State";
-import html from "./TopicConfiguration.html";
+import WebComponent from "../../../../lib/components/WebComponent";
+import { Topic } from "../../../../data/models/TemplateConfigurationModel";
+import State from "../../../../lib/state/State";
+import html from "./TopicConfiguratorItem.html";
 
-export default class TopicConfiguration extends WebComponent {
+export default class TopicConfiguratorItem extends WebComponent {
   private readonly topic: Topic;
   private readonly selectedTopicsState: State<Array<string>>;
 
@@ -31,17 +31,14 @@ export default class TopicConfiguration extends WebComponent {
     )!;
     this.$topicName = this.select(".topic-name")!;
     this.$topicName.innerHTML = this.topic.name;
-    this.$appendRadioButtons();
+    this.$appendTopicItems();
   }
 
   private initListener(): void {
-    this.selectedTopicsState.addEventListener(
-      "change",
-      this.$updateRadioButtons
-    );
+    this.selectedTopicsState.addEventListener("change", this.$updateCheckboxes);
   }
 
-  $appendRadioButtons(): void {
+  $appendTopicItems(): void {
     this.topic.titles.forEach((title) => {
       const radioButton = document.createElement("input"),
         label = document.createElement("label");
@@ -54,14 +51,14 @@ export default class TopicConfiguration extends WebComponent {
       this.$topicTitleSelectionContainer.appendChild(label);
 
       radioButton.addEventListener("change", () =>
-        this.$onSelectRadioButton(radioButton.value)
+        this.$onClickCheckbox(radioButton.value, radioButton.checked)
       );
     });
 
-    this.$updateRadioButtons();
+    this.$updateCheckboxes();
   }
 
-  private $updateRadioButtons = () => {
+  private $updateCheckboxes = () => {
     const radioButtons: NodeList =
       this.$topicTitleSelectionContainer.querySelectorAll(
         "input[type=checkbox]"
@@ -74,7 +71,13 @@ export default class TopicConfiguration extends WebComponent {
     });
   };
 
-  $onSelectRadioButton = (value: string) => {
-    this.selectedTopicsState.value.push(value);
+  $onClickCheckbox = (value: string, isChecked: boolean) => {
+    if (isChecked) {
+      this.selectedTopicsState.value.push(value);
+    } else {
+      this.selectedTopicsState.value = this.selectedTopicsState.value.filter(
+        (topicTitle) => topicTitle !== value
+      );
+    }
   };
 }
