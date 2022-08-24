@@ -98,16 +98,18 @@ export default class DataManager {
 
   // User Settings Model
   static async getUserSettingsModel(): Promise<UserSettingsModel> {
-    const username = await ApiClient.getUsername(),
-      template = await ApiClient.getUserTemplate();
-    return new UserSettingsModel(username, "token-xyz", { template });
+    const account = await ApiClient.getAccountData(),
+      templateData = await ApiClient.getUserTemplate(),
+      template = this.jsonParseArray(templateData);
+
+    return new UserSettingsModel(account.name, "token-xyz", { template });
   }
 
   static async saveUserSettingsModel(
     userSettingsModel: UserSettingsModel
   ): Promise<void> {
     return await ApiClient.updateUserTemplate(
-      userSettingsModel.settings.template
+      this.stringifyArray(userSettingsModel.settings.template)
     );
   }
 

@@ -65,26 +65,26 @@ export default class ApiClient {
     return userSettings.documents[0];
   }
 
-  static async getUserTemplate() {
+  static async getUserTemplate(): Promise<Array<string>> {
     const userSettings = await this.getUserSettingsDocument();
-    return this.jsonParseArray(userSettings.template);
+    return userSettings.template;
   }
 
   static async createUserTemplate(
     template: Array<TemplateItem>
   ): Promise<Models.Document> {
-    return await this.databaseManager.createNewDocument(
-      Server.COLLECTION_SETTINGS,
-      { userID: this.userId, template: template }
-    );
+    return this.databaseManager.createNewDocument(Server.COLLECTION_SETTINGS, {
+      userID: this.userId,
+      template: template,
+    });
   }
 
-  static async updateUserTemplate(template: Array<TemplateItem>) {
+  static async updateUserTemplate(template: Array<string>) {
     const userSettings = await this.getUserSettingsDocument();
     this.databaseManager.updateDocument(
       Server.COLLECTION_SETTINGS,
       userSettings.$id,
-      { template: this.stringifyArray(template) }
+      { template: template }
     );
   }
 
