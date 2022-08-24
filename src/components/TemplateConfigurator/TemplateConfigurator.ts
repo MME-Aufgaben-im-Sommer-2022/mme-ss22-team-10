@@ -12,6 +12,17 @@ enum TemplateConfigurationProgress {
   SELECT_INPUT_TYPES,
 }
 
+// Component to configure the note template
+
+// Usage:
+// 1. create and append an instance of this component to the DOM
+//    - templateConfigurationModelState: a state containing the template configuration model
+// 2. listen for the finish event, which contains the configured template
+//    - templateConfigurator.addEventListener(
+//        TemplateConfigurator.FINISH_TEMPLATE_CONFIGURATION_EVENT,
+//        (event: AppEvent) => {...}
+//      );
+
 export default class TemplateConfigurator extends WebComponent {
   public static readonly FINISH_TEMPLATE_CONFIGURATION_EVENT =
     "onFinishTemplateConfiguration";
