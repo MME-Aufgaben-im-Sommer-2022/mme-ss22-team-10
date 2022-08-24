@@ -204,10 +204,6 @@ export default class ApiClient {
     });
   }
 
-  private static convertUnixTimestampToDate(timestamp: number): Date {
-    return new Date(timestamp * 1000);
-  }
-
   private static convertDateToString(date: Date): string {
     return [
       date.getFullYear(),
@@ -216,17 +212,5 @@ export default class ApiClient {
         : date.getMonth() + 1,
       date.getDate() < 10 ? "0" + date.getDate() : date.getDate(),
     ].join("-");
-  }
-
-  private static stringifyArray(array: Array<any>): Array<string> {
-    const stringArray: Array<string> = [];
-    array.forEach((entry) => stringArray.push(JSON.stringify(entry)));
-    return stringArray;
-  }
-
-  private static jsonParseArray(array: Array<string>): Array<any> {
-    const objArray: Array<any> = [];
-    array.forEach((entry) => objArray.push(JSON.parse(entry)));
-    return objArray;
   }
 }

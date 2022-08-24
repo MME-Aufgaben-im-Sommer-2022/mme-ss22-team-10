@@ -117,6 +117,23 @@ export default class DataManager {
     );
   }
 
+  // HELPER FUNCTIONS
+  private static convertNumberToDate(timestamp: number): Date {
+    return new Date(timestamp * 1000);
+  }
+
+  private static jsonParseArray(array: Array<string>): Array<any> {
+    const objArray: Array<any> = [];
+    array.forEach((entry) => objArray.push(JSON.parse(entry)));
+    return objArray;
+  }
+
+  private static stringifyArray(array: Array<any>): Array<string> {
+    const stringArray: Array<string> = [];
+    array.forEach((entry) => stringArray.push(JSON.stringify(entry)));
+    return stringArray;
+  }
+
   // MOCK DATA
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
