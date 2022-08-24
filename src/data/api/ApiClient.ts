@@ -109,6 +109,29 @@ export default class ApiClient {
     return noteDocument.documents[0];
   }
 
+  static async getNoteDays() {
+    const maxDay: Date = new Date(),
+      minDay: Date = new Date(),
+      array: Array<any> = [];
+    let noteDocument;
+    minDay.setMonth(minDay.getMonth() - 3);
+
+    for (let i = 0; i < 4; i++) {
+      noteDocument = await this.databaseManager.listDocuments(
+        Server.COLLECTION_NOTES,
+        [
+          Query.equal("userID", this.userId),
+          Query.greater("day", this.convertDateToString(minDay)),
+          Query.lesserEqual("day", this.convertDateToString(maxDay)),
+        ]
+      );
+      maxDay.setMonth(maxDay.getMonth() - 3);
+      minDay.setMonth(minDay.getMonth() - 3);
+      noteDocument.documents.forEach((document) => array.push(document));
+    }
+    return array;
+  }
+
   private static async getBlockContentsDocuments(
     noteID: string
   ): Promise<Array<BlockContent>> {

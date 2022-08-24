@@ -32,9 +32,24 @@ export default class DataManager {
   }
 
   // Calendar Model
-
   static async getCalendarModel(): Promise<CalendarModel> {
-    return this.generateMockCalendarModel();
+    const noteDays: Years = {},
+      noteDaysArray = await ApiClient.getNoteDays();
+    noteDaysArray.forEach((note) => {
+      const date = new Date(note.day),
+        year = date.getFullYear() + "",
+        month = date.getMonth() + 1 + "",
+        day = date.getDate() + "";
+
+      if (!(year in noteDays)) {
+        noteDays[year] = {};
+      }
+      if (!(month in noteDays[year])) {
+        noteDays[year][month] = [];
+      }
+      noteDays[year][month].push(day);
+    });
+    return new CalendarModel(new Date(), noteDays);
   }
 
   static async saveCalendarModel(calendarModel: CalendarModel): Promise<void> {
