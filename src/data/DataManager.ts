@@ -109,6 +109,8 @@ export default class DataManager {
   }
 
   // MOCK DATA
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   private static async generateMockDatabaseData() {
     const months: Array<string> = ["1", "2", "3", "4", "5", "6", "7", "8"];
     months.forEach((month) => {
@@ -126,12 +128,16 @@ export default class DataManager {
   }
 
   // Calendar Model
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   private static generateMockCalendarModel(): CalendarModel {
     const noteDays: Years = {
       "2022": {},
     };
 
+    // eslint-disable-next-line no-magic-numbers
     generateRandomAscendingArray(11, 1).forEach((month) => {
+      // eslint-disable-next-line no-magic-numbers
       noteDays["2022"][month] = generateRandomAscendingArray(30, 1);
       if (noteDays["2022"][month].length === 0) {
         delete noteDays["2022"][month];
@@ -151,6 +157,7 @@ export default class DataManager {
       blockContents.push({
         title: `Title ${i}`,
         inputType: BlockContentInputType.FreeText,
+        // eslint-disable-next-line no-magic-numbers
         inputValue: generateRandomLoremIpsum(50),
       });
     }
@@ -158,6 +165,8 @@ export default class DataManager {
   }
 
   // User Settings Model
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   private static generateMockUserSettingsModel(): UserSettingsModel {
     const template: Template = [
       {
