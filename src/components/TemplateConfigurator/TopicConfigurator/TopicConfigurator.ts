@@ -4,14 +4,17 @@ import TopicConfiguratorItem from "./TopicConfiguratorItem/TopicConfiguratorItem
 import State from "../../../lib/state/State";
 import TemplateConfigurationModel from "../../../data/models/TemplateConfigurationModel";
 export default class TopicConfigurator extends WebComponent {
-  static readonly FINISH_TOPIC_CONFIGURATION_EVENT =
-    "onFinishTopicConfiguration";
+  static readonly NEXT_BUTTON_CLICKED_EVENT = "onFinishTopicConfiguration";
+  // eslint-disable-next-line no-magic-numbers
+  static readonly MAX_TOPICS = 3;
+  // eslint-disable-next-line no-magic-numbers
+  static readonly MIN_TOPICS = 3;
 
   private readonly templateConfigurationModelState: State<TemplateConfigurationModel>;
   private readonly selectedTitlesState: State<Array<string>>;
 
-  private $topicConfigurationElementsContainer!: HTMLDivElement;
-  private $finishTopicConfigurationButton!: HTMLButtonElement;
+  private $topicConfigurationItemsContainer!: HTMLDivElement;
+  private $nextButton!: HTMLButtonElement;
 
   constructor(
     templateConfigurationModelState: State<TemplateConfigurationModel>,
@@ -32,33 +35,48 @@ export default class TopicConfigurator extends WebComponent {
   }
 
   private $initHtml() {
-    this.$topicConfigurationElementsContainer = this.select(
-      "#topic-configuration-elements-container"
+    this.$topicConfigurationItemsContainer = this.select(
+      "#topic-configurator-items-container"
     )!;
-    this.$finishTopicConfigurationButton = this.select(
-      "#finish-topic-configuration-button"
-    )!;
-    this.$appendTopicConfigurations();
+    this.$nextButton = this.select("#topic-configurator-next-button")!;
+    this.$appendTopicConfiguratorItems();
+    this.onSelectedTitlesChanged();
   }
 
   private initListener(): void {
-    this.$finishTopicConfigurationButton.addEventListener(
-      "click",
-      this.$onFinishTopicConfiguration
+    this.$nextButton.addEventListener("click", this.$onNextButtonClicked);
+    this.selectedTitlesState.addEventListener(
+      "change",
+      this.onSelectedTitlesChanged
     );
   }
 
-  private $onFinishTopicConfiguration = (): void => {
-    this.notifyAll(TopicConfigurator.FINISH_TOPIC_CONFIGURATION_EVENT, {});
+  private onSelectedTitlesChanged = () => {
+    if (this.selectedTitlesState.value.length > TopicConfigurator.MAX_TOPICS) {
+      this.$nextButton.disabled = true;
+      this.$nextButton.textContent = `Select at max ${TopicConfigurator.MAX_TOPICS} topics`;
+    } else if (
+      this.selectedTitlesState.value.length < TopicConfigurator.MIN_TOPICS
+    ) {
+      this.$nextButton.disabled = true;
+      this.$nextButton.textContent = `Select at least ${TopicConfigurator.MIN_TOPICS} topics`;
+    } else {
+      this.$nextButton.disabled = false;
+      this.$nextButton.textContent = "Next";
+    }
   };
 
-  private $appendTopicConfigurations(): void {
+  private $onNextButtonClicked = (): void => {
+    this.notifyAll(TopicConfigurator.NEXT_BUTTON_CLICKED_EVENT, {});
+  };
+
+  private $appendTopicConfiguratorItems(): void {
     this.templateConfigurationModelState.value.topics.forEach((topic) => {
       const topicConfiguration = new TopicConfiguratorItem(
         topic,
         this.selectedTitlesState
       );
-      this.$topicConfigurationElementsContainer.appendChild(topicConfiguration);
+      this.$topicConfigurationItemsContainer.appendChild(topicConfiguration);
     });
   }
 }

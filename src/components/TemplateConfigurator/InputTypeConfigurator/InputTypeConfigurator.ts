@@ -35,10 +35,10 @@ export default class InputTypeConfigurator extends WebComponent {
 
   private $initHtml(): void {
     this.$inputTypeConfigurationElementsContainer = this.select(
-      "#input-type-configuration-elements-container"
+      "#input-type-configurator-items-container"
     )!;
-    this.$backButton = this.select("#back-to-topic-configuration-button")!;
-    this.$nextButton = this.select("#finish-template-configuration-button")!;
+    this.$backButton = this.select("#input-type-configurator-back-button")!;
+    this.$nextButton = this.select("#input-type-configurator-next-button")!;
     this.$appendInputTypeConfigurations();
   }
 

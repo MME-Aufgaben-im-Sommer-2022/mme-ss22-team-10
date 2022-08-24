@@ -40,18 +40,18 @@ export default class TopicConfiguratorItem extends WebComponent {
 
   $appendTopicItems(): void {
     this.topic.titles.forEach((title) => {
-      const radioButton = document.createElement("input"),
+      const checkbox = document.createElement("input"),
         label = document.createElement("label");
-      radioButton.type = "checkbox";
-      radioButton.name = "topic-title";
-      radioButton.value = title;
-      this.$topicTitleSelectionContainer.appendChild(radioButton);
+      checkbox.type = "checkbox";
+      checkbox.name = "topic-title";
+      checkbox.value = title;
+      this.$topicTitleSelectionContainer.appendChild(checkbox);
 
       label.innerHTML = title;
       this.$topicTitleSelectionContainer.appendChild(label);
 
-      radioButton.addEventListener("change", () =>
-        this.$onClickCheckbox(radioButton.value, radioButton.checked)
+      checkbox.addEventListener("change", () =>
+        this.$onClickCheckbox(checkbox.value, checkbox.checked)
       );
     });
 

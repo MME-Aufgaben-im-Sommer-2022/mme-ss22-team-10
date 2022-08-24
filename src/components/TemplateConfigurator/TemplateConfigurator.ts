@@ -13,18 +13,19 @@ enum TemplateConfigurationProgress {
 }
 
 export default class TemplateConfigurator extends WebComponent {
+  public static readonly FINISH_TEMPLATE_CONFIGURATION_EVENT =
+    "onFinishTemplateConfiguration";
+
   private readonly templateConfigurationModelState: State<TemplateConfigurationModel>;
   private readonly selectedTitlesState: State<Array<string>> = new State([]);
   private readonly selectedInputTypesState: State<
     Array<BlockContentInputType>
   > = new State([]);
 
-  private readonly templateConfigurationProgressState: State<TemplateConfigurationProgress> =
+  private readonly configurationProgressState: State<TemplateConfigurationProgress> =
     new State<TemplateConfigurationProgress>(
       TemplateConfigurationProgress.SELECT_TOPICS
     );
-
-  private readonly onFinishConfiguration: (template: Template) => void;
 
   private $topicConfiguratorContainer!: HTMLDivElement;
   private $topicConfigurator!: TopicConfigurator;
@@ -33,16 +34,14 @@ export default class TemplateConfigurator extends WebComponent {
   private $inputTypeConfigurator!: InputTypeConfigurator;
 
   constructor(
-    templateConfigurationModelState: State<TemplateConfigurationModel>,
-    onFinishConfiguration: (template: Template) => void
+    templateConfigurationModelState: State<TemplateConfigurationModel>
   ) {
     super(html);
     this.templateConfigurationModelState = templateConfigurationModelState;
-    this.onFinishConfiguration = onFinishConfiguration;
   }
 
   get htmlTagName(): string {
-    return "template-configuration";
+    return "template-configurator";
   }
 
   onCreate(): void {
@@ -52,15 +51,24 @@ export default class TemplateConfigurator extends WebComponent {
   }
 
   $initHtml(): void {
-    this.$topicConfiguratorContainer = this.select("#topic-configuration")!;
+    this.$initTopicConfigurator();
+    this.$initInputTypeConfigurator();
+  }
+
+  $initTopicConfigurator = (): void => {
+    this.$topicConfiguratorContainer = this.select(
+      "#topic-configurator-container"
+    )!;
     this.$topicConfigurator = new TopicConfigurator(
       this.templateConfigurationModelState,
       this.selectedTitlesState
     );
     this.$topicConfiguratorContainer.appendChild(this.$topicConfigurator);
+  };
 
+  $initInputTypeConfigurator = (): void => {
     this.$inputTypeConfiguratorContainer = this.select(
-      "#input-type-configuration"
+      "#input-type-configurator-container"
     )!;
     this.$inputTypeConfigurator = new InputTypeConfigurator(
       this.selectedTitlesState,
@@ -69,11 +77,11 @@ export default class TemplateConfigurator extends WebComponent {
     this.$inputTypeConfiguratorContainer.appendChild(
       this.$inputTypeConfigurator
     );
-  }
+  };
 
   private $initHtmlListener(): void {
     this.$topicConfigurator.addEventListener(
-      TopicConfigurator.FINISH_TOPIC_CONFIGURATION_EVENT,
+      TopicConfigurator.NEXT_BUTTON_CLICKED_EVENT,
       this.$onFinishTopicConfiguration
     );
     this.$inputTypeConfigurator.addEventListener(
@@ -82,20 +90,20 @@ export default class TemplateConfigurator extends WebComponent {
     );
     this.$inputTypeConfigurator.addEventListener(
       InputTypeConfigurator.NEXT_BUTTON_CLICKED_EVENT,
-      this.$onFinishTemplateConfiguration
+      this.$onFinishInputTypeConfiguration
     );
   }
 
   private initStateListener(): void {
-    this.templateConfigurationProgressState.addEventListener(
+    this.configurationProgressState.addEventListener(
       "change",
-      this.$updateTemplateConfigurationProgress
+      this.$onConfigurationProgressChanged
     );
   }
 
-  private $updateTemplateConfigurationProgress = () => {
+  private $onConfigurationProgressChanged = () => {
     if (
-      this.templateConfigurationProgressState.value ===
+      this.configurationProgressState.value ===
       TemplateConfigurationProgress.SELECT_TOPICS
     ) {
       this.$topicConfiguratorContainer.hidden = false;
@@ -108,12 +116,17 @@ export default class TemplateConfigurator extends WebComponent {
   };
 
   private $onFinishTopicConfiguration = () => {
-    this.templateConfigurationProgressState.value =
+    this.configurationProgressState.value =
       TemplateConfigurationProgress.SELECT_INPUT_TYPES;
   };
 
-  private $onFinishTemplateConfiguration = () => {
+  private $onBackToTopicConfiguration = () => {
+    this.configurationProgressState.value =
+      TemplateConfigurationProgress.SELECT_TOPICS;
     this.selectedInputTypesState.value = [];
+  };
+
+  private $onFinishInputTypeConfiguration = () => {
     const template: Template = this.selectedTitlesState.value.map(
       (title, index) => {
         return {
@@ -122,11 +135,9 @@ export default class TemplateConfigurator extends WebComponent {
         };
       }
     );
-    this.onFinishConfiguration(template);
-  };
-
-  private $onBackToTopicConfiguration = () => {
-    this.templateConfigurationProgressState.value =
-      TemplateConfigurationProgress.SELECT_TOPICS;
+    this.notifyAll(
+      TemplateConfigurator.FINISH_TEMPLATE_CONFIGURATION_EVENT,
+      template
+    );
   };
 }

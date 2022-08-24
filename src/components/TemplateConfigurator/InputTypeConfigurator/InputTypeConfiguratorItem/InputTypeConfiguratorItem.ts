@@ -38,20 +38,22 @@ export default class InputTypeConfiguratorItem extends WebComponent {
   }
 
   private initListener(): void {
-    this.selectedInputTypeState.addEventListener(
+    this.$inputTypeSelection.addEventListener(
       "change",
       this.$onSelectionChanged
     );
   }
 
   $onSelectionChanged = (): void => {
-    this.$inputTypeSelection.value = this.selectedInputTypeState.value;
+    this.selectedInputTypeState.value = this.$inputTypeSelection
+      .value as BlockContentInputType;
   };
 
   private $appendOptions(): void {
     Object.keys(BlockContentInputType).forEach((inputType) => {
       const option = document.createElement("option");
-      option.value = inputType;
+      option.value =
+        BlockContentInputType[inputType as keyof typeof BlockContentInputType];
       option.innerHTML = inputType;
       this.$inputTypeSelection.appendChild(option);
     });
