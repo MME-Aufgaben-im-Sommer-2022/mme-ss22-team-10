@@ -112,12 +112,21 @@ export default class DataManager {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   private static async generateMockDatabaseData() {
-    const months: Array<string> = ["1", "2", "3", "4", "5", "6", "7", "8"];
-    months.forEach((month) => {
-      const days: Array<string> = generateRandomAscendingArray(28, 1);
-      days.forEach(async (day) => {
-        const date = new Date("2022-0" + month + "-0" + day),
-          editorModel = this.generateMockEditorModel(date);
+    // eslint-disable-next-line no-magic-numbers
+    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].forEach((month) => {
+      // eslint-disable-next-line no-magic-numbers
+      generateRandomAscendingArray(16, 1).forEach(async (day) => {
+        const date = new Date();
+        // eslint-disable-next-line no-unused-expressions
+        month < date.getMonth()
+          ? // eslint-disable-next-line no-magic-numbers
+            date.setFullYear(2022)
+          : // eslint-disable-next-line no-magic-numbers
+            date.setFullYear(2021);
+        date.setDate(Number(day));
+        date.setMonth(month);
+        // eslint-disable-next-line one-var
+        const editorModel = this.generateMockEditorModel(date);
         try {
           await ApiClient.createEditorNotes(editorModel);
         } catch (e) {
