@@ -1,5 +1,7 @@
 @import url(./cursors.css);
-@import url(./colors.css);
+@import url(variables/colors.css);
+@import url(variables/styles.css);
+@import url(variables/font.css);
 @import url(./doodle-overrides.css);
 
 .list-item {
@@ -8,4 +10,22 @@
 
 *:disabled {
     opacity: 0.5;
+}
+
+.title-s {
+    font-size: var(--font-size-large);
+    padding-bottom: var(--padding-small);
+    display: inline-block;
+}
+
+.title-m {
+    font-size: var(--font-size-xlarge);
+    padding-bottom: var(--padding-medium);
+    display: inline-block;
+}
+
+.title-l {
+    font-size: var(--font-size-max);
+    padding-bottom: var(--padding-large);
+    display: inline-block;
 }

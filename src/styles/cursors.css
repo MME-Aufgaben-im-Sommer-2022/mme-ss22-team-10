@@ -7,3 +7,7 @@ select {
 input[type=text] {
     cursor: text;
 }
+
+*:disabled {
+    cursor: not-allowed;
+}

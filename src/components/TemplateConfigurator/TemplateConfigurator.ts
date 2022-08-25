@@ -3,6 +3,7 @@ import TemplateConfigurationModel from "../../data/models/TemplateConfigurationM
 import State from "../../lib/state/State";
 import { Template } from "../../data/models/UserSettingsModel";
 import html from "./TemplateConfigurator.html";
+import css from "./TemplateConfigurator.css";
 import { BlockContentInputType } from "../../data/models/EditorModel";
 import TopicConfigurator from "./TopicConfigurator/TopicConfigurator";
 import InputTypeConfigurator from "./InputTypeConfigurator/InputTypeConfigurator";
@@ -47,7 +48,7 @@ export default class TemplateConfigurator extends WebComponent {
   constructor(
     templateConfigurationModelState: State<TemplateConfigurationModel>
   ) {
-    super(html);
+    super(html, css);
     this.templateConfigurationModelState = templateConfigurationModelState;
   }
 

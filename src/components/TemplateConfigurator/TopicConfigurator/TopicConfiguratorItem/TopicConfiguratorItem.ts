@@ -2,6 +2,7 @@ import WebComponent from "../../../../lib/components/WebComponent";
 import { Topic } from "../../../../data/models/TemplateConfigurationModel";
 import State from "../../../../lib/state/State";
 import html from "./TopicConfiguratorItem.html";
+import css from "./TopicConfiguratorItem.css";
 
 export default class TopicConfiguratorItem extends WebComponent {
   private readonly topic: Topic;
@@ -11,13 +12,13 @@ export default class TopicConfiguratorItem extends WebComponent {
   private $topicName!: HTMLSpanElement;
 
   constructor(topic: Topic, selectedTopicsState: State<Array<string>>) {
-    super(html);
+    super(html, css);
     this.topic = topic;
     this.selectedTopicsState = selectedTopicsState;
   }
 
   get htmlTagName(): string {
-    return "topic-title-selection";
+    return "topic-configurator-item";
   }
 
   onCreate(): void {
@@ -41,14 +42,17 @@ export default class TopicConfiguratorItem extends WebComponent {
   $appendTopicItems(): void {
     this.topic.titles.forEach((title) => {
       const checkbox = document.createElement("input"),
-        label = document.createElement("label");
+        label = document.createElement("label"),
+        container = document.createElement("div");
       checkbox.type = "checkbox";
       checkbox.name = "topic-title";
       checkbox.value = title;
-      this.$topicTitleSelectionContainer.appendChild(checkbox);
+      container.appendChild(checkbox);
 
       label.innerHTML = title;
-      this.$topicTitleSelectionContainer.appendChild(label);
+      container.appendChild(label);
+
+      this.$topicTitleSelectionContainer.appendChild(container);
 
       checkbox.addEventListener("change", () =>
         this.$onClickCheckbox(checkbox.value, checkbox.checked)

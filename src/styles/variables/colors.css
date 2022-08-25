@@ -6,8 +6,7 @@ When the body element has the class "theme-light", it will use the light theme.
 When the body element has the class "theme-dark", it will use the dark theme.
 */
 
-.theme-light
-{
+.theme-light {
     --background-primary: #FDF7F1;
 
     --text-normal: #3c3c3c;

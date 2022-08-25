@@ -1,0 +1,18 @@
+topic-configurator {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    align-content: center;
+}
+
+#topic-configurator-items-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#topic-configurator-info-title {
+    margin-bottom: var(--margin-large);
+}
