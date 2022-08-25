@@ -5,3 +5,7 @@ p{
 .loginForm{
     align-content: center;
 }
+
+.loginForm a{
+    text-underline: #965454;
+}
