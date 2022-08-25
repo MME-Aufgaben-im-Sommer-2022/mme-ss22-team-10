@@ -31,16 +31,16 @@ export default class DataManager {
   }
 
   static async logInUser(email: string, password: string) {
-    if (localStorage.getItem("sessionId")) {
-      const session = await ApiClient.getSession(localStorage.sessionId);
-      // if session is expired, create new one
+    const localSessionId = localStorage.getItem("sessionId");
+    if (localSessionId) {
+      const session = await ApiClient.getSession(localSessionId);
       if (this.convertNumberToDate(session.expire) > new Date()) {
-        await ApiClient.createNewSession(email, password);
-      } else {
-        ApiClient.connectSession(session);
         return await ApiClient.connectSession(session);
       }
     }
+    return await ApiClient.createNewSession(email, password).then((session) => {
+      ApiClient.connectSession(session);
+    });
   }
 
   // Calendar Model
