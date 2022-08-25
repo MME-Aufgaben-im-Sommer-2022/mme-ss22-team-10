@@ -1,0 +1,9 @@
+button,
+input,
+select {
+    cursor: pointer;
+}
+
+input[type=text] {
+    cursor: text;
+}

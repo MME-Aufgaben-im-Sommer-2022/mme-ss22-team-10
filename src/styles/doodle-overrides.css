@@ -1,0 +1,22 @@
+/*
+Override the default doodle styles here.
+For reference, what the default styles are:
+https://github.com/chr15m/DoodleCSS/blob/main/doodle.css
+*/
+
+.doodle {
+    background-color: var(--background-primary) !important;
+    color: var(--text-normal) !important;
+}
+
+.doodle a {
+    color: var(--text-accent) !important;
+}
+
+.doodle table thead {
+    border-bottom: 3px solid var(--border-color) !important;
+}
+
+.doodle button, .doodle textarea, .doodle input, .doodle select {
+    color: var(--text-normal) !important;
+}

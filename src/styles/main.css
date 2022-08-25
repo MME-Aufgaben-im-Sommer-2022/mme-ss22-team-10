@@ -1,3 +1,11 @@
+@import url(./cursors.css);
+@import url(./colors.css);
+@import url(./doodle-overrides.css);
+
 .list-item {
     display: list-item;
+}
+
+*:disabled {
+    opacity: 0.5;
 }
