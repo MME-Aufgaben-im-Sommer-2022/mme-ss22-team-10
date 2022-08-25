@@ -31,14 +31,13 @@ export default class Calendar extends WebComponent {
 
   onCreate(): void {
     this.$initHtml();
-
+    this.initListeners();
     log(this.calendarModelPromise);
     this.calendarModelPromise.then((data) => {
       this.data = data;
       this.getDataForFirstEntries(this.data);
       this.setUpFirstEntries();
     });
-    this.initListeners();
   }
 
   private $initHtml(): void {
@@ -110,6 +109,7 @@ export default class Calendar extends WebComponent {
       this.showEntries();
     } else {
       if (this.currentMonthNumber === this.data.today.getMonth() + 1) {
+        log("currentMonth");
         this.removeMonthEntries();
         this.changeMonthTitle();
         this.createEntry();
@@ -117,6 +117,7 @@ export default class Calendar extends WebComponent {
         this.currentMonthNumber + 1 <=
         this.data.today.getMonth() + 1
       ) {
+        log("next Month smaller= than current");
         this.checkIfNextButtonClicked();
         this.getEntriesForMonth();
       }
