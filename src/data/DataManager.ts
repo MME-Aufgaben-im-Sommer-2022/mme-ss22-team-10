@@ -28,6 +28,8 @@ export default class DataManager {
   static async getExampleModel(): Promise<ExampleModel> {
     // would query database here or other networking stuff
     return new ExampleModel("John", 0);
+  }
+
   static async logInUser(email: string, password: string) {
     if (localStorage.getItem("sessionId")) {
       const session = await ApiClient.getSession(localStorage.sessionId);
@@ -36,6 +38,7 @@ export default class DataManager {
         await ApiClient.createNewSession(email, password);
       } else {
         ApiClient.connectSession(session);
+        return await ApiClient.connectSession(session);
       }
     }
   }
