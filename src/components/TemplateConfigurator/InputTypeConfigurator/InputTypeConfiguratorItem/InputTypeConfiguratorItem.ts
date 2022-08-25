@@ -1,5 +1,6 @@
 import WebComponent from "../../../../lib/components/WebComponent";
 import html from "./InputTypeConfiguratorItem.html";
+import css from "./InputTypeConfiguratorItem.css";
 import State from "../../../../lib/state/State";
 import { BlockContentInputType } from "../../../../data/models/EditorModel";
 
@@ -14,13 +15,13 @@ export default class InputTypeConfiguratorItem extends WebComponent {
     topicTitle: string,
     selectedInputTypeState: State<BlockContentInputType>
   ) {
-    super(html);
+    super(html, css);
     this.topicTitle = topicTitle;
     this.selectedInputTypeState = selectedInputTypeState;
   }
 
   get htmlTagName(): string {
-    return "input-type-configuration";
+    return "input-type-configurator-item";
   }
 
   onCreate(): void {

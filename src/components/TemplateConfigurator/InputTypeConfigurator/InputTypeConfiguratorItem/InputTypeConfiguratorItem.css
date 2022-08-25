@@ -1,0 +1,10 @@
+input-type-configurator-item {
+    margin-bottom: var(--margin-small);
+    align-items: center;
+}
+
+.input-type-configuration-selection {
+    display: flex;
+    flex-direction: column;
+}
+

@@ -1,19 +1,14 @@
-topic-configurator {
+input-type-configurator {
     display: flex;
     flex-direction: column;
-    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
-    align-content: center;
     width: 100%;
 }
 
-#topic-configurator-items-container {
+#input-type-configurator-items-container {
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
     align-items: center;
-}
-
-#topic-configurator-info-title {
-    margin-bottom: var(--margin-large);
 }

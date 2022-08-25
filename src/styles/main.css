@@ -12,20 +12,7 @@
     opacity: 0.5;
 }
 
-.title-s {
-    font-size: var(--font-size-large);
-    padding-bottom: var(--padding-small);
-    display: inline-block;
-}
-
-.title-m {
-    font-size: var(--font-size-xlarge);
-    padding-bottom: var(--padding-medium);
-    display: inline-block;
-}
-
-.title-l {
-    font-size: var(--font-size-max);
-    padding-bottom: var(--padding-large);
-    display: inline-block;
+.container {
+    width: 100%;
+    height: 100%;
 }
