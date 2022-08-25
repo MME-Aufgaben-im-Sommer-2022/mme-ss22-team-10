@@ -17,6 +17,8 @@ export default class Calendar extends WebComponent {
   currentYearNumber!: number;
   onNextButtonClicked!: boolean;
   $monthTitle!: HTMLHeadElement;
+  $previousButton!: HTMLButtonElement;
+  $nextButton!: HTMLButtonElement;
 
   constructor(calendarModelPromise: Promise<CalendarModel>) {
     super(html, css);
@@ -41,12 +43,14 @@ export default class Calendar extends WebComponent {
   }
 
   private $initHtml(): void {
-    this.$monthTitle = this.select(".selector h3")!;
+    this.$monthTitle = this.select(".calendar-navigation h3")!;
+    this.$previousButton = this.select(".previous")!;
+    this.$nextButton = this.select(".next")!;
   }
 
   private initListeners(): void {
-    this.select(".previous")!.addEventListener("click", this.onPreviousClicked);
-    this.select(".next")!.addEventListener("click", this.onNextClicked);
+    this.$previousButton.addEventListener("click", this.onPreviousClicked);
+    this.$nextButton.addEventListener("click", this.onNextClicked);
   }
 
   private setUpFirstEntries() {
