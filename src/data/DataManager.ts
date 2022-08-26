@@ -139,6 +139,16 @@ export default class DataManager {
     return stringArray;
   }
 
+  private static convertDateToString(date: Date): string {
+    return [
+      date.getFullYear(),
+      date.getMonth() + 1 < 10
+        ? "0" + (date.getMonth() + 1)
+        : date.getMonth() + 1,
+      date.getDate() < 10 ? "0" + date.getDate() : date.getDate(),
+    ].join("-");
+  }
+
   // MOCK DATA
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
