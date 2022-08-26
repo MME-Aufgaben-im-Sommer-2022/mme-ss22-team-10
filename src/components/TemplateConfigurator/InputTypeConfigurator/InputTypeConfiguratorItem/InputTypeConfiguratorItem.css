@@ -1,10 +1,5 @@
 input-type-configurator-item {
-    margin-bottom: var(--spacing-small);
     align-items: center;
+    flex-grow: 0 !important;
+    margin-bottom: var(--spacing-medium);
 }
-
-.input-type-configuration-selection {
-    display: flex;
-    flex-direction: column;
-}
-

@@ -2,7 +2,6 @@ import WebComponent from "../../../../lib/components/WebComponent";
 import { Topic } from "../../../../data/models/TemplateConfigurationModel";
 import State from "../../../../lib/state/State";
 import html from "./TopicConfiguratorItem.html";
-import css from "./TopicConfiguratorItem.css";
 
 export default class TopicConfiguratorItem extends WebComponent {
   private readonly topic: Topic;
@@ -12,7 +11,7 @@ export default class TopicConfiguratorItem extends WebComponent {
   private $topicName!: HTMLSpanElement;
 
   constructor(topic: Topic, selectedTopicsState: State<Array<string>>) {
-    super(html, css);
+    super(html);
     this.topic = topic;
     this.selectedTopicsState = selectedTopicsState;
   }

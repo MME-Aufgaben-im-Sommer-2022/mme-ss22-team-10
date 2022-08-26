@@ -1,8 +1,0 @@
-topic-configurator-item {
-    margin-bottom: var(--spacing-medium);
-}
-
-.topic-title-selection-container {
-    display: flex;
-    flex-direction: column;
-}

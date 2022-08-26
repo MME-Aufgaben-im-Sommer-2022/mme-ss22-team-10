@@ -1,6 +1,5 @@
 import WebComponent from "../../../lib/components/WebComponent";
 import html from "./InputTypeConfigurator.html";
-import css from "./InputTypeConfigurator.css";
 import State from "../../../lib/state/State";
 import { BlockContentInputType } from "../../../data/models/EditorModel";
 import InputTypeConfiguratorItem from "./InputTypeConfiguratorItem/InputTypeConfiguratorItem";
@@ -20,7 +19,7 @@ export default class InputTypeConfigurator extends WebComponent {
     selectedTitlesState: State<Array<string>>,
     selectedInputTypesState: State<Array<BlockContentInputType>>
   ) {
-    super(html, css);
+    super(html);
     this.selectedTitlesState = selectedTitlesState;
     this.selectedInputTypesState = selectedInputTypesState;
   }

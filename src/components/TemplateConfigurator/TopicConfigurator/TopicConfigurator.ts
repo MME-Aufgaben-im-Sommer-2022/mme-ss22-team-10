@@ -3,7 +3,6 @@ import html from "./TopicConfigurator.html";
 import TopicConfiguratorItem from "./TopicConfiguratorItem/TopicConfiguratorItem";
 import State from "../../../lib/state/State";
 import TemplateConfigurationModel from "../../../data/models/TemplateConfigurationModel";
-import css from "./TopicConfigurator.css";
 export default class TopicConfigurator extends WebComponent {
   static readonly NEXT_BUTTON_CLICKED_EVENT = "onFinishTopicConfiguration";
   // eslint-disable-next-line no-magic-numbers
@@ -21,7 +20,7 @@ export default class TopicConfigurator extends WebComponent {
     templateConfigurationModelState: State<TemplateConfigurationModel>,
     selectedTitlesState: State<Array<string>>
   ) {
-    super(html, css);
+    super(html);
     this.templateConfigurationModelState = templateConfigurationModelState;
     this.selectedTitlesState = selectedTitlesState;
   }
