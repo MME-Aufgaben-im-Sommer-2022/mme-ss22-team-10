@@ -17,7 +17,7 @@ export default class CalendarDay extends WebComponent {
     return "calendar-day";
   }
 
-  onCreate(): void {
+  onCreate(): Promise<void> | void {
     this.select("h3")!.innerText = this.entryDate;
     this.addEventListener("click", () => {
       EventBus.notifyAll("calenderEntryClicked", this.entryDate);

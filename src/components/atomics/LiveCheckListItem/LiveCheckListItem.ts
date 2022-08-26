@@ -32,7 +32,7 @@ export default class LiveCheckListItem extends WebComponent {
     return "check-list-item";
   }
 
-  onCreate(): void {
+  onCreate(): Promise<void> | void {
     this.$initHtml();
     this.initListeners();
   }

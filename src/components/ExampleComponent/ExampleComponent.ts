@@ -31,7 +31,7 @@ export default class ExampleComponent extends WebComponent {
 
   // override onCreate, to add listeners, set data, etc.
   // -> this method is called, when the component is connected to the DOM
-  onCreate(): void {
+  onCreate(): Promise<void> | void {
     // select the element using querySelector and set the value of the element
     this.querySelector(
       "h1"

@@ -24,7 +24,7 @@ export default abstract class WebComponent extends HTMLElement {
 
   // Called, when the component is connected to the DOM
   // Override this method in your component to add listeners, set data, etc.
-  abstract onCreate(): void;
+  abstract onCreate(): Promise<void> | void;
 
   onDestroy() {
     // override this method in your component to clean up listeners, etc.
@@ -53,7 +53,10 @@ export default abstract class WebComponent extends HTMLElement {
   async connectedCallback() {
     this.loadStylesheet();
     this.loadHtml();
-    this.onCreate();
+    const create: Promise<void> | void = this.onCreate();
+    if (create instanceof Promise) {
+      await create;
+    }
   }
 
   async disconnectedCallback() {

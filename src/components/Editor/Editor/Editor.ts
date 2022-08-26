@@ -28,7 +28,7 @@ export default class Editor extends WebComponent {
     return "note-editor";
   }
 
-  onCreate(): void {
+  onCreate(): Promise<void> | void {
     this.$initHtml();
     this.initListeners();
   }

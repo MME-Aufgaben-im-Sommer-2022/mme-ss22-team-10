@@ -20,7 +20,7 @@ export default class HomeBar extends WebComponent {
     return "home-bar";
   }
 
-  onCreate(): void {
+  onCreate(): Promise<void> | void {
     DataManager.getUserSettingsModel().then((userSettingsModel) => {
       this.userSettingsModelState = new State(userSettingsModel);
       this.$initHtml();

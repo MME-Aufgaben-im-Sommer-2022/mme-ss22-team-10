@@ -1,6 +1,10 @@
 main-calendar {
     width: 35%;
-    height: 30vh;
+    flex-grow: 1;
+}
+
+.calendar {
+    flex-grow: 1;
 }
 
 h3{

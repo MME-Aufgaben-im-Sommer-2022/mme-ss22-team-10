@@ -29,7 +29,7 @@ export default class TopicConfigurator extends WebComponent {
     return "topic-configurator";
   }
 
-  onCreate(): void {
+  onCreate(): Promise<void> | void {
     this.$initHtml();
     this.initListener();
   }

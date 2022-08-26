@@ -35,7 +35,7 @@ export default class LiveTextInput extends WebComponent {
     return "live-text-input";
   }
 
-  onCreate(): void {
+  onCreate(): Promise<void> | void {
     this.$initHtml();
     this.initListeners();
 

@@ -18,7 +18,7 @@ export default class LiveBulletPointItem extends WebComponent {
     return "live-bullet-point-item";
   }
 
-  onCreate(): void {
+  onCreate(): Promise<void> | void {
     this.$initHtml();
   }
 

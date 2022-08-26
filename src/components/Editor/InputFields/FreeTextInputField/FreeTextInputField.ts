@@ -26,7 +26,7 @@ export default class FreeTextInputField extends WebComponent {
     return "free-text-input-field";
   }
 
-  onCreate(): void {
+  onCreate(): Promise<void> | void {
     this.$initHtml();
   }
 

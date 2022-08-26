@@ -20,7 +20,7 @@ export default class TopicConfiguratorItem extends WebComponent {
     return "topic-configurator-item";
   }
 
-  onCreate(): void {
+  onCreate(): Promise<void> | void {
     this.$initHtml();
     this.initListener();
   }

@@ -35,7 +35,7 @@ export default class EditorBlock extends WebComponent {
     return "editor-block";
   }
 
-  onCreate(): void {
+  onCreate(): Promise<void> | void {
     this.$initHtml();
     this.intiListeners();
   }

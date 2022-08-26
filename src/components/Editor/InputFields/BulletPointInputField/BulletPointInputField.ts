@@ -35,7 +35,7 @@ export default class BulletPointInputField extends WebComponent {
     return "bullet-point-input-field";
   }
 
-  onCreate(): void {
+  onCreate(): Promise<void> | void {
     this.$initHtml();
     this.initListeners();
   }

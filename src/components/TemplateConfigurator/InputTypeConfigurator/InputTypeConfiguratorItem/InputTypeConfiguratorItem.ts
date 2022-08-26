@@ -24,7 +24,7 @@ export default class InputTypeConfiguratorItem extends WebComponent {
     return "input-type-configurator-item";
   }
 
-  onCreate(): void {
+  onCreate(): Promise<void> | void {
     this.$initHtml();
     this.initListener();
   }

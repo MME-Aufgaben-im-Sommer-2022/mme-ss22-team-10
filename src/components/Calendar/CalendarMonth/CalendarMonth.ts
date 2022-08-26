@@ -25,7 +25,7 @@ export default class CalendarMonth extends WebComponent {
     return "calendar-month";
   }
 
-  onCreate(): void {
+  onCreate(): Promise<void> | void {
     log(this.entriesForCurrentMonth);
     this.formatMonth();
     this.appendCalenderEntry();

@@ -56,7 +56,7 @@ export default class TemplateConfigurator extends WebComponent {
     return "template-configurator";
   }
 
-  onCreate(): void {
+  onCreate(): Promise<void> | void {
     this.$initHtml();
     this.$initHtmlListener();
     this.initStateListener();

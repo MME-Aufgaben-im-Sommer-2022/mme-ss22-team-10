@@ -7,21 +7,20 @@ import { log } from "../../../lib/utils/Logger";
 //import { log } from "../../../lib/utils/Logger";
 
 export default class Calendar extends WebComponent {
-  calendarModelPromise: Promise<CalendarModel>;
   calendarMonth!: CalendarMonth;
   currentMonthNumber!: number;
   currentMonthText!: string;
   currentYear!: string;
-  data!: CalendarModel;
+  calendarModel!: CalendarModel;
   entriesForCurrentMonth: any;
   onNextButtonClicked = false;
   onPreviousButtonClicked = false;
 
   $monthTitle!: HTMLHeadElement;
 
-  constructor(calendarModelPromise: Promise<CalendarModel>) {
+  constructor(calendarModel: CalendarModel) {
     super(html, css);
-    this.calendarModelPromise = calendarModelPromise;
+    this.calendarModel = calendarModel;
   }
 
   // override htmlTagName to return the tag name our component
@@ -30,16 +29,12 @@ export default class Calendar extends WebComponent {
     return "main-calendar";
   }
 
-  onCreate(): void {
+  onCreate(): Promise<void> | void {
     this.$initHtml();
 
-    log(this.calendarModelPromise);
-    this.calendarModelPromise.then((data) => {
-      this.data = data;
-      this.getDataForFirstEntries(this.data);
-      this.setUpFirstEntries();
-      //this.getEntriesForMonth();
-    });
+    this.getDataForFirstEntries(this.calendarModel);
+    this.setUpFirstEntries();
+    //this.getEntriesForMonth();
     this.initListeners();
   }
 
@@ -53,7 +48,7 @@ export default class Calendar extends WebComponent {
   }
 
   private setUpFirstEntries() {
-    this.entriesForCurrentMonth = this.getEntryData(this.data);
+    this.entriesForCurrentMonth = this.getEntryData(this.calendarModel);
     if (this.entriesForCurrentMonth !== undefined) {
       this.showEntries();
     } else {
@@ -63,7 +58,7 @@ export default class Calendar extends WebComponent {
 
   private createEntry(): void {
     const currentDate: Array<string> = [];
-    currentDate.push(this.data.today.getDate() + "");
+    currentDate.push(this.calendarModel.today.getDate() + "");
     this.calendarMonth = new CalendarMonth(
       currentDate,
       this.currentMonthNumber,
@@ -88,7 +83,7 @@ export default class Calendar extends WebComponent {
   }
 
   private getEntriesForMonth(): void {
-    this.entriesForCurrentMonth = this.getEntryData(this.data);
+    this.entriesForCurrentMonth = this.getEntryData(this.calendarModel);
     this.checkEntries();
   }
 

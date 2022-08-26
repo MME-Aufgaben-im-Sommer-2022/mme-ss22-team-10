@@ -38,7 +38,7 @@ export default class CheckListInputField extends WebComponent {
     return "check-list-input-field";
   }
 
-  onCreate(): void {
+  onCreate(): Promise<void> | void {
     this.$initHtml();
     this.initListeners();
   }
