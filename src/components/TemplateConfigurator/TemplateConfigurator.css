@@ -1,0 +1,44 @@
+template-configurator {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+template-configurator > .container {
+    width: 100%;
+}
+
+.button-navbar {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    padding: 0 var(--spacing-medium) var(--spacing-medium);
+    margin-top: var(--spacing-xlarge);
+    margin-bottom: 0;
+}
+
+.button-navbar > .next-button {
+    margin-left: auto;
+    align-self: flex-end;
+}
+
+
+topic-configurator-item, input-type-configurator-item {
+    margin-bottom: var(--spacing-large);
+    flex-grow: 0 !important;
+}
+
+.configuration-title {
+    margin-bottom: var(--spacing-large);
+}
+
+topic-configurator, input-type-configurator {
+    flex-wrap: wrap;
+    align-items: center;
+    align-content: center;
+    width: 100%;
+}
+
+topic-configurator > .container, input-type-configurator > .container {
+    align-items: center;
+}

@@ -1,0 +1,5 @@
+input-type-configurator-item {
+    align-items: center;
+    flex-grow: 0 !important;
+    margin-bottom: var(--spacing-medium);
+}

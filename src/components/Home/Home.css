@@ -1,0 +1,10 @@
+home-component {
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+#home-container-content {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+}

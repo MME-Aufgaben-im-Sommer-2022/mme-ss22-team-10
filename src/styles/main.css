@@ -1,0 +1,18 @@
+/*
+* Load all stylesheets from the lib and variables folder here
+*/
+
+@import url(lib/cursors.css);
+@import url(variables/colors.css);
+@import url(variables/spacings.css);
+@import url(variables/font.css);
+@import url(lib/doodle-css/doodle.css);
+@import url(lib/misc.css);
+@import url(lib/web-component.css);
+
+html, body, #app {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}

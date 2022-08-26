@@ -2,6 +2,7 @@ import WebComponentLoader from "./lib/components/WebComponentLoader";
 import GlobalState from "./lib/state/GlobalState";
 import DataManager from "./data/DataManager";
 import Playground from "./components/Playground/Playground";
+import "./styles/main.css";
 
 const app = () => {
   WebComponentLoader.loadAll() // Initialize the WebComponent definitions

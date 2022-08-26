@@ -1,0 +1,19 @@
+note-editor {
+    width: 65%;
+    flex-grow: 1;
+}
+
+
+.editor {
+    width: 100%;
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+
+    padding-top: var(--spacing-medium);
+    padding-left: var(--margin-editor-side);
+    padding-right: var(--margin-editor-side);
+
+    overflow: auto;
+}
+

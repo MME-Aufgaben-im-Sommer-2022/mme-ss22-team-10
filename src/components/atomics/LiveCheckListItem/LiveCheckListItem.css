@@ -1,0 +1,14 @@
+.check-list-item-container {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+}
+
+.checked {
+    /*cross through*/
+    text-decoration: line-through;
+}
+
+.checkbox {
+    cursor: pointer;
+}

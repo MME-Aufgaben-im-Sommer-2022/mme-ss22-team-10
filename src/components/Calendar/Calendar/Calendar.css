@@ -1,6 +1,6 @@
-.calendar{
-    width: 30vw;
-    hight: 100vh;
+main-calendar {
+    width: 35%;
+    height: 30vh;
 }
 
 h3{

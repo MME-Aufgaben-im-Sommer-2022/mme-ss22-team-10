@@ -1,0 +1,16 @@
+.text-input.single-line {
+    resize: none;
+}
+
+.text-input.multi-line {
+    width: 100%;
+    resize: vertical;
+}
+
+.text-preview {
+    width: 100%;
+}
+
+.live-text-input-container {
+    cursor: pointer;
+}

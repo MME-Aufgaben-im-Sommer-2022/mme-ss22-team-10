@@ -39,6 +39,21 @@ export abstract class Observable {
     }
   }
 
+  notifyAllExcept(
+    type: string,
+    data: any,
+    callback: (event: AppEvent) => void
+  ) {
+    const event = new AppEvent(type, data);
+    if (this.listener[event.type] !== undefined) {
+      for (let i = 0; i < this.listener[event.type].length; i++) {
+        if (this.listener[event.type][i] !== callback) {
+          this.listener[event.type][i](event);
+        }
+      }
+    }
+  }
+
   clear() {
     this.listener = {};
   }
