@@ -20,14 +20,14 @@ export default class ApiClient {
     this.databaseManager = new DatabaseManager(this.client, Server.DATABASE_ID);
   }
 
-  static connectSession(session: Models.Session) {
+  static connectSession(session: Models.Session): void {
     this.sessionId = session.$id;
     this.userId = session.userId;
     localStorage.setItem("sessionId", this.sessionId);
     localStorage.setItem("userId", this.userId);
   }
 
-  static async disconnectCurrentSession() {
+  static async disconnectCurrentSession(): Promise<void> {
     await this.removeSession(this.sessionId);
     this.userId = "";
     this.sessionId = "";
@@ -79,7 +79,7 @@ export default class ApiClient {
     });
   }
 
-  static async updateUserTemplate(template: Array<string>) {
+  static async updateUserTemplate(template: Array<string>): Promise<void> {
     const userSettings = await this.getUserSettingsDocument();
     this.databaseManager.updateDocument(
       Server.COLLECTION_SETTINGS,
@@ -96,8 +96,8 @@ export default class ApiClient {
     return noteDocument.documents[0];
   }
 
-  static async getNoteDays() {
-    const array: Array<any> = [],
+  static async getNoteDays(): Promise<Array<Models.Document>> {
+    const array: Array<Models.Document> = [],
       noteDocument = await this.databaseManager.listDocuments(
         Server.COLLECTION_NOTES,
         [Query.equal("userID", this.userId)]
