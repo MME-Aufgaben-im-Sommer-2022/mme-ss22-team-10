@@ -3,7 +3,7 @@ import { Client, Models, Query } from "appwrite";
 import AccountManager from "./AccountManager";
 import DatabaseManager from "./DatabaseManager";
 import { TemplateItem } from "../models/UserSettingsModel";
-import EditorModel, { BlockContent } from "../models/EditorModel";
+import { BlockContent } from "../models/EditorModel";
 
 export default class ApiClient {
   private static client: Client;
@@ -88,13 +88,10 @@ export default class ApiClient {
     );
   }
 
-  private static async getNoteDocument(day: Date): Promise<Models.Document> {
+  static async getNoteDocument(day: string): Promise<Models.Document> {
     const noteDocument = await this.databaseManager.listDocuments(
       Server.COLLECTION_NOTES,
-      [
-        Query.equal("userID", this.userId),
-        Query.equal("day", this.convertDateToString(day)),
-      ]
+      [Query.equal("userID", this.userId), Query.equal("day", day)]
     );
     return noteDocument.documents[0];
   }
@@ -123,25 +120,16 @@ export default class ApiClient {
     return array;
   }
 
-  private static async getBlockContentsDocuments(
-    noteID: string
-  ): Promise<Array<BlockContent>> {
-    const blockContents: Array<BlockContent> = [],
-      promise = await this.databaseManager.listDocuments(
-        Server.COLLECTION_BLOCK_CONTENTS,
-        [Query.equal("noteID", noteID)]
-      );
-    promise.documents.forEach((entry) => {
-      blockContents.push(<BlockContent>{
-        title: entry.title,
-        inputType: entry.inputType,
-        inputValue: "",
-      });
-    });
-    return blockContents;
+  static async getBlockContentsDocuments(
+    noteId: string
+  ): Promise<Models.DocumentList<Models.Document>> {
+    return await this.databaseManager.listDocuments(
+      Server.COLLECTION_BLOCK_CONTENTS,
+      [Query.equal("noteID", noteId)]
+    );
   }
 
-  private static async getBlockContentDocument(
+  static async getSingleBlockContentDocument(
     noteID: string,
     title: string
   ): Promise<Models.Document> {
@@ -152,51 +140,45 @@ export default class ApiClient {
     return blockContents.documents[0];
   }
 
-  static async getEditorNotes(date: Date) {
-    const noteDocument = await this.getNoteDocument(date),
-      blockContents = await this.getBlockContentsDocuments(noteDocument.$id);
-    return { day: date, blockContents: blockContents };
+  static async createNewNote(day: string): Promise<Models.Document> {
+    return this.databaseManager.createNewDocument(Server.COLLECTION_NOTES, {
+      userID: this.userId,
+      day: day,
+    });
   }
 
-  static async createEditorNotes(editorModel: EditorModel) {
-    const noteDocument = await this.databaseManager.createNewDocument(
-      Server.COLLECTION_NOTES,
+  static async createNewBlockContent(
+    noteId: string,
+    blockContent: BlockContent
+  ): Promise<Models.Document> {
+    return this.databaseManager.createNewDocument(
+      Server.COLLECTION_BLOCK_CONTENTS,
       {
-        userID: this.userId,
-        day: this.convertDateToString(editorModel.day),
-      }
-    );
-    editorModel.blockContents.forEach(async (blockContent) => {
-      this.databaseManager.createNewDocument(Server.COLLECTION_BLOCK_CONTENTS, {
-        noteID: noteDocument.$id,
+        noteID: noteId,
         title: blockContent.title,
         inputType: blockContent.inputType,
         inputValue: blockContent.inputValue,
-      });
-    });
-  }
-
-  static async updateEditorNotes(editorModel: EditorModel) {
-    const noteDocument = await this.getNoteDocument(editorModel.day);
-    editorModel.blockContents.forEach(async (blockContent) => {
-      const blockContentDocument = await this.getBlockContentDocument(
-        noteDocument.$id,
-        blockContent.title
-      );
-      this.databaseManager.updateDocument(
-        Server.COLLECTION_BLOCK_CONTENTS,
-        blockContentDocument.$id,
-        blockContent
-      );
-    });
-  }
-
-  static async deleteEditorNotes(noteId: string) {
-    const blockContents = await this.databaseManager.listDocuments(
-      Server.COLLECTION_BLOCK_CONTENTS,
-      [Query.equal("noteID", noteId)]
+      }
     );
+  }
+
+  static async updateBlockContent(
+    blockContentId: string,
+    blockContent: BlockContent
+  ): Promise<Models.Document> {
+    return this.databaseManager.updateDocument(
+      Server.COLLECTION_BLOCK_CONTENTS,
+      blockContentId,
+      blockContent
+    );
+  }
+
+  static async deleteNoteDocument(noteId: string): Promise<void> {
     this.databaseManager.deleteDocument(Server.COLLECTION_NOTES, noteId);
+  }
+
+  static async deleteBlockContents(noteId: string): Promise<void> {
+    const blockContents = await this.getBlockContentsDocuments(noteId);
     blockContents.documents.forEach((blockContent) => {
       this.databaseManager.deleteDocument(
         Server.COLLECTION_BLOCK_CONTENTS,

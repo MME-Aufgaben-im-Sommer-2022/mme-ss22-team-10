@@ -64,39 +64,63 @@ export default class DataManager {
     return new CalendarModel(new Date(), noteDays);
   }
 
-  static async saveCalendarModel(calendarModel: CalendarModel): Promise<void> {
-    info("Saving calendar model:", calendarModel);
-    return Promise.resolve();
-  }
-
   // Editor Model
-  static async getEditorModel(date: Date): Promise<EditorModel> {
-    let editorNotes;
+  static async getEditorModel(day: Date): Promise<EditorModel> {
     try {
-      editorNotes = await ApiClient.getEditorNotes(date);
+      const noteDocument = await ApiClient.getNoteDocument(
+          this.convertDateToString(day)
+        ),
+        blockContentsDocuments = await ApiClient.getBlockContentsDocuments(
+          noteDocument.$id
+        ),
+        blockContents = this.convertArrayToBlockContent(
+          blockContentsDocuments.documents
+        );
+      return new EditorModel(day, blockContents);
     } catch (e) {
       const editorModel = await this.createEditorModelFromTemplate();
-      await ApiClient.createEditorNotes(editorModel);
+      await this.createEditorModel(editorModel);
       return editorModel;
     }
-    return new EditorModel(editorNotes.day, editorNotes.blockContents);
   }
 
-  static async saveEditorModel(editorModel: EditorModel): Promise<void> {
-    return await ApiClient.updateEditorNotes(editorModel);
+  static async createEditorModel(editorModel: EditorModel) {
+    const noteDocument = await ApiClient.createNewNote(
+      this.convertDateToString(editorModel.day)
+    );
+    editorModel.blockContents.forEach(async (blockContent) => {
+      ApiClient.createNewBlockContent(noteDocument.$id, blockContent);
+    });
+  }
+
+  static async updateEditorModel(editorModel: EditorModel): Promise<void> {
+    const noteDocument = await ApiClient.getNoteDocument(
+      this.convertDateToString(editorModel.day)
+    );
+    editorModel.blockContents.forEach(async (blockContent) => {
+      const blockContentDocument =
+        await ApiClient.getSingleBlockContentDocument(
+          noteDocument.$id,
+          blockContent.title
+        );
+      ApiClient.updateBlockContent(blockContentDocument.$id, blockContent);
+    });
   }
 
   private static async createEditorModelFromTemplate(): Promise<EditorModel> {
-    const blockContents: Array<BlockContent> = [],
-      promise = await DataManager.getUserSettingsModel();
-    promise.settings.template.forEach((entry) => {
-      blockContents.push(<BlockContent>{
-        title: entry.title,
-        inputType: entry.inputType,
-        inputValue: "",
-      });
-    });
+    const promise = await DataManager.getUserSettingsModel(),
+      blockContents = this.convertArrayToBlockContent(
+        promise.settings.template
+      );
     return new EditorModel(new Date(), blockContents);
+  }
+
+  static async deleteEditorModel(editorModel: EditorModel): Promise<void> {
+    const noteDocument = await ApiClient.getNoteDocument(
+      this.convertDateToString(editorModel.day)
+    );
+    await ApiClient.deleteNoteDocument(noteDocument.$id);
+    return await ApiClient.deleteBlockContents(noteDocument.$id);
   }
 
   // User Settings Model
@@ -123,6 +147,18 @@ export default class DataManager {
   }
 
   // HELPER FUNCTIONS
+  private static convertArrayToBlockContent(array: Array<any>) {
+    const blockContents: Array<BlockContent> = [];
+    array.forEach((entry) => {
+      blockContents.push(<BlockContent>{
+        title: entry.title,
+        inputType: entry.inputType,
+        inputValue: "",
+      });
+    });
+    return blockContents;
+  }
+
   private static convertNumberToDate(timestamp: number): Date {
     return new Date(timestamp * 1000);
   }
@@ -155,7 +191,8 @@ export default class DataManager {
   private static async deleteUserNotes() {
     const userNotes: Array<any> = await ApiClient.getNoteDays();
     userNotes.forEach(async (note) => {
-      await ApiClient.deleteEditorNotes(note.$id);
+      await ApiClient.deleteNoteDocument(note.$id);
+      await ApiClient.deleteBlockContents(note.$id);
     });
   }
 
@@ -178,9 +215,9 @@ export default class DataManager {
         // eslint-disable-next-line one-var
         const editorModel = this.generateMockEditorModel(date);
         try {
-          await ApiClient.createEditorNotes(editorModel);
+          await this.createEditorModel(editorModel);
         } catch (e) {
-          ApiClient.updateEditorNotes(editorModel);
+          this.updateEditorModel(editorModel);
         }
       });
     });
