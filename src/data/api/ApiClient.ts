@@ -57,7 +57,7 @@ export default class ApiClient {
     return this.accountManager.getAccountData();
   }
 
-  private static async getUserSettingsDocument(): Promise<Models.Document> {
+  static async getUserSettingsDocument(): Promise<Models.Document> {
     const userSettings = await this.databaseManager.listDocuments(
       Server.COLLECTION_SETTINGS,
       [Query.equal("userID", this.userId)]
@@ -65,10 +65,6 @@ export default class ApiClient {
     return userSettings.documents[0];
   }
 
-  static async getUserTemplate(): Promise<Array<string>> {
-    const userSettings = await this.getUserSettingsDocument();
-    return userSettings.template;
-  }
 
   static async createUserTemplate(
     template: Array<TemplateItem>

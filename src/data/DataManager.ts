@@ -133,9 +133,9 @@ export default class DataManager {
   // User Settings Model
   static async getUserSettingsModel(): Promise<UserSettingsModel> {
     const account = await ApiClient.getAccountData(),
-      templateData = await ApiClient.getUserTemplate(),
+      userSettings = await ApiClient.getUserSettingsDocument(),
+      templateData = userSettings.template,
       template = this.jsonParseArray(templateData);
-
     return new UserSettingsModel(account.name, "token-xyz", { template });
   }
 
