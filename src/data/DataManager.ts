@@ -163,7 +163,7 @@ export default class DataManager {
       blockContents.push(<BlockContent>{
         title: entry.title,
         inputType: entry.inputType,
-        inputValue: "",
+        inputValue: entry.inputValue,
       });
     });
     return blockContents;
