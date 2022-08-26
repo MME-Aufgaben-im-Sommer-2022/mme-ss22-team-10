@@ -3,7 +3,7 @@ import { Client, Models, Query } from "appwrite";
 import AccountManager from "./AccountManager";
 import DatabaseManager from "./DatabaseManager";
 import { TemplateItem } from "../models/UserSettingsModel";
-import EditorModel from "../models/EditorModel";
+import { BlockContent } from "../models/EditorModel";
 
 export default class ApiClient {
   private static client: Client;
@@ -20,52 +20,50 @@ export default class ApiClient {
     this.databaseManager = new DatabaseManager(this.client, Server.DATABASE_ID);
   }
 
-  static async logInUser(email: string, password: string) {
-    const sessionExpired = await this.localSessionIsExpired();
-    if (sessionExpired) {
-      await this.createNewSession(email, password);
-    }
+  static connectSession(session: Models.Session): void {
+    this.sessionId = session.$id;
+    this.userId = session.userId;
+    localStorage.setItem("sessionId", this.sessionId);
+    localStorage.setItem("userId", this.userId);
   }
 
-  private static async localSessionIsExpired(): Promise<boolean> {
-    this.sessionId = localStorage.getItem("sessionId")!;
-    if (this.sessionId !== null) {
-      const sessionPromise = await this.accountManager.getAccountSession(
-        this.sessionId
-      );
-      this.userId = sessionPromise.userId;
-      return new Date(sessionPromise.expire * 1000) <= new Date();
-    }
-    return true;
-  }
-
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  static async createNewSession(email: string, password: string) {
-    const accountSession = await this.accountManager.createNewAccountSession(
-      Server.TEST_USER_EMAIL, // email
-      Server.TEST_USER_PASSWORD // password
-    );
-    this.sessionId = accountSession.$id;
-    this.userId = accountSession.userId;
-    localStorage.setItem("sessionId", accountSession.$id);
-    localStorage.setItem("userId", accountSession.userId);
-  }
-
-  static async logOutUser(): Promise<any> {
+  static async disconnectCurrentSession(): Promise<void> {
+    await this.removeSession(this.sessionId);
     this.userId = "";
     this.sessionId = "";
     localStorage.removeItem("sessionId");
     localStorage.removeItem("userId");
-    return this.accountManager.deleteAccountSession(this.sessionId);
   }
 
-  static async getUsername(): Promise<string> {
-    const accountData = await this.accountManager.getAccountData();
-    return accountData.name;
+  static async getSession(sessionId: string): Promise<Models.Session> {
+    return this.accountManager.getAccountSession(sessionId);
   }
 
-  private static async getUserSettingsDocument(): Promise<Models.Document> {
+  static async createNewSession(
+    _email: string,
+    _password: string
+  ): Promise<Models.Session> {
+    return await this.accountManager.createNewAccountSession(
+      Server.TEST_USER_EMAIL,
+      Server.TEST_USER_PASSWORD
+    );
+  }
+
+  private static async removeSession(sessionId: string): Promise<any> {
+    return this.accountManager.deleteAccountSession(sessionId);
+  }
+
+  static async getAccountData(): Promise<Models.User<Models.Preferences>> {
+    return this.accountManager.getAccountData();
+  }
+
+  static async updateAccountName(
+    name: string
+  ): Promise<Models.User<Models.Preferences>> {
+    return this.accountManager.account.updateName(name);
+  }
+
+  static async getUserSettingsDocument(): Promise<Models.Document> {
     const userSettings = await this.databaseManager.listDocuments(
       Server.COLLECTION_SETTINGS,
       [Query.equal("userID", this.userId)]
@@ -73,48 +71,68 @@ export default class ApiClient {
     return userSettings.documents[0];
   }
 
-  static async getUserTemplate() {
-    const userSettings = await this.getUserSettingsDocument();
-    return this.jsonParseArray(userSettings.template);
-  }
-
-  static async createUserTemplate(
+  static async createNewSettingsDocument(
     template: Array<TemplateItem>
   ): Promise<Models.Document> {
-    return await this.databaseManager.createNewDocument(
-      Server.COLLECTION_SETTINGS,
-      { userID: this.userId, template: template }
-    );
+    return this.databaseManager.createNewDocument(Server.COLLECTION_SETTINGS, {
+      userID: this.userId,
+      template: template,
+    });
   }
 
-  static async updateUserTemplate(template: Array<TemplateItem>) {
+  static async updateUserSettingsDocument(
+    template: Array<string>
+  ): Promise<void> {
     const userSettings = await this.getUserSettingsDocument();
     this.databaseManager.updateDocument(
       Server.COLLECTION_SETTINGS,
       userSettings.$id,
-      { template: this.stringifyArray(template) }
+      { template: template }
     );
   }
 
-  private static async getNoteDocument(day: Date): Promise<Models.Document> {
+  static async getNoteDocument(day: string): Promise<Models.Document> {
     const noteDocument = await this.databaseManager.listDocuments(
       Server.COLLECTION_NOTES,
-      [Query.equal("day", this.convertDateToString(day))]
+      [Query.equal("userID", this.userId), Query.equal("day", day)]
     );
     return noteDocument.documents[0];
   }
 
-  private static async getBlockContentsDocuments(
-    noteID: string
-  ): Promise<any[]> {
-    const blockContents = await this.databaseManager.listDocuments(
-      Server.COLLECTION_BLOCK_CONTENTS,
-      [Query.equal("noteID", noteID)]
-    );
-    return blockContents.documents;
+  static async getNoteDocumentList(): Promise<Array<Models.Document>> {
+    const array: Array<Models.Document> = [],
+      noteDocument = await this.databaseManager.listDocuments(
+        Server.COLLECTION_NOTES,
+        [Query.equal("userID", this.userId)]
+      ),
+      noteDocumentLength = noteDocument.total;
+    let lastDocumentId =
+      noteDocument.documents[noteDocument.documents.length - 1].$id;
+    noteDocument.documents.forEach((document) => array.push(document));
+
+    while (array.length < noteDocumentLength) {
+      const noteDocument = await this.databaseManager.listDocuments(
+        Server.COLLECTION_NOTES,
+        [Query.equal("userID", this.userId)],
+        lastDocumentId
+      );
+      lastDocumentId =
+        noteDocument.documents[noteDocument.documents.length - 1].$id;
+      noteDocument.documents.forEach((document) => array.push(document));
+    }
+    return array;
   }
 
-  private static async getBlockContentDocument(
+  static async getBlockContentDocumentList(
+    noteId: string
+  ): Promise<Models.DocumentList<Models.Document>> {
+    return await this.databaseManager.listDocuments(
+      Server.COLLECTION_BLOCK_CONTENTS,
+      [Query.equal("noteID", noteId)]
+    );
+  }
+
+  static async getBlockContentDocument(
     noteID: string,
     title: string
   ): Promise<Models.Document> {
@@ -125,63 +143,50 @@ export default class ApiClient {
     return blockContents.documents[0];
   }
 
-  static async getEditorNotes(date: Date) {
-    const noteDocument = await this.getNoteDocument(date),
-      day = new Date(noteDocument.$createdAt * 1000),
-      blockContents = await this.getBlockContentsDocuments(noteDocument.$id);
-    return { day: day, blockContents: blockContents };
+  static async createNewNoteDocument(day: string): Promise<Models.Document> {
+    return this.databaseManager.createNewDocument(Server.COLLECTION_NOTES, {
+      userID: this.userId,
+      day: day,
+    });
   }
 
-  static async createEditorNotes(editorModel: EditorModel) {
-    const noteDocument = await this.databaseManager.createNewDocument(
-      Server.COLLECTION_NOTES,
+  static async createNewBlockContentDocument(
+    noteId: string,
+    blockContent: BlockContent
+  ): Promise<Models.Document> {
+    return this.databaseManager.createNewDocument(
+      Server.COLLECTION_BLOCK_CONTENTS,
       {
-        userID: this.userId,
-        day: this.convertDateToString(editorModel.day),
-      }
-    );
-    editorModel.blockContents.forEach(async (blockContent) => {
-      this.databaseManager.createNewDocument(Server.COLLECTION_BLOCK_CONTENTS, {
-        noteID: noteDocument.$id,
+        noteID: noteId,
         title: blockContent.title,
         inputType: blockContent.inputType,
         inputValue: blockContent.inputValue,
-      });
-    });
+      }
+    );
   }
 
-  static async updateEditorNotes(editorModel: EditorModel) {
-    const noteDocument = await this.getNoteDocument(editorModel.day);
-    editorModel.blockContents.forEach(async (blockContent) => {
-      const blockContentDocument = await this.getBlockContentDocument(
-        noteDocument.$id,
-        blockContent.title
-      );
-      this.databaseManager.updateDocument(
+  static async updateBlockContentDocument(
+    blockContentId: string,
+    blockContent: BlockContent
+  ): Promise<Models.Document> {
+    return this.databaseManager.updateDocument(
+      Server.COLLECTION_BLOCK_CONTENTS,
+      blockContentId,
+      blockContent
+    );
+  }
+
+  static async deleteNoteDocument(noteId: string): Promise<void> {
+    this.databaseManager.deleteDocument(Server.COLLECTION_NOTES, noteId);
+  }
+
+  static async deleteBlockContents(noteId: string): Promise<void> {
+    const blockContents = await this.getBlockContentDocumentList(noteId);
+    blockContents.documents.forEach((blockContent) => {
+      this.databaseManager.deleteDocument(
         Server.COLLECTION_BLOCK_CONTENTS,
-        blockContentDocument.$id,
-        blockContent
+        blockContent.$id
       );
     });
-  }
-
-  private static convertDateToString(date: Date): string {
-    return [
-      date.getFullYear(),
-      date.getMonth() < 10 ? "0" + (date.getMonth() + 1) : date.getMonth(),
-      date.getDate() < 10 ? "0" + date.getDate() : date.getDate(),
-    ].join("");
-  }
-
-  private static stringifyArray(array: Array<any>): Array<string> {
-    const stringArray: Array<string> = [];
-    array.forEach((entry) => stringArray.push(JSON.stringify(entry)));
-    return stringArray;
-  }
-
-  private static jsonParseArray(array: Array<string>): Array<any> {
-    const objArray: Array<any> = [];
-    array.forEach((entry) => objArray.push(JSON.parse(entry)));
-    return objArray;
   }
 }

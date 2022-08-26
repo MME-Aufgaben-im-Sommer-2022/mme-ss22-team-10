@@ -12,15 +12,14 @@ import {
 } from "../lib/utils";
 import ApiClient from "./api/ApiClient";
 
-// `DataManager` is a singleton, in which you define functions to fetch/save Models.
+// `DataManager` is a singleton, in which you define functions to fetch/save/delete Models.
 
 // Usage guide & examples:
 // https://github.com/MME-Aufgaben-im-Sommer-2022/mme-ss22-team-10/blob/dev/docs/lib/DataManager.md
-
 export default class DataManager {
   static async init() {
     await ApiClient.init();
-    await ApiClient.logInUser("email", "password");
+    await this.logInUser("email", "password");
   }
 
   // Write methods to fetch or save data to Database etc. here
@@ -31,62 +30,220 @@ export default class DataManager {
     return new ExampleModel("John", 0);
   }
 
-  // Calendar Model
-
-  static async getCalendarModel(): Promise<CalendarModel> {
-    return this.generateMockCalendarModel();
+  static async logInUser(email: string, password: string): Promise<void> {
+    if (!(await this.connectToOldSession())) {
+      await ApiClient.createNewSession(email, password).then((session) => {
+        return ApiClient.connectSession(session);
+      });
+    }
   }
 
-  static async saveCalendarModel(calendarModel: CalendarModel): Promise<void> {
-    info("Saving calendar model:", calendarModel);
-    return Promise.resolve();
+  private static async connectToOldSession(): Promise<boolean> {
+    const localSessionId = localStorage.getItem("sessionId");
+    if (localSessionId) {
+      const session = await ApiClient.getSession(localSessionId);
+      if (this.convertNumberToDate(session.expire) > new Date()) {
+        await ApiClient.connectSession(session);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  // Calendar Model
+  static async getCalendarModel(): Promise<CalendarModel> {
+    const noteDays: Years = {},
+      noteDaysArray = await ApiClient.getNoteDocumentList();
+    noteDaysArray.forEach((note) => {
+      const date = new Date(note.day),
+        year = date.getFullYear() + "",
+        month = date.getMonth() + 1 + "",
+        day = date.getDate() + "";
+
+      if (!(year in noteDays)) {
+        noteDays[year] = {};
+      }
+      if (!(month in noteDays[year])) {
+        noteDays[year][month] = [];
+      }
+      noteDays[year][month].push(day);
+    });
+    return new CalendarModel(new Date(), noteDays);
   }
 
   // Editor Model
-
-  static async getEditorModel(date: Date): Promise<EditorModel> {
-    const editorNotes = await ApiClient.getEditorNotes(date);
-    return new EditorModel(editorNotes.day, editorNotes.blockContents);
+  static async getEditorModel(day: Date): Promise<EditorModel> {
+    try {
+      const noteDocument = await ApiClient.getNoteDocument(
+          this.convertDateToString(day)
+        ),
+        blockContentsDocuments = await ApiClient.getBlockContentDocumentList(
+          noteDocument.$id
+        ),
+        blockContents = this.convertArrayToBlockContent(
+          blockContentsDocuments.documents
+        );
+      return new EditorModel(day, blockContents);
+    } catch (e) {
+      const editorModel = await this.createEditorModelFromTemplate();
+      await this.createEditorModel(editorModel);
+      return editorModel;
+    }
   }
 
-  static async saveEditorModel(editorModel: EditorModel): Promise<void> {
-    return await ApiClient.updateEditorNotes(editorModel);
+  static async createEditorModel(editorModel: EditorModel) {
+    const noteDocument = await ApiClient.createNewNoteDocument(
+      this.convertDateToString(editorModel.day)
+    );
+    editorModel.blockContents.forEach(async (blockContent) => {
+      ApiClient.createNewBlockContentDocument(noteDocument.$id, blockContent);
+    });
   }
 
-  static async createEditorModel(editorModel: EditorModel): Promise<void> {
-    return await ApiClient.createEditorNotes(editorModel);
+  static async updateEditorModel(editorModel: EditorModel): Promise<void> {
+    const noteDocument = await ApiClient.getNoteDocument(
+      this.convertDateToString(editorModel.day)
+    );
+    editorModel.blockContents.forEach(async (blockContent) => {
+      const blockContentDocument = await ApiClient.getBlockContentDocument(
+        noteDocument.$id,
+        blockContent.title
+      );
+      ApiClient.updateBlockContentDocument(
+        blockContentDocument.$id,
+        blockContent
+      );
+    });
+  }
+
+  private static async createEditorModelFromTemplate(): Promise<EditorModel> {
+    const promise = await DataManager.getUserSettingsModel(),
+      blockContents = this.convertArrayToBlockContent(
+        promise.settings.template
+      );
+    return new EditorModel(new Date(), blockContents);
+  }
+
+  static async deleteEditorModel(editorModel: EditorModel): Promise<void> {
+    const noteDocument = await ApiClient.getNoteDocument(
+      this.convertDateToString(editorModel.day)
+    );
+    await ApiClient.deleteNoteDocument(noteDocument.$id);
+    return await ApiClient.deleteBlockContents(noteDocument.$id);
   }
 
   // User Settings Model
   static async getUserSettingsModel(): Promise<UserSettingsModel> {
-    const username = await ApiClient.getUsername(),
-      template = await ApiClient.getUserTemplate();
-    return new UserSettingsModel(username, "token-xyz", { template });
+    const account = await ApiClient.getAccountData(),
+      userSettings = await ApiClient.getUserSettingsDocument(),
+      templateData = userSettings.template,
+      template = this.jsonParseArray(templateData);
+    return new UserSettingsModel(account.name, "token-xyz", { template });
   }
 
-  static async saveUserSettingsModel(
+  static async updateUserSettingsModel(
     userSettingsModel: UserSettingsModel
   ): Promise<void> {
-    return await ApiClient.updateUserTemplate(
-      userSettingsModel.settings.template
+    await ApiClient.updateAccountName(userSettingsModel.username);
+    return await ApiClient.updateUserSettingsDocument(
+      this.stringifyArray(userSettingsModel.settings.template)
     );
   }
 
   static async createUserSettingsModel(userSettingsModel: UserSettingsModel) {
-    return await ApiClient.createUserTemplate(
+    return await ApiClient.createNewSettingsDocument(
       userSettingsModel.settings.template
     );
   }
 
+  // HELPER FUNCTIONS
+  private static convertArrayToBlockContent(array: Array<any>) {
+    const blockContents: Array<BlockContent> = [];
+    array.forEach((entry) => {
+      blockContents.push(<BlockContent>{
+        title: entry.title,
+        inputType: entry.inputType,
+        inputValue: "",
+      });
+    });
+    return blockContents;
+  }
+
+  private static convertNumberToDate(timestamp: number): Date {
+    return new Date(timestamp * 1000);
+  }
+
+  private static jsonParseArray(array: Array<string>): Array<any> {
+    const objArray: Array<any> = [];
+    array.forEach((entry) => objArray.push(JSON.parse(entry)));
+    return objArray;
+  }
+
+  private static stringifyArray(array: Array<any>): Array<string> {
+    const stringArray: Array<string> = [];
+    array.forEach((entry) => stringArray.push(JSON.stringify(entry)));
+    return stringArray;
+  }
+
+  private static convertDateToString(date: Date): string {
+    return [
+      date.getFullYear(),
+      date.getMonth() + 1 < 10
+        ? "0" + (date.getMonth() + 1)
+        : date.getMonth() + 1,
+      date.getDate() < 10 ? "0" + date.getDate() : date.getDate(),
+    ].join("-");
+  }
+
   // MOCK DATA
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  private static async deleteUserNotes() {
+    const userNotes: Array<any> = await ApiClient.getNoteDocumentList();
+    userNotes.forEach(async (note) => {
+      await ApiClient.deleteNoteDocument(note.$id);
+      await ApiClient.deleteBlockContents(note.$id);
+    });
+  }
+
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  private static async generateMockDatabaseData() {
+    // eslint-disable-next-line no-magic-numbers
+    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].forEach((month) => {
+      // eslint-disable-next-line no-magic-numbers
+      generateRandomAscendingArray(16, 1).forEach(async (day) => {
+        const date = new Date();
+        // eslint-disable-next-line no-unused-expressions
+        month < date.getMonth()
+          ? // eslint-disable-next-line no-magic-numbers
+            date.setFullYear(2022)
+          : // eslint-disable-next-line no-magic-numbers
+            date.setFullYear(2021);
+        date.setDate(Number(day));
+        date.setMonth(month);
+        // eslint-disable-next-line one-var
+        const editorModel = this.generateMockEditorModel(date);
+        try {
+          await this.createEditorModel(editorModel);
+        } catch (e) {
+          this.updateEditorModel(editorModel);
+        }
+      });
+    });
+  }
 
   // Calendar Model
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   private static generateMockCalendarModel(): CalendarModel {
     const noteDays: Years = {
       "2022": {},
     };
 
+    // eslint-disable-next-line no-magic-numbers
     generateRandomAscendingArray(11, 1).forEach((month) => {
+      // eslint-disable-next-line no-magic-numbers
       noteDays["2022"][month] = generateRandomAscendingArray(30, 1);
       if (noteDays["2022"][month].length === 0) {
         delete noteDays["2022"][month];
@@ -97,10 +254,9 @@ export default class DataManager {
   }
 
   // Editor Model
-
-  private static generateMockEditorModel(): EditorModel {
+  private static generateMockEditorModel(date: Date): EditorModel {
     const NUM_BLOCKS = 3,
-      day = new Date(),
+      day = date,
       blockContents: Array<BlockContent> = [];
 
     blockContents.push({
@@ -125,7 +281,8 @@ export default class DataManager {
   }
 
   // User Settings Model
-
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   private static generateMockUserSettingsModel(): UserSettingsModel {
     const template: Template = [
       {

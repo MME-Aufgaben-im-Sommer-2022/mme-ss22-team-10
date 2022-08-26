@@ -16,9 +16,10 @@ export default class DatabaseManager {
 
   async listDocuments(
     collection: string,
-    query: Array<any>
+    query: Array<any>,
+    cursor?: string
   ): Promise<Models.DocumentList<Models.Document>> {
-    return this.database.listDocuments(collection, query);
+    return this.database.listDocuments(collection, query, 100, 0, cursor);
   }
 
   async updateDocument(
@@ -27,5 +28,9 @@ export default class DatabaseManager {
     data: any
   ): Promise<Models.Document> {
     return this.database.updateDocument(collection, document, data);
+  }
+
+  async deleteDocument(collection: string, document: string) {
+    return this.database.deleteDocument(collection, document);
   }
 }
