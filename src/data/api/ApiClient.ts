@@ -65,8 +65,7 @@ export default class ApiClient {
     return userSettings.documents[0];
   }
 
-
-  static async createUserTemplate(
+  static async createNewSettingsDocument(
     template: Array<TemplateItem>
   ): Promise<Models.Document> {
     return this.databaseManager.createNewDocument(Server.COLLECTION_SETTINGS, {
@@ -92,7 +91,7 @@ export default class ApiClient {
     return noteDocument.documents[0];
   }
 
-  static async getNoteDays(): Promise<Array<Models.Document>> {
+  static async getNoteDocumentList(): Promise<Array<Models.Document>> {
     const array: Array<Models.Document> = [],
       noteDocument = await this.databaseManager.listDocuments(
         Server.COLLECTION_NOTES,
@@ -116,7 +115,7 @@ export default class ApiClient {
     return array;
   }
 
-  static async getBlockContentsDocuments(
+  static async getBlockContentDocumentList(
     noteId: string
   ): Promise<Models.DocumentList<Models.Document>> {
     return await this.databaseManager.listDocuments(
@@ -125,7 +124,7 @@ export default class ApiClient {
     );
   }
 
-  static async getSingleBlockContentDocument(
+  static async getBlockContentDocument(
     noteID: string,
     title: string
   ): Promise<Models.Document> {
@@ -136,14 +135,14 @@ export default class ApiClient {
     return blockContents.documents[0];
   }
 
-  static async createNewNote(day: string): Promise<Models.Document> {
+  static async createNewNoteDocument(day: string): Promise<Models.Document> {
     return this.databaseManager.createNewDocument(Server.COLLECTION_NOTES, {
       userID: this.userId,
       day: day,
     });
   }
 
-  static async createNewBlockContent(
+  static async createNewBlockContentDocument(
     noteId: string,
     blockContent: BlockContent
   ): Promise<Models.Document> {
@@ -158,7 +157,7 @@ export default class ApiClient {
     );
   }
 
-  static async updateBlockContent(
+  static async updateBlockContentDocument(
     blockContentId: string,
     blockContent: BlockContent
   ): Promise<Models.Document> {
@@ -174,7 +173,7 @@ export default class ApiClient {
   }
 
   static async deleteBlockContents(noteId: string): Promise<void> {
-    const blockContents = await this.getBlockContentsDocuments(noteId);
+    const blockContents = await this.getBlockContentDocumentList(noteId);
     blockContents.documents.forEach((blockContent) => {
       this.databaseManager.deleteDocument(
         Server.COLLECTION_BLOCK_CONTENTS,

@@ -53,7 +53,7 @@ export default class DataManager {
   // Calendar Model
   static async getCalendarModel(): Promise<CalendarModel> {
     const noteDays: Years = {},
-      noteDaysArray = await ApiClient.getNoteDays();
+      noteDaysArray = await ApiClient.getNoteDocumentList();
     noteDaysArray.forEach((note) => {
       const date = new Date(note.day),
         year = date.getFullYear() + "",
@@ -77,7 +77,7 @@ export default class DataManager {
       const noteDocument = await ApiClient.getNoteDocument(
           this.convertDateToString(day)
         ),
-        blockContentsDocuments = await ApiClient.getBlockContentsDocuments(
+        blockContentsDocuments = await ApiClient.getBlockContentDocumentList(
           noteDocument.$id
         ),
         blockContents = this.convertArrayToBlockContent(
@@ -92,11 +92,11 @@ export default class DataManager {
   }
 
   static async createEditorModel(editorModel: EditorModel) {
-    const noteDocument = await ApiClient.createNewNote(
+    const noteDocument = await ApiClient.createNewNoteDocument(
       this.convertDateToString(editorModel.day)
     );
     editorModel.blockContents.forEach(async (blockContent) => {
-      ApiClient.createNewBlockContent(noteDocument.$id, blockContent);
+      ApiClient.createNewBlockContentDocument(noteDocument.$id, blockContent);
     });
   }
 
@@ -105,12 +105,14 @@ export default class DataManager {
       this.convertDateToString(editorModel.day)
     );
     editorModel.blockContents.forEach(async (blockContent) => {
-      const blockContentDocument =
-        await ApiClient.getSingleBlockContentDocument(
-          noteDocument.$id,
-          blockContent.title
-        );
-      ApiClient.updateBlockContent(blockContentDocument.$id, blockContent);
+      const blockContentDocument = await ApiClient.getBlockContentDocument(
+        noteDocument.$id,
+        blockContent.title
+      );
+      ApiClient.updateBlockContentDocument(
+        blockContentDocument.$id,
+        blockContent
+      );
     });
   }
 
@@ -139,16 +141,20 @@ export default class DataManager {
     return new UserSettingsModel(account.name, "token-xyz", { template });
   }
 
-  static async saveUserSettingsModel(
+  static async updateUserSettingsModel(
     userSettingsModel: UserSettingsModel
   ): Promise<void> {
+    // todo later: save whole model
+    // update Account data
+
+    // update user settings
     return await ApiClient.updateUserTemplate(
       this.stringifyArray(userSettingsModel.settings.template)
     );
   }
 
   static async createUserSettingsModel(userSettingsModel: UserSettingsModel) {
-    return await ApiClient.createUserTemplate(
+    return await ApiClient.createNewSettingsDocument(
       userSettingsModel.settings.template
     );
   }
@@ -196,7 +202,7 @@ export default class DataManager {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   private static async deleteUserNotes() {
-    const userNotes: Array<any> = await ApiClient.getNoteDays();
+    const userNotes: Array<any> = await ApiClient.getNoteDocumentList();
     userNotes.forEach(async (note) => {
       await ApiClient.deleteNoteDocument(note.$id);
       await ApiClient.deleteBlockContents(note.$id);
