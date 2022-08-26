@@ -57,6 +57,12 @@ export default class ApiClient {
     return this.accountManager.getAccountData();
   }
 
+  static async updateAccountName(
+    name: string
+  ): Promise<Models.User<Models.Preferences>> {
+    return this.accountManager.account.updateName(name);
+  }
+
   static async getUserSettingsDocument(): Promise<Models.Document> {
     const userSettings = await this.databaseManager.listDocuments(
       Server.COLLECTION_SETTINGS,
@@ -74,7 +80,9 @@ export default class ApiClient {
     });
   }
 
-  static async updateUserTemplate(template: Array<string>): Promise<void> {
+  static async updateUserSettingsDocument(
+    template: Array<string>
+  ): Promise<void> {
     const userSettings = await this.getUserSettingsDocument();
     this.databaseManager.updateDocument(
       Server.COLLECTION_SETTINGS,

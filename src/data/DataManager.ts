@@ -144,11 +144,8 @@ export default class DataManager {
   static async updateUserSettingsModel(
     userSettingsModel: UserSettingsModel
   ): Promise<void> {
-    // todo later: save whole model
-    // update Account data
-
-    // update user settings
-    return await ApiClient.updateUserTemplate(
+    await ApiClient.updateAccountName(userSettingsModel.username);
+    return await ApiClient.updateUserSettingsDocument(
       this.stringifyArray(userSettingsModel.settings.template)
     );
   }
