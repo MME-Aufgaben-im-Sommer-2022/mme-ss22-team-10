@@ -1,0 +1,12 @@
+/*
+* Misc styles, which would not warrant their own file
+*/
+
+.list-item {
+    display: list-item;
+}
+
+*:disabled {
+    opacity: 0.5;
+}
+

@@ -15,5 +15,5 @@ topic-configurator {
 }
 
 #topic-configurator-info-title {
-    margin-bottom: var(--margin-large);
+    margin-bottom: var(--spacing-large);
 }

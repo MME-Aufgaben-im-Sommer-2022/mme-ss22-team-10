@@ -1,5 +1,5 @@
 input-type-configurator-item {
-    margin-bottom: var(--margin-small);
+    margin-bottom: var(--spacing-small);
     align-items: center;
 }
 

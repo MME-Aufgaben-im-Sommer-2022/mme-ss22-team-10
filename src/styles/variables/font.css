@@ -9,22 +9,22 @@
 
 .title-s {
     font-size: var(--font-size-large);
-    margin-bottom: var(--margin-small);
-    margin-top: var(--margin-small);
+    margin-bottom: var(--spacing-small);
+    margin-top: var(--spacing-small);
     display: inline-block;
 }
 
 .title-m {
     font-size: var(--font-size-xlarge);
-    margin-bottom: var(--margin-medium);
-    margin-top: var(--margin-medium);
+    margin-bottom: var(--spacing-medium);
+    margin-top: var(--spacing-medium);
     display: inline-block;
 }
 
 .title-l {
     font-size: var(--font-size-max);
-    margin-bottom: var(--margin-large);
-    margin-top: var(--margin-large);
+    margin-bottom: var(--spacing-large);
+    margin-top: var(--spacing-large);
     display: inline-block;
     /*add separator under*/
     border-bottom: 1px solid var(--border-color);

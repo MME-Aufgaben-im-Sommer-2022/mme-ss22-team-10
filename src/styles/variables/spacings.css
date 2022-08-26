@@ -1,0 +1,13 @@
+/*
+Global style variables (e.g. borders, padding go here)
+*/
+
+* {
+    --spacing-small: 0.5rem;
+    --spacing-medium: 1rem;
+    --spacing-large: 1.5rem;
+    --spacing-xlarge: 2rem;
+
+    /*Special spacings*/
+    --margin-editor-side: 6em;
+}

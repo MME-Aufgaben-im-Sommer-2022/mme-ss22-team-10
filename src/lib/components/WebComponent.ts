@@ -73,6 +73,7 @@ export default abstract class WebComponent extends HTMLElement {
       const template = document.createElement("template");
       template.innerHTML = this.html;
       this.appendChild(template.content.cloneNode(true));
+      this.classList.add("web-component");
     }
   }
 

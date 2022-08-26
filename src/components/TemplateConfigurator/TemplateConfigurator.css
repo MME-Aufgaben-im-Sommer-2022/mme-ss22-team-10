@@ -10,7 +10,7 @@ template-configurator {
     width: 100%;
     display: flex;
     flex-direction: row;
-    margin-top: var(--margin-xlarge);
+    margin-top: var(--spacing-xlarge);
 }
 
 .button-navbar > .next-button {
