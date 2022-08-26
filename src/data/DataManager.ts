@@ -30,17 +30,24 @@ export default class DataManager {
     return new ExampleModel("John", 0);
   }
 
-  static async logInUser(email: string, password: string) {
+  static async logInUser(email: string, password: string): Promise<void> {
+    if (!(await this.connectToOldSession())) {
+      await ApiClient.createNewSession(email, password).then((session) => {
+        return ApiClient.connectSession(session);
+      });
+    }
+  }
+
+  private static async connectToOldSession(): Promise<boolean> {
     const localSessionId = localStorage.getItem("sessionId");
     if (localSessionId) {
       const session = await ApiClient.getSession(localSessionId);
       if (this.convertNumberToDate(session.expire) > new Date()) {
-        return await ApiClient.connectSession(session);
+        await ApiClient.connectSession(session);
+        return true;
       }
     }
-    return await ApiClient.createNewSession(email, password).then((session) => {
-      ApiClient.connectSession(session);
-    });
+    return false;
   }
 
   // Calendar Model
