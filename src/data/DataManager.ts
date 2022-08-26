@@ -10,6 +10,7 @@ import {
   generateRandomAscendingArray,
   generateRandomLoremIpsum,
 } from "../lib/utils";
+import ApiClient from "./api/ApiClient";
 
 // `DataManager` is a singleton, in which you define functions to fetch/save Models.
 
@@ -18,10 +19,11 @@ import {
 
 export default class DataManager {
   static async init() {
-    // Do init stuff here, e.g. db connection
+    await ApiClient.init();
+    await ApiClient.logInUser("email", "password");
   }
 
-  // Write methods to fetch or save data to Database etc here
+  // Write methods to fetch or save data to Database etc. here
 
   // Returns the example model
   static async getExampleModel(): Promise<ExampleModel> {
@@ -43,24 +45,37 @@ export default class DataManager {
   // Editor Model
 
   static async getEditorModel(date: Date): Promise<EditorModel> {
-    return this.generateMockEditorModel();
+    const editorNotes = await ApiClient.getEditorNotes(date);
+    return new EditorModel(editorNotes.day, editorNotes.blockContents);
   }
 
   static async saveEditorModel(editorModel: EditorModel): Promise<void> {
-    info("Saving Editor model:", editorModel);
-    return Promise.resolve();
+    return await ApiClient.updateEditorNotes(editorModel);
   }
-  // User Settings Model
 
+  static async createEditorModel(editorModel: EditorModel): Promise<void> {
+    return await ApiClient.createEditorNotes(editorModel);
+  }
+
+  // User Settings Model
   static async getUserSettingsModel(): Promise<UserSettingsModel> {
-    return this.generateMockUserSettingsModel();
+    const username = await ApiClient.getUsername(),
+      template = await ApiClient.getUserTemplate();
+    return new UserSettingsModel(username, "token-xyz", { template });
   }
 
   static async saveUserSettingsModel(
     userSettingsModel: UserSettingsModel
   ): Promise<void> {
-    info("Saving user settings model:", userSettingsModel);
-    return Promise.resolve();
+    return await ApiClient.updateUserTemplate(
+      userSettingsModel.settings.template
+    );
+  }
+
+  static async createUserSettingsModel(userSettingsModel: UserSettingsModel) {
+    return await ApiClient.createUserTemplate(
+      userSettingsModel.settings.template
+    );
   }
 
   // MOCK DATA

@@ -25,6 +25,7 @@
     "vite-plugin-glob": "^0.3.2"
   },
   "dependencies": {
+    "appwrite": "^9.0.1",
     "observable-slim": "^0.1.6"
   }
 }
