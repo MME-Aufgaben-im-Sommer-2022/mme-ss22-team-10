@@ -23,7 +23,6 @@ import templateConfigurationModel from "./models/templateConfigurationModel.json
 export default class DataManager {
   static async init() {
     await ApiClient.init();
-    await this.logInUser("email", "password");
   }
 
   // Write methods to fetch or save data to Database etc. here
@@ -34,24 +33,16 @@ export default class DataManager {
     return new ExampleModel("John", 0);
   }
 
-  static async logInUser(email: string, password: string): Promise<void> {
-    if (!(await this.connectToOldSession())) {
-      await ApiClient.createNewSession(email, password).then((session) => {
-        return ApiClient.connectSession(session);
-      });
-    }
+  static async signInViaMail(email: string, password: string) {
+    const session = await ApiClient.createNewSession(email, password);
+    ApiClient.connectSession(session);
   }
 
-  private static async connectToOldSession(): Promise<boolean> {
-    const localSessionId = localStorage.getItem("sessionId");
-    if (localSessionId) {
-      const session = await ApiClient.getSession(localSessionId);
-      if (this.convertNumberToDate(session.expire) > new Date()) {
-        await ApiClient.connectSession(session);
-        return true;
-      }
+  static async connectToSession(sessionId: string) {
+    const session = await ApiClient.getSession(sessionId);
+    if (this.convertNumberToDate(session.expire) > new Date()) {
+      await ApiClient.connectSession(session);
     }
-    return false;
   }
 
   // Calendar Model
