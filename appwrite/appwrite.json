@@ -1,0 +1,21 @@
+{
+    "projectId": "62ebd3a59c321c79a842",
+    "projectName": "EcoNotes",
+    "functions": [
+        {
+            "$id": "generate-gpt3-title",
+            "name": "generate-gpt3-title",
+            "runtime": "node-16.0",
+            "path": "functions/generate-gpt3-title",
+            "entrypoint": "src/index.js",
+            "ignore": [
+                "node_modules",
+                ".npm"
+            ],
+            "execute": [],
+            "events": [],
+            "schedule": "",
+            "timeout": 15
+        }
+    ]
+}
