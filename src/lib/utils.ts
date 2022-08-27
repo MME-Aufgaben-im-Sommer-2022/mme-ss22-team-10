@@ -21,4 +21,12 @@ export const generateRandomAscendingArray = (
       end = start + size;
 
     return loremIpsum.substring(start, end);
+  },
+  // parses date strings like 26.10.2019 to a Date object
+  parseDateFromString = (dateString: string): Date => {
+    const dateArray = dateString.split("."),
+      day = parseInt(dateArray[0], 10),
+      month = parseInt(dateArray[1], 10) - 1,
+      year = parseInt(dateArray[2], 10);
+    return new Date(year, month, day);
   };

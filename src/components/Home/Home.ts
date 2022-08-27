@@ -28,10 +28,8 @@ export default class Home extends WebComponent {
   onCreate(): Promise<void> | void {
     // eslint-disable-next-line no-async-promise-executor
     return new Promise(async (resolve) => {
-      const editorModel = await DataManager.getEditorModel(new Date());
-      log(editorModel);
-
       this.calendarModel = await DataManager.getCalendarModel();
+      const editorModel = await DataManager.getEditorModel(new Date());
       this.editorModelState = editorModel.toState();
       this.$initHtml();
       this.initListener();

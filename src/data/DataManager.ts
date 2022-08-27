@@ -11,6 +11,10 @@ import {
   generateRandomLoremIpsum,
 } from "../lib/utils";
 import ApiClient from "./api/ApiClient";
+import TemplateConfigurationModel, {
+  Topic,
+} from "./models/TemplateConfigurationModel";
+import templateConfigurationModel from "/public/templateConfigurationModel.json";
 
 // `DataManager` is a singleton, in which you define functions to fetch/save/delete Models.
 
@@ -156,6 +160,14 @@ export default class DataManager {
     );
   }
 
+  // Template config screen
+  static async getTemplateConfigurationModel(): Promise<TemplateConfigurationModel> {
+    const configModel = new TemplateConfigurationModel(
+      templateConfigurationModel.map((topic: Topic) => topic)
+    );
+    return configModel;
+  }
+
   // HELPER FUNCTIONS
   private static convertArrayToBlockContent(array: Array<any>) {
     const blockContents: Array<BlockContent> = [];
@@ -260,18 +272,18 @@ export default class DataManager {
       blockContents: Array<BlockContent> = [];
 
     blockContents.push({
-      title: `Title 1`,
+      title: "Title 1",
       inputType: BlockContentInputType.Checkbox,
       inputValue: `0___unchecked
         1___checked`,
     });
     blockContents.push({
-      title: `Title 2`,
+      title: "Title 2",
       inputType: BlockContentInputType.FreeText,
       inputValue: generateRandomLoremIpsum(100),
     });
     blockContents.push({
-      title: `Title 3`,
+      title: "Title 3",
       inputType: BlockContentInputType.BulletPoint,
       inputValue: `first point
       second point`,

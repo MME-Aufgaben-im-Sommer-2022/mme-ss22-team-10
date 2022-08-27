@@ -1,0 +1,42 @@
+[
+  {
+    "name": "Environment",
+    "titles": [
+      "Things I did to help the environment today:",
+      "Today, I am planning to cook:",
+      "Car driving log:"
+    ]
+  },
+  {
+    "name": "Reflection",
+    "titles": [
+      "What did you learn today?",
+      "Last night, after work, I...",
+      "Today, I had the following ideas:"
+    ]
+  },
+  {
+    "name": "Planning",
+    "titles": [
+      "TODOs for today:",
+      "Goals for today:",
+      "If today was the ideal day, what would it look like?"
+    ]
+  },
+  {
+    "name": "Creativity",
+    "titles": [
+      "What did you discover today?",
+      "What did you create today?",
+      "Write a little poem:"
+    ]
+  },
+  {
+    "name": "Feelings",
+    "titles": [
+      "Today, I was dreaming about...",
+      "Today, I was feeling...",
+      "Mood log:"
+    ]
+  }
+]
