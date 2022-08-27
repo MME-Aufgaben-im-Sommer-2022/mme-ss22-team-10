@@ -9,7 +9,6 @@ import { CLOSE_ALL_EDITOR_INPUTS_EVENT } from "../../../events/CloseAllEditorInp
 import CalendarDay from "../../Calendar/CalendarDay/CalendarDay";
 import { AppEvent } from "../../../lib/events/AppEvent";
 import DataManager from "../../../data/DataManager";
-import { log } from "../../../lib/utils/Logger";
 import { StateChangedData } from "../../../events/StateChanged";
 import { parseDateFromString } from "../../../lib/utils";
 
