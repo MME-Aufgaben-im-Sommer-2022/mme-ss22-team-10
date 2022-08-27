@@ -267,8 +267,7 @@ export default class DataManager {
 
   // Editor Model
   private static generateMockEditorModel(date: Date): EditorModel {
-    const NUM_BLOCKS = 3,
-      day = date,
+    const day = date,
       blockContents: Array<BlockContent> = [];
 
     blockContents.push({
