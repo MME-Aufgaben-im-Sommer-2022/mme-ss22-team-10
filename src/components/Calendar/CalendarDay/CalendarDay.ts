@@ -7,6 +7,7 @@ export default class CalendarDay extends WebComponent {
   public static CALENDAR_DAY_CLICKED_EVENT = "calendarDayClicked";
 
   private entryDate;
+  $entryTitle!: HTMLHeadElement;
 
   constructor(entryDate: string) {
     super(html, css);
@@ -20,13 +21,18 @@ export default class CalendarDay extends WebComponent {
   }
 
   onCreate(): Promise<void> | void {
-    this.select("h3")!.innerText = this.entryDate;
+    this.$initHtml();
+    this.$entryTitle.innerText = this.entryDate;
     this.addEventListener("click", () => {
+      this.style.background = "green";
       EventBus.notifyAll(
         CalendarDay.CALENDAR_DAY_CLICKED_EVENT,
         this.entryDate
       );
-      //log("listener works");
     });
+  }
+
+  private $initHtml(): void {
+    this.$entryTitle = this.select(".date")!;
   }
 }

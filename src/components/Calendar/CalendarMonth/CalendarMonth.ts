@@ -8,6 +8,7 @@ export default class CalendarMonth extends WebComponent {
   currentMonthNumber: number;
   currentMonthNumberText!: string;
   currentYear!: string;
+  $entryContainer!: HTMLHeadElement;
 
   constructor(
     entriesForCurrentMonth: Array<string>,
@@ -26,8 +27,13 @@ export default class CalendarMonth extends WebComponent {
 
   onCreate(): Promise<void> | void {
     //log(this.entriesForCurrentMonth);
+    this.$initHtml();
     this.formatMonth();
     this.appendCalenderEntry();
+  }
+
+  private $initHtml(): void {
+    this.$entryContainer = this.select(".entry-container")!;
   }
 
   private formatMonth(): void {
@@ -41,7 +47,7 @@ export default class CalendarMonth extends WebComponent {
   private appendCalenderEntry() {
     for (let i = 0; i < this.entriesForCurrentMonth.length; i++) {
       if (parseInt(this.entriesForCurrentMonth[i]) < 10) {
-        this.select(".days")!.append(
+        this.$entryContainer.append(
           new CalendarDay(
             "0" +
               this.entriesForCurrentMonth[i] +
@@ -52,7 +58,7 @@ export default class CalendarMonth extends WebComponent {
           )
         );
       } else {
-        this.select(".days")!.append(
+        this.$entryContainer.append(
           new CalendarDay(
             this.entriesForCurrentMonth[i] +
               "." +

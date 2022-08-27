@@ -1,14 +1,19 @@
 main-calendar {
+    display: flex;
     width: 35%;
     flex-grow: 1;
 }
 
-.calendar {
-    flex-grow: 1;
+.calendar{
+    display: flex;
+    flex-direction: column;
 }
 
-.h3{
+.calendar > span{
     text-align: center;
+    font-size: var(--font-size-xlarge);
+    padding-bottom: var(--spacing-large);
+    padding-top: var(--spacing-medium);
 }
 
 a{
@@ -20,9 +25,15 @@ a{
 
 
 .calendar-navigation{
-    width: 30vw;
     display: flex;
     justify-content: center ;
+    font-size: var(--font-size-large);
+    padding-bottom: var(--spacing-large);
+}
+
+.calendar-navigation > span{
+    display: flex;
+    align-items: center;
 }
 
 a:hover {

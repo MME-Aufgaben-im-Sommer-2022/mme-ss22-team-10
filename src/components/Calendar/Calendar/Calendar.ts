@@ -40,7 +40,7 @@ export default class Calendar extends WebComponent {
   }
 
   private $initHtml(): void {
-    this.$monthTitle = this.select(".calendar-navigation h3")!;
+    this.$monthTitle = this.select(".calendar-navigation span")!;
     this.$previousButton = this.select(".previous")!;
     this.$nextButton = this.select(".next")!;
   }
