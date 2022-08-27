@@ -2,9 +2,12 @@
     display: flex;
     flex-direction: row;
     width: 100%;
+    justify-content: flex-end;
 }
 
-
 #home-bar-container > #greet-text {
-    margin-right: auto;
+    align-self: center;
+    flex-grow: 1;
+    text-align: center;
+    font-size: var(--font-size-large);
 }
