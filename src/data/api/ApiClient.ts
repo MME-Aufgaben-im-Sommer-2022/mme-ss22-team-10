@@ -40,13 +40,10 @@ export default class ApiClient {
   }
 
   static async createNewSession(
-    _email: string,
-    _password: string
+    email: string,
+    password: string
   ): Promise<Models.Session> {
-    return await this.accountManager.createNewAccountSession(
-      Server.TEST_USER_EMAIL,
-      Server.TEST_USER_PASSWORD
-    );
+    return await this.accountManager.createNewAccountSession(email, password);
   }
 
   private static async removeSession(sessionId: string): Promise<any> {
