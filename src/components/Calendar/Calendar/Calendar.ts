@@ -8,7 +8,6 @@ import { log } from "../../../lib/utils/Logger";
 export default class Calendar extends WebComponent {
   monthNumberDecember = 12;
   monthNumberJanuary = 1;
-  calendarModelPromise: Promise<CalendarModel>;
   calendarMonth!: CalendarMonth;
   currentMonthNumber!: number;
   currentMonthText!: string;
@@ -34,13 +33,10 @@ export default class Calendar extends WebComponent {
   onCreate(): Promise<void> | void {
     this.$initHtml();
     this.initListeners();
-    log(this.calendarModelPromise);
-    this.calendarModelPromise.then((data) => {
-      this.noteDays = data.noteDays;
-      this.today = data.today;
-      this.getCurrentData();
-      this.getEntriesForMonth(false);
-    });
+    this.noteDays = this.calendarModel.noteDays;
+    this.today = this.calendarModel.today;
+    this.getCurrentData();
+    this.getEntriesForMonth(false);
   }
 
   private $initHtml(): void {

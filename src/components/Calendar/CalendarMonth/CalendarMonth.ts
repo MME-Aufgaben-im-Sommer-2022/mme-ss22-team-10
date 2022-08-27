@@ -2,7 +2,6 @@ import WebComponent from "../../../lib/components/WebComponent";
 import html from "../../Calendar/CalendarMonth/CalendarMonth.html";
 import css from "../../Calendar/CalendarMonth/CalendarMonth.css";
 import CalendarDay from "../CalendarDay/CalendarDay";
-import { log } from "../../../lib/utils/Logger";
 
 export default class CalendarMonth extends WebComponent {
   entriesForCurrentMonth: Array<string>;

@@ -7,6 +7,7 @@ import Calendar from "../Calendar/Calendar/Calendar";
 import html from "./Home.html";
 import css from "./Home.css";
 import CalendarModel from "../../data/models/CalendarModel";
+import { log } from "../../lib/utils/Logger";
 
 export default class Home extends WebComponent {
   private $contentContainer!: HTMLDivElement;
@@ -28,6 +29,8 @@ export default class Home extends WebComponent {
     // eslint-disable-next-line no-async-promise-executor
     return new Promise(async (resolve) => {
       const editorModel = await DataManager.getEditorModel(new Date());
+      log(editorModel);
+
       this.calendarModel = await DataManager.getCalendarModel();
       this.editorModelState = editorModel.toState();
       this.$initHtml();
