@@ -1,11 +1,44 @@
+login-register{
+    display: flex;
+    flex-grow: 1;
+
+
+}
+
+.login-form{
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+
+}
+
+.login-form button{
+    margin: var(--spacing-medium);
+}
+
+svg {
+    width: 150px;
+    height: 150px;
+}
+
+image {
+    width: 100px;
+    height: 100px;
+}
+
+
 p{
     color: #ff0000;
 }
 
-.loginForm{
-    align-content: center;
+.login-form span{
+    text-align: center;
 }
 
-.loginForm a{
-    text-underline: #965454;
+.connect-message{
+    color: red;
+}
+
+.register-toggle{
+    color: var(--text-accent);
 }

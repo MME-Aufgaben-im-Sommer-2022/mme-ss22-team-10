@@ -2,10 +2,6 @@ import WebComponent from "../../../lib/components/WebComponent";
 import html from "../../Calendar/CalendarMonth/CalendarMonth.html";
 import css from "../../Calendar/CalendarMonth/CalendarMonth.css";
 import CalendarDay from "../CalendarDay/CalendarDay";
-import eventBus from "../../../lib/events/EventBus";
-import EventBus from "../../../lib/events/EventBus";
-import { AppEvent } from "../../../lib/events/AppEvent";
-import { log } from "../../../lib/utils/Logger";
 
 export default class CalendarMonth extends WebComponent {
   entriesForCurrentMonth: Array<string>;
@@ -29,16 +25,9 @@ export default class CalendarMonth extends WebComponent {
     return "calendar-month";
   }
 
-  private initListeners(): void {
-    EventBus.addEventListener("testColor", (event: AppEvent) => {
-      this.colorEntry(event.data);
-    });
-  }
-
   onCreate(): Promise<void> | void {
     //log(this.entriesForCurrentMonth);
     this.$initHtml();
-    this.initListeners();
     this.formatMonth();
     this.appendCalenderEntry();
   }
@@ -82,13 +71,13 @@ export default class CalendarMonth extends WebComponent {
     }
   }
 
-  colorEntry(data: any): void {
-    const test = document.querySelectorAll(".calendar-day border");
-
-    for (let i = 0; i < test.length; i++) {
-      test[i].style.backgroundColor = "red";
-    }
-    log(data);
-    data.style.background = "blue";
-  }
+  // colorEntry(data: any): void {
+  //   const test = document.querySelectorAll(".calendar-day");
+  //
+  //   for (let i = 0; i < test.length; i++) {
+  //     test[i].style.backgroundColor = "red";
+  //   }
+  //   log(data);
+  //   data.style.background = "blue";
+  // }
 }

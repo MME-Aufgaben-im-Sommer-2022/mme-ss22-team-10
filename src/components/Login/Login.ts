@@ -30,7 +30,7 @@ export default class Login extends WebComponent {
     this.$loginButton = this.select("button")!;
     this.$emailInput = this.select('input[name="email"]')!;
     this.$passwordInput = this.select('input[name="password"]')!;
-    this.$registerToggle = this.select("a")!;
+    this.$registerToggle = this.select("span")!;
   }
 
   private initListeners(): void {

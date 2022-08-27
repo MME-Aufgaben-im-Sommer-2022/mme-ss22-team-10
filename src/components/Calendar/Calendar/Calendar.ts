@@ -34,6 +34,7 @@ export default class Calendar extends WebComponent {
     this.$initHtml();
     this.initListeners();
     this.noteDays = this.calendarModel.noteDays;
+    //log(this.noteDays);
     this.today = this.calendarModel.today;
     this.getCurrentData();
     this.getEntriesForMonth(false);
@@ -68,7 +69,9 @@ export default class Calendar extends WebComponent {
     }
     this.entriesForCurrentMonth = this.getEntryData();
     log(this.entriesForCurrentMonth);
-    log(this.entriesForCurrentMonth.includes(this.today.getDate()) + "");
+    log(this.today.getDate() + "");
+    log(this.today.getDate());
+    log(this.entriesForCurrentMonth.includes(this.today.getDate() + ""));
     if (
       this.currentMonthNumber === this.today.getMonth() + 1 &&
       !this.entriesForCurrentMonth.includes(this.today.getDate() + "")
@@ -130,10 +133,8 @@ export default class Calendar extends WebComponent {
   };
 
   onNextClicked = () => {
-    if (this.currentMonthNumber + 1 <= this.today.getMonth() + 1) {
-      this.currentMonthNumber += 1;
-      this.getEntriesForMonth(true);
-    }
+    this.currentMonthNumber += 1;
+    this.getEntriesForMonth(true);
   };
 
   removeMonthEntries = () => {
