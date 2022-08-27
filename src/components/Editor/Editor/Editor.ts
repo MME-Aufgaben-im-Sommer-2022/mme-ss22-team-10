@@ -11,6 +11,7 @@ import { AppEvent } from "../../../lib/events/AppEvent";
 import DataManager from "../../../data/DataManager";
 import { log } from "../../../lib/utils/Logger";
 import { StateChangedData } from "../../../events/StateChanged";
+import { parseDateFromString } from "../../../lib/utils";
 
 // HTML element that serves as the main editor component
 
@@ -75,7 +76,7 @@ export default class Editor extends WebComponent {
       CalendarDay.CALENDAR_DAY_CLICKED_EVENT,
       (event: AppEvent) => {
         const newDate = event.data;
-        log(event);
+        log("editor", event, parseDateFromString(newDate));
         DataManager.getEditorModel(newDate).then((editorModel) => {
           log(editorModel);
           this.editorModelState.value = editorModel;
