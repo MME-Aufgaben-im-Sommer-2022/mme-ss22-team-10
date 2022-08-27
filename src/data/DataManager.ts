@@ -1,6 +1,6 @@
 import ExampleModel from "./models/ExampleModel";
 import CalendarModel, { Years } from "./models/CalendarModel";
-import { info } from "../lib/utils/Logger";
+import { error, info } from "../lib/utils/Logger";
 import EditorModel, {
   BlockContent,
   BlockContentInputType,
@@ -23,7 +23,6 @@ import templateConfigurationModel from "./models/templateConfigurationModel.json
 export default class DataManager {
   static async init() {
     await ApiClient.init();
-    await this.logInUser("email", "password");
   }
 
   // Write methods to fetch or save data to Database etc. here
@@ -34,24 +33,27 @@ export default class DataManager {
     return new ExampleModel("John", 0);
   }
 
-  static async logInUser(email: string, password: string): Promise<void> {
-    if (!(await this.connectToOldSession())) {
-      await ApiClient.createNewSession(email, password).then((session) => {
-        return ApiClient.connectSession(session);
+  static async signInViaMail(
+    email: string,
+    password: string
+  ): Promise<boolean> {
+    await ApiClient.createNewSession(email, password)
+      .then((session) => {
+        ApiClient.connectSession(session);
+        console.log(session);
+      })
+      .catch((e) => console.log(e))
+      .then(() => {
+        return false;
       });
-    }
+    return true;
   }
 
-  private static async connectToOldSession(): Promise<boolean> {
-    const localSessionId = localStorage.getItem("sessionId");
-    if (localSessionId) {
-      const session = await ApiClient.getSession(localSessionId);
-      if (this.convertNumberToDate(session.expire) > new Date()) {
-        await ApiClient.connectSession(session);
-        return true;
-      }
+  static async connectToSession(sessionId: string) {
+    const session = await ApiClient.getSession(sessionId);
+    if (this.convertNumberToDate(session.expire) > new Date()) {
+      await ApiClient.connectSession(session);
     }
-    return false;
   }
 
   // Calendar Model
@@ -267,8 +269,7 @@ export default class DataManager {
 
   // Editor Model
   private static generateMockEditorModel(date: Date): EditorModel {
-    const NUM_BLOCKS = 3,
-      day = date,
+    const day = date,
       blockContents: Array<BlockContent> = [];
 
     blockContents.push({
