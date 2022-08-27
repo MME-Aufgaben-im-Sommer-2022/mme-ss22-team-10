@@ -14,7 +14,7 @@ import ApiClient from "./api/ApiClient";
 import TemplateConfigurationModel, {
   Topic,
 } from "./models/TemplateConfigurationModel";
-import templateConfigurationModel from "/public/templateConfigurationModel.json";
+import templateConfigurationModel from "./models/templateConfigurationModel.json";
 
 // `DataManager` is a singleton, in which you define functions to fetch/save/delete Models.
 
