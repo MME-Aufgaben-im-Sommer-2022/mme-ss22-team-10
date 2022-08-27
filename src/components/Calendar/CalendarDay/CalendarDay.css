@@ -12,6 +12,6 @@ calendar-day{
     align-items: center;
 
 }
-.calendar-day:hover{
-    background: #965454;
+.calendar-day:hover {
+    background: var(--text-accent-hover);
 }

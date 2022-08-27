@@ -16,7 +16,7 @@ main-calendar {
     padding-top: var(--spacing-medium);
 }
 
-a{
+.calendar-navigation > a{
     text-decoration: none;
     display: inline-block;
     padding: 8px 16px;
@@ -36,21 +36,21 @@ a{
     align-items: center;
 }
 
-a:hover {
-    background-color: #ddd;
-    color: black;
+.calendar-navigation a:hover {
+    background-color: var(--text-accent-hover);
+    color: var(--text-header);
 }
 
-.previous {
-    background-color: #f1f1f1;
-    color: black;
+.calendar-navigation .previous {
+    background-color: var(--border-color);
+    color: var(--text-header);
 }
 
-.next {
-    background-color: #f1f1f1;
-    color: black;
+.calendar-navigation .next {
+    background-color: var(--border-color);
+    color: var(--text-header);
 }
 
-.round {
+.calendar-navigation .round {
     border-radius: 50%;
 }

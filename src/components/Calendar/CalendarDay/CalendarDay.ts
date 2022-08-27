@@ -24,11 +24,14 @@ export default class CalendarDay extends WebComponent {
     this.$initHtml();
     this.$entryTitle.innerText = this.entryDate;
     this.addEventListener("click", () => {
-      this.style.background = "green";
       EventBus.notifyAll(
         CalendarDay.CALENDAR_DAY_CLICKED_EVENT,
         this.entryDate
       );
+    });
+
+    this.addEventListener("click", () => {
+      EventBus.notifyAll("testColor", this);
     });
   }
 
