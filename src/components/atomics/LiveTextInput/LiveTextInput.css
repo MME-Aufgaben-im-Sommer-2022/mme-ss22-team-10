@@ -8,7 +8,7 @@
 }
 
 .text-preview {
-    width: 100%;
+    flex-grow: 1;
 }
 
 .live-text-input-container {

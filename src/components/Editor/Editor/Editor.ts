@@ -21,7 +21,7 @@ import { GlobalStates } from "../../../state/GlobalStates";
 //    - a state object that holds the editor model
 
 export default class Editor extends WebComponent {
-  private editorModelState: State<EditorModel>;
+  private editorModelState!: State<EditorModel>;
 
   private $editor!: HTMLDivElement;
   private $editorBlocksContainer!: HTMLDivElement;
@@ -85,6 +85,8 @@ export default class Editor extends WebComponent {
       if (data.currentPath === "") {
         this.$editorBlocksContainer.innerHTML = "";
         this.$appendEditorBlocks();
+      } else {
+        DataManager.updateEditorModel(this.editorModelState.value);
       }
     });
 

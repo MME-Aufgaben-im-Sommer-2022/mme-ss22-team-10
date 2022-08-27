@@ -1,5 +1,6 @@
 import WebComponent from "../../../../lib/components/WebComponent";
 import html from "./FreeTextInputField.html";
+import css from "./FreeTextInputField.css";
 import State from "../../../../lib/state/State";
 import LiveTextInput from "../../../atomics/LiveTextInput/LiveTextInput";
 
@@ -18,7 +19,7 @@ export default class FreeTextInputField extends WebComponent {
   private readonly inputValueState: State<string>;
 
   constructor(inputValueState: State<string>) {
-    super(html);
+    super(html, css);
     this.inputValueState = inputValueState;
   }
 

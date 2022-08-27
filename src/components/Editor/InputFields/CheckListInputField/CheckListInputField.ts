@@ -22,9 +22,9 @@ export default class CheckListInputField extends WebComponent {
   // the split up bullet points (e.g. ["1___item 1", "0___item 2"])
   private readonly checkListStates: State<Array<string>>;
 
-  static readonly CHECK_LIST_CONTENT_SEPARATOR = "___";
-  static readonly CHECK_LIST_IS_CHECKED_MARK = "1";
-  static readonly CHECK_LIST_IS_UNCHECKED_MARK = "0";
+  static readonly CHECK_LIST_CONTENT_SEPARATOR = " ";
+  static readonly CHECK_LIST_IS_CHECKED_MARK = "[X]";
+  static readonly CHECK_LIST_IS_UNCHECKED_MARK = "[-]";
 
   constructor(inputValueState: State<string>) {
     super(html);

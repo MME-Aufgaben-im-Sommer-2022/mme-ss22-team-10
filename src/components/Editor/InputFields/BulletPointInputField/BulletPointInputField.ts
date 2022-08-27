@@ -24,11 +24,13 @@ export default class BulletPointInputField extends WebComponent {
   constructor(bulletPointsListState: State<string>) {
     super(html);
     this.bulletPointsListState = bulletPointsListState;
-    this.bulletPointsState = new State<Array<string>>(
-      this.bulletPointsListState.value
-        .split("\n")
-        .map((inputValue) => inputValue.trim())
-    );
+    this.bulletPointsState = new State<Array<string>>([]);
+    this.bulletPointsListState.value.split("\n").forEach((inputValue) => {
+      const value = inputValue.trim();
+      if (value !== "") {
+        this.bulletPointsState.value.push(value);
+      }
+    });
   }
 
   get htmlTagName(): string {

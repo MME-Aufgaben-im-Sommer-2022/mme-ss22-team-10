@@ -14,6 +14,7 @@ import TemplateConfigurationModel, {
   Topic,
 } from "./models/TemplateConfigurationModel";
 import templateConfigurationModel from "./models/templateConfigurationModel.json";
+import { log } from "../lib/utils/Logger";
 
 // `DataManager` is a singleton, in which you define functions to fetch/save/delete Models.
 
@@ -116,6 +117,7 @@ export default class DataManager {
   }
 
   static async updateEditorModel(editorModel: EditorModel): Promise<void> {
+    log(this.convertDateToString(editorModel.day));
     const noteDocument = await ApiClient.getNoteDocument(
       this.convertDateToString(editorModel.day)
     );
@@ -284,8 +286,8 @@ export default class DataManager {
     blockContents.push({
       title: "Title 1",
       inputType: BlockContentInputType.Checkbox,
-      inputValue: `0___unchecked
-        1___checked`,
+      inputValue: `[-] unchecked
+        [X] checked`,
     });
     blockContents.push({
       title: "Title 2",
