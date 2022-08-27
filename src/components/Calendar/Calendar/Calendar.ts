@@ -4,6 +4,8 @@ import css from "../../Calendar/Calendar/Calendar.css";
 import CalendarMonth from "../CalendarMonth/CalendarMonth";
 import CalendarModel, { Years } from "../../../data/models/CalendarModel";
 import { log } from "../../../lib/utils/Logger";
+import { GlobalStates } from "../../../state/GlobalStates";
+import GlobalState from "../../../lib/state/GlobalState";
 
 export default class Calendar extends WebComponent {
   monthNumberDecember = 12;
@@ -21,9 +23,11 @@ export default class Calendar extends WebComponent {
   today!: Date;
   noteDays!: Years;
 
-  constructor(calendarModel: CalendarModel) {
+  constructor() {
     super(html, css);
-    this.calendarModel = calendarModel;
+    this.calendarModel = GlobalState.getStateById<CalendarModel>(
+      GlobalStates.calendarModel
+    )!.value;
   }
 
   get htmlTagName(): string {
@@ -91,6 +95,7 @@ export default class Calendar extends WebComponent {
 
   private getEntryData(): Array<string> | undefined {
     if (
+      this.noteDays[this.currentYear] !== undefined &&
       this.noteDays[this.currentYear][this.currentMonthNumber] !== undefined
     ) {
       return this.noteDays[this.currentYear][this.currentMonthNumber];

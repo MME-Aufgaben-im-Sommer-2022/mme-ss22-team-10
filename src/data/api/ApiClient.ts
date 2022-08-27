@@ -103,19 +103,21 @@ export default class ApiClient {
         [Query.equal("userID", this.userId)]
       ),
       noteDocumentLength = noteDocument.total;
-    let lastDocumentId =
-      noteDocument.documents[noteDocument.documents.length - 1].$id;
-    noteDocument.documents.forEach((document) => array.push(document));
-
-    while (array.length < noteDocumentLength) {
-      const noteDocument = await this.databaseManager.listDocuments(
-        Server.COLLECTION_NOTES,
-        [Query.equal("userID", this.userId)],
-        lastDocumentId
-      );
-      lastDocumentId =
+    if (noteDocumentLength !== 0) {
+      let lastDocumentId =
         noteDocument.documents[noteDocument.documents.length - 1].$id;
       noteDocument.documents.forEach((document) => array.push(document));
+
+      while (array.length < noteDocumentLength) {
+        const noteDocument = await this.databaseManager.listDocuments(
+          Server.COLLECTION_NOTES,
+          [Query.equal("userID", this.userId)],
+          lastDocumentId
+        );
+        lastDocumentId =
+          noteDocument.documents[noteDocument.documents.length - 1].$id;
+        noteDocument.documents.forEach((document) => array.push(document));
+      }
     }
     return array;
   }

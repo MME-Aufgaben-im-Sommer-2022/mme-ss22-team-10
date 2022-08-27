@@ -9,21 +9,18 @@ export interface TemplateItem {
 
 export default class UserSettingsModel extends Model {
   username: string;
-  token: string;
   settings: {
     template: Template;
   };
 
   constructor(
     username: string,
-    token: string,
     settings: {
       template: Template;
     }
   ) {
     super();
     this.username = username;
-    this.token = token;
     this.settings = settings;
   }
 }

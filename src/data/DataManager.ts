@@ -1,6 +1,5 @@
 import ExampleModel from "./models/ExampleModel";
 import CalendarModel, { Years } from "./models/CalendarModel";
-import { error, info } from "../lib/utils/Logger";
 import EditorModel, {
   BlockContent,
   BlockContentInputType,
@@ -40,20 +39,30 @@ export default class DataManager {
     await ApiClient.createNewSession(email, password)
       .then((session) => {
         ApiClient.connectSession(session);
-        console.log(session);
       })
-      .catch((e) => console.log(e))
+      .catch()
       .then(() => {
         return false;
       });
     return true;
   }
 
-  static async connectToSession(sessionId: string) {
+  private static async connectToSession(sessionId: string): Promise<boolean> {
     const session = await ApiClient.getSession(sessionId);
     if (this.convertNumberToDate(session.expire) > new Date()) {
       await ApiClient.connectSession(session);
+      return true;
     }
+    return false;
+  }
+
+  static async checkIfUserLoggedIn(): Promise<boolean> {
+    const localSessionId = localStorage.getItem("sessionId");
+    let connected = false;
+    if (localSessionId) {
+      connected = await this.connectToSession(localSessionId);
+    }
+    return connected;
   }
 
   // Calendar Model
@@ -144,7 +153,7 @@ export default class DataManager {
       userSettings = await ApiClient.getUserSettingsDocument(),
       templateData = userSettings.template,
       template = this.jsonParseArray(templateData);
-    return new UserSettingsModel(account.name, "token-xyz", { template });
+    return new UserSettingsModel(account.name, { template });
   }
 
   static async updateUserSettingsModel(
@@ -312,6 +321,6 @@ export default class DataManager {
       },
     ];
 
-    return new UserSettingsModel("user1", "token-xyz", { template });
+    return new UserSettingsModel("user1", { template });
   }
 }

@@ -1,12 +1,17 @@
 import WebComponent from "../../lib/components/WebComponent";
 import TemplateConfigurationModel from "../../data/models/TemplateConfigurationModel";
 import State from "../../lib/state/State";
-import { Template } from "../../data/models/UserSettingsModel";
+import UserSettingsModel, {
+  Template,
+} from "../../data/models/UserSettingsModel";
 import html from "./TemplateConfigurator.html";
 import css from "./TemplateConfigurator.css";
 import { BlockContentInputType } from "../../data/models/EditorModel";
 import TopicConfigurator from "./TopicConfigurator/TopicConfigurator";
 import InputTypeConfigurator from "./InputTypeConfigurator/InputTypeConfigurator";
+import DataManager from "../../data/DataManager";
+import GlobalState from "../../lib/state/GlobalState";
+import { GlobalStates } from "../../state/GlobalStates";
 
 enum TemplateConfigurationProgress {
   SELECT_TOPICS,
@@ -28,7 +33,7 @@ export default class TemplateConfigurator extends WebComponent {
   public static readonly FINISH_TEMPLATE_CONFIGURATION_EVENT =
     "onFinishTemplateConfiguration";
 
-  private readonly templateConfigurationModelState: State<TemplateConfigurationModel>;
+  private templateConfigurationModelState!: State<TemplateConfigurationModel>;
   private readonly selectedTitlesState: State<Array<string>> = new State([]);
   private readonly selectedInputTypesState: State<
     Array<BlockContentInputType>
@@ -45,11 +50,8 @@ export default class TemplateConfigurator extends WebComponent {
   private $inputTypeConfiguratorContainer!: HTMLDivElement;
   private $inputTypeConfigurator!: InputTypeConfigurator;
 
-  constructor(
-    templateConfigurationModelState: State<TemplateConfigurationModel>
-  ) {
+  constructor() {
     super(html, css);
-    this.templateConfigurationModelState = templateConfigurationModelState;
   }
 
   get htmlTagName(): string {
@@ -57,9 +59,17 @@ export default class TemplateConfigurator extends WebComponent {
   }
 
   onCreate(): Promise<void> | void {
-    this.$initHtml();
-    this.$initHtmlListener();
-    this.initStateListener();
+    // eslint-disable-next-line no-async-promise-executor
+    return new Promise(async (resolve) => {
+      const templateConfigurationModel =
+        await DataManager.getTemplateConfigurationModel();
+      this.templateConfigurationModelState =
+        templateConfigurationModel.toState();
+      this.$initHtml();
+      this.$initHtmlListener();
+      this.initStateListener();
+      resolve();
+    });
   }
 
   $initHtml(): void {
@@ -138,18 +148,28 @@ export default class TemplateConfigurator extends WebComponent {
     this.selectedInputTypesState.value = [];
   };
 
-  private $onFinishInputTypeConfiguration = () => {
+  private $onFinishInputTypeConfiguration = async () => {
     const template: Template = this.selectedTitlesState.value.map(
-      (title, index) => {
-        return {
-          title,
-          inputType: this.selectedInputTypesState.value[index],
-        };
-      }
-    );
-    this.notifyAll(
-      TemplateConfigurator.FINISH_TEMPLATE_CONFIGURATION_EVENT,
-      template
-    );
+        (title, index) => {
+          return {
+            title,
+            inputType: this.selectedInputTypesState.value[index],
+          };
+        }
+      ),
+      userSettingsModelState = GlobalState.getStateById<UserSettingsModel>(
+        GlobalStates.userSettingsModel
+      );
+
+    if (userSettingsModelState) {
+      const userSettingsModel = userSettingsModelState.value;
+      userSettingsModel.settings.template = template;
+      DataManager.updateUserSettingsModel(userSettingsModel).then(() => {
+        this.notifyAll(
+          TemplateConfigurator.FINISH_TEMPLATE_CONFIGURATION_EVENT,
+          template
+        );
+      });
+    }
   };
 }

@@ -29,9 +29,13 @@ export default class CheckListInputField extends WebComponent {
   constructor(inputValueState: State<string>) {
     super(html);
     this.inputValueState = inputValueState;
-    this.checkListStates = new State<Array<string>>(
-      this.inputValueState.value.split("\n")
-    );
+    const splitStates = this.inputValueState.value.split("\n");
+    this.checkListStates = new State<Array<string>>([]);
+    splitStates.forEach((splitState) => {
+      if (splitState !== "") {
+        this.checkListStates.value.push(splitState);
+      }
+    });
   }
 
   get htmlTagName(): string {

@@ -11,6 +11,8 @@ import { AppEvent } from "../../../lib/events/AppEvent";
 import DataManager from "../../../data/DataManager";
 import { StateChangedData } from "../../../events/StateChanged";
 import { parseDateFromString } from "../../../lib/utils";
+import GlobalState from "../../../lib/state/GlobalState";
+import { GlobalStates } from "../../../state/GlobalStates";
 
 // HTML element that serves as the main editor component
 
@@ -24,9 +26,11 @@ export default class Editor extends WebComponent {
   private $editor!: HTMLDivElement;
   private $editorBlocksContainer!: HTMLDivElement;
 
-  constructor(editorModelState: State<EditorModel>) {
+  constructor() {
     super(html, css);
-    this.editorModelState = editorModelState;
+    this.editorModelState = GlobalState.getStateById<EditorModel>(
+      GlobalStates.editorModel
+    )!;
   }
 
   get htmlTagName(): string {

@@ -4,11 +4,13 @@ import DataManager from "./data/DataManager";
 import Playground from "./components/Playground/Playground";
 import "./styles/main.css";
 import { log } from "./lib/utils/Logger";
-import State from "./lib/state/State";
+import Login from "./components/Login/Login";
+import TemplateConfigurator from "./components/TemplateConfigurator/TemplateConfigurator";
+import Home from "./components/Home/Home";
+import { GlobalStates } from "./state/GlobalStates";
 
 const app = () => {
   const $app = document.querySelector<HTMLDivElement>("#app")!;
-  const isLoggedIn = new State(false);
 
   WebComponentLoader.loadAll() // Initialize the WebComponent definitions
     .then(() => DataManager.init()) // Initialize the database connection etc.
@@ -31,14 +33,69 @@ const app = () => {
   }
 
   async function onProductionStart() {
-    const userModel = await DataManager.getUserSettingsModel();
-    if (userModel !== undefined) {
-      log("logged in", userModel);
-      isLoggedIn.value = true;
+    await DataManager.signInViaMail("notemplate@mail.de", "123456789");
+    const isLoggedIn = await DataManager.checkIfUserLoggedIn();
+    if (isLoggedIn) {
+      await onLoggedIn();
     } else {
-      log("not logged in", userModel);
-      isLoggedIn.value = false;
+      await onLoggedOut();
     }
+  }
+
+  async function onLoggedIn() {
+    log("user is logged in");
+    const userModel = await DataManager.getUserSettingsModel();
+    GlobalState.addState(userModel.toState(), GlobalStates.userSettingsModel);
+    if (userModel.settings.template.length === 0) {
+      onNewUser();
+    } else {
+      onReturningUser();
+    }
+  }
+
+  async function onReturningUser() {
+    log("returning user");
+    $showHome();
+  }
+
+  async function $showHome() {
+    const calendarModel = await DataManager.getCalendarModel(),
+      editorModel = await DataManager.getEditorModel(new Date());
+
+    GlobalState.addState(calendarModel.toState(), GlobalStates.calendarModel);
+    GlobalState.addState(editorModel.toState(), GlobalStates.editorModel);
+
+    $app.innerHTML = "";
+    $app.append(new Home());
+  }
+
+  async function onNewUser() {
+    log("new user");
+    $showTemplateConfigurator();
+  }
+
+  function $showTemplateConfigurator() {
+    $app.innerHTML = "";
+    const templateConfigurator = new TemplateConfigurator();
+    templateConfigurator.addEventListener(
+      TemplateConfigurator.FINISH_TEMPLATE_CONFIGURATION_EVENT,
+      () => {
+        log("template configurator finished");
+        $showHome();
+      }
+    );
+    $app.append(templateConfigurator);
+  }
+
+  async function onLoggedOut() {
+    log("user is logged out");
+    $showLogin();
+  }
+
+  function $showLogin() {
+    $app.innerHTML = "";
+    const loginPage = new Login();
+    $app.append(loginPage);
   }
 };
 
