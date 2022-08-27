@@ -26,12 +26,12 @@ export default class CalendarMonth extends WebComponent {
   }
 
   onCreate(): Promise<void> | void {
-    log(this.entriesForCurrentMonth);
+    //log(this.entriesForCurrentMonth);
     this.formatMonth();
     this.appendCalenderEntry();
   }
 
-  formatMonth(): void {
+  private formatMonth(): void {
     if (this.currentMonthNumber < 10) {
       this.currentMonthNumberText = "0" + this.currentMonthNumber;
     } else {
@@ -39,7 +39,7 @@ export default class CalendarMonth extends WebComponent {
     }
   }
 
-  appendCalenderEntry() {
+  private appendCalenderEntry() {
     for (let i = 0; i < this.entriesForCurrentMonth.length; i++) {
       if (parseInt(this.entriesForCurrentMonth[i]) < 10) {
         this.select(".days")!.append(

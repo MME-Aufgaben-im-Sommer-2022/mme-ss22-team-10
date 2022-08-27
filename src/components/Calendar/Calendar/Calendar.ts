@@ -2,115 +2,120 @@ import WebComponent from "../../../lib/components/WebComponent";
 import html from "../../Calendar/Calendar/Calendar.html";
 import css from "../../Calendar/Calendar/Calendar.css";
 import CalendarMonth from "../CalendarMonth/CalendarMonth";
-import CalendarModel from "../../../data/models/CalendarModel";
+import CalendarModel, { Years } from "../../../data/models/CalendarModel";
 import { log } from "../../../lib/utils/Logger";
-//import { log } from "../../../lib/utils/Logger";
 
 export default class Calendar extends WebComponent {
+  monthNumberDecember = 12;
+  monthNumberJanuary = 1;
+  calendarModelPromise: Promise<CalendarModel>;
   calendarMonth!: CalendarMonth;
   currentMonthNumber!: number;
   currentMonthText!: string;
   currentYear!: string;
   calendarModel!: CalendarModel;
   entriesForCurrentMonth: any;
-  onNextButtonClicked = false;
-  onPreviousButtonClicked = false;
-
+  currentYearNumber!: number;
   $monthTitle!: HTMLHeadElement;
+  $previousButton!: HTMLButtonElement;
+  $nextButton!: HTMLButtonElement;
+  today!: Date;
+  noteDays!: Years;
 
   constructor(calendarModel: CalendarModel) {
     super(html, css);
     this.calendarModel = calendarModel;
   }
 
-  // override htmlTagName to return the tag name our component
-  // -> <example-component /> can be used in the html to create a new instance of this component
   get htmlTagName(): string {
     return "main-calendar";
   }
 
   onCreate(): Promise<void> | void {
     this.$initHtml();
-
-    this.getDataForFirstEntries(this.calendarModel);
-    this.setUpFirstEntries();
-    //this.getEntriesForMonth();
     this.initListeners();
+    log(this.calendarModelPromise);
+    this.calendarModelPromise.then((data) => {
+      this.noteDays = data.noteDays;
+      this.today = data.today;
+      this.getCurrentData();
+      this.getEntriesForMonth(false);
+    });
   }
 
   private $initHtml(): void {
-    this.$monthTitle = this.select(".selector h3")!;
+    this.$monthTitle = this.select(".calendar-navigation h3")!;
+    this.$previousButton = this.select(".previous")!;
+    this.$nextButton = this.select(".next")!;
   }
 
   private initListeners(): void {
-    this.select(".previous")!.addEventListener("click", this.onPreviousClicked);
-    this.select(".next")!.addEventListener("click", this.onNextClicked);
+    this.$previousButton.addEventListener("click", this.onPreviousClicked);
+    this.$nextButton.addEventListener("click", this.onNextClicked);
   }
 
-  private setUpFirstEntries() {
-    this.entriesForCurrentMonth = this.getEntryData(this.calendarModel);
-    if (this.entriesForCurrentMonth !== undefined) {
-      this.showEntries();
-    } else {
-      this.createEntry();
-    }
+  private getCurrentData(): void {
+    this.currentYear = this.today.getFullYear().toString();
+    this.currentMonthNumber = this.today.getMonth() + 1;
   }
 
-  private createEntry(): void {
-    const currentDate: Array<string> = [];
-    currentDate.push(this.calendarModel.today.getDate() + "");
-    this.calendarMonth = new CalendarMonth(
-      currentDate,
-      this.currentMonthNumber,
-      this.currentYear
-    );
-    this.select(".month")!.append(this.calendarMonth);
-  }
-
-  private getDataForFirstEntries(data: CalendarModel): void {
-    this.currentYear = data.today.getFullYear().toString();
-    this.currentMonthNumber = data.today.getMonth() + 1;
-    this.changeMonthTitle(this.currentMonthNumber);
-  }
-
-  private changeMonthTitle(monthNumber: number): void {
-    log("change Month Description" + this.currentMonthNumber);
+  private changeMonthTitle(): void {
     const date: Date = new Date();
-    date.setMonth(monthNumber - 1);
-    log("after change" + this.currentMonthNumber);
+    date.setMonth(this.currentMonthNumber - 1);
     this.currentMonthText = date.toLocaleString("default", { month: "long" });
     this.$monthTitle.innerText = this.currentMonthText;
   }
 
-  private getEntriesForMonth(): void {
-    this.entriesForCurrentMonth = this.getEntryData(this.calendarModel);
-    this.checkEntries();
-  }
-
-  private getEntryData(data: CalendarModel): Array<string> | undefined {
-    //log(this.currentYear);
-    //log(this.currentMonthNumber);
-    //log(data.noteDays[this.currentYear][this.currentMonthNumber]);
-    if (
-      data.noteDays[this.currentYear][this.currentMonthNumber] !== undefined
-    ) {
-      return data.noteDays[this.currentYear][this.currentMonthNumber];
+  private getEntriesForMonth(directionForward: boolean): void {
+    if (this.currentMonthNumber < 1 || this.currentMonthNumber > 12) {
+      this.changeYearNumber();
     }
-    return undefined;
+    this.entriesForCurrentMonth = this.getEntryData();
+    log(this.entriesForCurrentMonth);
+    log(this.entriesForCurrentMonth.includes(this.today.getDate()) + "");
+    if (
+      this.currentMonthNumber === this.today.getMonth() + 1 &&
+      !this.entriesForCurrentMonth.includes(this.today.getDate() + "")
+    ) {
+      //this.entriesForCurrentMonth.push(this.today.getDate() + "");
+    }
+    this.checkEntries(directionForward);
   }
 
-  private checkEntries(): void {
-    if (this.entriesForCurrentMonth !== undefined) {
-      this.changeMonthTitle(this.currentMonthNumber);
+  private changeYearNumber(): void {
+    if (this.currentMonthNumber < 1) {
+      this.currentMonthNumber = this.monthNumberDecember;
+      this.currentYearNumber = parseInt(this.currentYear) - 1;
+    } else {
+      this.currentMonthNumber = this.monthNumberJanuary;
+      this.currentYearNumber = parseInt(this.currentYear) + 1;
+    }
+    this.currentYear = this.currentYearNumber.toString();
+  }
 
-      //log(this.onNextButtonClicked);
-      //log(this.onPreviousButtonClicked);
+  private getEntryData(): Array<string> | undefined {
+    if (
+      this.noteDays[this.currentYear][this.currentMonthNumber] !== undefined
+    ) {
+      return this.noteDays[this.currentYear][this.currentMonthNumber];
+    }
+    return new Array<string>();
+  }
+
+  private checkEntries(directionForward: boolean): void {
+    if (this.entriesForCurrentMonth.length > 0) {
+      this.removeMonthEntries();
+      this.changeMonthTitle();
       this.showEntries();
     } else {
-      //log("keine Einträge vorhanden" + this.currentMonthNumber);
-      this.currentMonthNumber -= 1;
-      this.changeMonthTitle(this.currentMonthNumber);
-      this.getEntriesForMonth();
+      if (this.currentMonthNumber + 1 <= this.today.getMonth() + 1) {
+        if (directionForward) {
+          this.currentMonthNumber += 1;
+        } else {
+          this.currentMonthNumber -= 1;
+        }
+        this.getEntriesForMonth(directionForward);
+      }
     }
   }
 
@@ -120,30 +125,22 @@ export default class Calendar extends WebComponent {
       this.currentMonthNumber,
       this.currentYear
     );
-    //log(this.calendarMonth);
     this.select(".month")!.append(this.calendarMonth);
   }
 
   onPreviousClicked = () => {
-    //this.onPreviousButtonClicked = true;
-    //log("previous");
     this.currentMonthNumber -= 1;
-    //log(this.currentMonthNumber);
-    this.removeMonthEntries();
-    this.getEntriesForMonth();
+    this.getEntriesForMonth(false);
   };
 
   onNextClicked = () => {
-    //this.onNextButtonClicked = true;
-    //log("next");
-    this.currentMonthNumber += 1;
-    //log(this.currentMonthNumber);
-    this.removeMonthEntries();
-    this.getEntriesForMonth();
+    if (this.currentMonthNumber + 1 <= this.today.getMonth() + 1) {
+      this.currentMonthNumber += 1;
+      this.getEntriesForMonth(true);
+    }
   };
 
   removeMonthEntries = () => {
-    //log("delete");
     this.select(".month")!.innerHTML = "";
   };
 }

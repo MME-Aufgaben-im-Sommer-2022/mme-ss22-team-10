@@ -1,0 +1,11 @@
+p{
+    color: #ff0000;
+}
+
+.loginForm{
+    align-content: center;
+}
+
+.loginForm a{
+    text-underline: #965454;
+}
