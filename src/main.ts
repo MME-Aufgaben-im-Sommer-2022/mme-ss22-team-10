@@ -3,8 +3,13 @@ import GlobalState from "./lib/state/GlobalState";
 import DataManager from "./data/DataManager";
 import Playground from "./components/Playground/Playground";
 import "./styles/main.css";
+import { log } from "./lib/utils/Logger";
+import State from "./lib/state/State";
 
 const app = () => {
+  const $app = document.querySelector<HTMLDivElement>("#app")!;
+  const isLoggedIn = new State(false);
+
   WebComponentLoader.loadAll() // Initialize the WebComponent definitions
     .then(() => DataManager.init()) // Initialize the database connection etc.
     .then(() => GlobalState.init()) // Initialize the global state
@@ -12,16 +17,28 @@ const app = () => {
 
   const appendDevPlayground = () => {
     const playground = new Playground();
-    document.querySelector<HTMLDivElement>("#app")!.append(playground);
+    $app.append(playground);
   };
 
-  function onApplicationStart() {
+  async function onApplicationStart() {
     const IS_IN_DEV_MODE = import.meta.env.DEV;
     if (IS_IN_DEV_MODE) {
-      appendDevPlayground();
+      // temp disable
+      // appendDevPlayground();
     }
 
-    // production code here
+    await onProductionStart();
+  }
+
+  async function onProductionStart() {
+    const userModel = await DataManager.getUserSettingsModel();
+    if (userModel !== undefined) {
+      log("logged in", userModel);
+      isLoggedIn.value = true;
+    } else {
+      log("not logged in", userModel);
+      isLoggedIn.value = false;
+    }
   }
 };
 

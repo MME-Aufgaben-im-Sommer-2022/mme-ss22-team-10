@@ -15,7 +15,7 @@ import ObservableSlim from "observable-slim";
 export default class State<T> extends Observable {
   private val: ProxyConstructor | T;
   private static stateCount = 0;
-  private readonly id: number;
+  readonly id: number;
 
   constructor(value: T) {
     super();

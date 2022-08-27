@@ -25,8 +25,8 @@ export default class GlobalState {
   }
 
   // Adds a state to the store.
-  public static addState(state: State<any>): void {
-    this.states.set(state.id, state);
+  public static addState(state: State<any>, id?: string): void {
+    this.states.set(id ?? state.id.toString(), state);
   }
 
   // Returns a state from the store by its id.
