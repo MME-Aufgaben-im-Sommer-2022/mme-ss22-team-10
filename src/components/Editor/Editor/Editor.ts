@@ -76,11 +76,11 @@ export default class Editor extends WebComponent {
       CalendarDay.CALENDAR_DAY_CLICKED_EVENT,
       (event: AppEvent) => {
         const newDate = event.data;
-        log("editor", event, parseDateFromString(newDate));
-        DataManager.getEditorModel(newDate).then((editorModel) => {
-          log(editorModel);
-          this.editorModelState.value = editorModel;
-        });
+        DataManager.getEditorModel(parseDateFromString(newDate)).then(
+          (editorModel) => {
+            this.editorModelState.value = editorModel;
+          }
+        );
       }
     );
   }
