@@ -21,16 +21,13 @@ import { GlobalStates } from "../../../state/GlobalStates";
 //    - a state object that holds the editor model
 
 export default class Editor extends WebComponent {
-  private readonly editorModelState: State<EditorModel>;
+  private editorModelState: State<EditorModel>;
 
   private $editor!: HTMLDivElement;
   private $editorBlocksContainer!: HTMLDivElement;
 
   constructor() {
     super(html, css);
-    this.editorModelState = GlobalState.getStateById<EditorModel>(
-      GlobalStates.editorModel
-    )!;
   }
 
   get htmlTagName(): string {
@@ -38,8 +35,24 @@ export default class Editor extends WebComponent {
   }
 
   onCreate(): Promise<void> | void {
-    this.$initHtml();
-    this.initListeners();
+    return this.initData().then(() => {
+      this.$initHtml();
+      this.initListeners();
+    });
+  }
+
+  private async initData() {
+    if (!GlobalState.hasState(GlobalStates.editorModel)) {
+      const editorModel = await DataManager.getEditorModel(new Date());
+      if (editorModel) {
+        GlobalState.addState(editorModel.toState(), GlobalStates.editorModel);
+      } else {
+        throw new Error("Could not load editor model");
+      }
+    }
+    this.editorModelState = GlobalState.getStateById<EditorModel>(
+      GlobalStates.editorModel
+    )!;
   }
 
   private $initHtml(): void {

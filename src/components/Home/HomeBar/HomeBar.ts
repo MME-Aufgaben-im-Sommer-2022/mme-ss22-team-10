@@ -6,6 +6,8 @@ import UserSettingsModel from "../../../data/models/UserSettingsModel";
 import DataManager from "../../../data/DataManager";
 import EventBus from "../../../lib/events/EventBus";
 import { LOGOUT_EVENT } from "../../../events/Logout";
+import { GlobalStates } from "../../../state/GlobalStates";
+import GlobalState from "../../../lib/state/GlobalState";
 
 export default class HomeBar extends WebComponent {
   private $greetText!: HTMLSpanElement;
@@ -21,11 +23,27 @@ export default class HomeBar extends WebComponent {
   }
 
   onCreate(): Promise<void> | void {
-    DataManager.getUserSettingsModel().then((userSettingsModel) => {
-      this.userSettingsModelState = new State(userSettingsModel);
+    return this.initData().then(() => {
       this.$initHtml();
       this.initListener();
     });
+  }
+
+  private async initData() {
+    if (!GlobalState.hasState(GlobalStates.userSettingsModel)) {
+      const userSettingsModel = await DataManager.getUserSettingsModel();
+      if (userSettingsModel) {
+        GlobalState.addState(
+          userSettingsModel.toState(),
+          GlobalStates.userSettingsModel
+        );
+      } else {
+        throw new Error("Could not load user settings model");
+      }
+    }
+    this.userSettingsModelState = GlobalState.getStateById<UserSettingsModel>(
+      GlobalStates.userSettingsModel
+    )!;
   }
 
   initListener(): void {

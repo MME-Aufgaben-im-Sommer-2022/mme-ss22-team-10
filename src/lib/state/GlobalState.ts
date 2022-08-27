@@ -46,6 +46,10 @@ export default class GlobalState {
     return undefined;
   }
 
+  public static hasState(id: string): boolean {
+    return this.states.has(id);
+  }
+
   // Returns all states from the store, that match the given predicate.
   // -> Like GlobalState.findModel(), but returns all matches.
   public static findStates<T>(

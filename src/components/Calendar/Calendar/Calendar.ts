@@ -6,6 +6,7 @@ import CalendarModel, { Years } from "../../../data/models/CalendarModel";
 import { log } from "../../../lib/utils/Logger";
 import { GlobalStates } from "../../../state/GlobalStates";
 import GlobalState from "../../../lib/state/GlobalState";
+import DataManager from "../../../data/DataManager";
 
 export default class Calendar extends WebComponent {
   monthNumberDecember = 12;
@@ -25,9 +26,6 @@ export default class Calendar extends WebComponent {
 
   constructor() {
     super(html, css);
-    this.calendarModel = GlobalState.getStateById<CalendarModel>(
-      GlobalStates.calendarModel
-    )!.value;
   }
 
   get htmlTagName(): string {
@@ -35,12 +33,32 @@ export default class Calendar extends WebComponent {
   }
 
   onCreate(): Promise<void> | void {
-    this.$initHtml();
-    this.initListeners();
-    this.noteDays = this.calendarModel.noteDays;
-    this.today = this.calendarModel.today;
-    this.getCurrentData();
-    this.getEntriesForMonth(false);
+    return this.initData().then(() => {
+      this.$initHtml();
+      this.initListeners();
+      this.noteDays = this.calendarModel.noteDays;
+      this.today = this.calendarModel.today;
+      this.getCurrentData();
+      this.getEntriesForMonth(false);
+    });
+  }
+
+  private async initData() {
+    if (!GlobalState.hasState(GlobalStates.calendarModel)) {
+      const calendarModel = await DataManager.getCalendarModel();
+      if (calendarModel) {
+        GlobalState.addState(
+          calendarModel.toState(),
+          GlobalStates.calendarModel
+        );
+      } else {
+        throw new Error("Could not load calendar model");
+      }
+    }
+    // TODO: change this to a state
+    this.calendarModel = GlobalState.getStateById<CalendarModel>(
+      GlobalStates.calendarModel
+    )!.value;
   }
 
   private $initHtml(): void {

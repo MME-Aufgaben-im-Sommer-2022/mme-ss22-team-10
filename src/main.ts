@@ -59,12 +59,6 @@ const app = () => {
   }
 
   async function $showHome() {
-    const calendarModel = await DataManager.getCalendarModel(),
-      editorModel = await DataManager.getEditorModel(new Date());
-
-    GlobalState.addState(calendarModel.toState(), GlobalStates.calendarModel);
-    GlobalState.addState(editorModel.toState(), GlobalStates.editorModel);
-
     $app.innerHTML = "";
     $app.append(new Home());
   }
