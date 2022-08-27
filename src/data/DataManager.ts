@@ -1,6 +1,6 @@
 import ExampleModel from "./models/ExampleModel";
 import CalendarModel, { Years } from "./models/CalendarModel";
-import { info } from "../lib/utils/Logger";
+import { error, info } from "../lib/utils/Logger";
 import EditorModel, {
   BlockContent,
   BlockContentInputType,
@@ -33,9 +33,20 @@ export default class DataManager {
     return new ExampleModel("John", 0);
   }
 
-  static async signInViaMail(email: string, password: string) {
-    const session = await ApiClient.createNewSession(email, password);
-    ApiClient.connectSession(session);
+  static async signInViaMail(
+    email: string,
+    password: string
+  ): Promise<boolean> {
+    await ApiClient.createNewSession(email, password)
+      .then((session) => {
+        ApiClient.connectSession(session);
+        console.log(session);
+      })
+      .catch((e) => console.log(e))
+      .then(() => {
+        return false;
+      });
+    return true;
   }
 
   static async connectToSession(sessionId: string) {
