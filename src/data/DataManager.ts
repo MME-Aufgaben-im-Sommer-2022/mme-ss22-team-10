@@ -260,18 +260,18 @@ export default class DataManager {
       blockContents: Array<BlockContent> = [];
 
     blockContents.push({
-      title: `Title 1`,
+      title: "Title 1",
       inputType: BlockContentInputType.Checkbox,
       inputValue: `0___unchecked
         1___checked`,
     });
     blockContents.push({
-      title: `Title 2`,
+      title: "Title 2",
       inputType: BlockContentInputType.FreeText,
       inputValue: generateRandomLoremIpsum(100),
     });
     blockContents.push({
-      title: `Title 3`,
+      title: "Title 3",
       inputType: BlockContentInputType.BulletPoint,
       inputValue: `first point
       second point`,

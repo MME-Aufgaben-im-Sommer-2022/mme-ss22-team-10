@@ -4,7 +4,9 @@ import css from "../../Calendar/CalendarDay/CalendarDay.css";
 import EventBus from "../../../lib/events/EventBus";
 
 export default class CalendarDay extends WebComponent {
-  entryDate;
+  public static CALENDAR_DAY_CLICKED_EVENT = "calendarDayClicked";
+
+  private entryDate;
 
   constructor(entryDate: string) {
     super(html, css);
@@ -20,7 +22,10 @@ export default class CalendarDay extends WebComponent {
   onCreate(): Promise<void> | void {
     this.select("h3")!.innerText = this.entryDate;
     this.addEventListener("click", () => {
-      EventBus.notifyAll("calenderEntryClicked", this.entryDate);
+      EventBus.notifyAll(
+        CalendarDay.CALENDAR_DAY_CLICKED_EVENT,
+        this.entryDate
+      );
       //log("listener works");
     });
   }

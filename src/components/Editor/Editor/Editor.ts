@@ -6,6 +6,11 @@ import EditorModel from "../../../data/models/EditorModel";
 import EventBus from "../../../lib/events/EventBus";
 import css from "./Editor.css";
 import { CLOSE_ALL_EDITOR_INPUTS_EVENT } from "../../../events/CloseAllEditorInputs";
+import CalendarDay from "../../Calendar/CalendarDay/CalendarDay";
+import { AppEvent } from "../../../lib/events/AppEvent";
+import DataManager from "../../../data/DataManager";
+import { log } from "../../../lib/utils/Logger";
+import { StateChangedData } from "../../../events/StateChanged";
 
 // HTML element that serves as the main editor component
 
@@ -37,6 +42,10 @@ export default class Editor extends WebComponent {
     this.$editor = this.select(".editor")!;
     this.$editorBlocksContainer = this.select(".editor-blocks-container")!;
 
+    this.$appendEditorBlocks();
+  }
+
+  private $appendEditorBlocks(): void {
     this.editorModelState.value.blockContents.forEach((_, index) => {
       const blockContentState = this.editorModelState.createSubState(
         `value.blockContents.${index}`
@@ -53,5 +62,25 @@ export default class Editor extends WebComponent {
     this.$editor.addEventListener("click", () => {
       EventBus.notifyAll(CLOSE_ALL_EDITOR_INPUTS_EVENT, {});
     });
+
+    this.editorModelState.addEventListener("change", (event: AppEvent) => {
+      const data: StateChangedData = event.data;
+      if (data.currentPath === "") {
+        this.$editorBlocksContainer.innerHTML = "";
+        this.$appendEditorBlocks();
+      }
+    });
+
+    EventBus.addEventListener(
+      CalendarDay.CALENDAR_DAY_CLICKED_EVENT,
+      (event: AppEvent) => {
+        const newDate = event.data;
+        log(event);
+        DataManager.getEditorModel(newDate).then((editorModel) => {
+          log(editorModel);
+          this.editorModelState.value = editorModel;
+        });
+      }
+    );
   }
 }

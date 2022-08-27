@@ -27,7 +27,7 @@ export default class EditorBlock extends WebComponent {
     super(html);
     this.blockContentState = blockContentState;
     this.inputValueState = new State<string>(
-      this.blockContentState.value.inputValue
+      this.blockContentState.value.inputValue ?? ""
     );
   }
 
