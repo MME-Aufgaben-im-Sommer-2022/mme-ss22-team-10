@@ -33,7 +33,6 @@ const app = () => {
   }
 
   async function onProductionStart() {
-    await DataManager.signInViaMail("notemplate@mail.de", "123456789");
     const isLoggedIn = await DataManager.checkIfUserLoggedIn();
     if (isLoggedIn) {
       await onLoggedIn();
