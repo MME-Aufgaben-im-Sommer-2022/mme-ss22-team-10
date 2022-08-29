@@ -10,6 +10,7 @@ export interface BlockContent {
   title: string;
   inputType: BlockContentInputType;
   inputValue: string;
+  documentId: string;
 }
 
 export default class EditorModel extends Model {
