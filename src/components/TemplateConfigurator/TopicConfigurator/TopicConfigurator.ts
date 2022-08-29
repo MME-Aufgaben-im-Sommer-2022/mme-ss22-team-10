@@ -1,5 +1,6 @@
 import WebComponent from "../../../lib/components/WebComponent";
 import html from "./TopicConfigurator.html";
+import css from "./TopicConfigurator.css";
 import TopicConfiguratorItem from "./TopicConfiguratorItem/TopicConfiguratorItem";
 import State from "../../../lib/state/State";
 import TemplateConfigurationModel from "../../../data/models/TemplateConfigurationModel";
@@ -20,7 +21,7 @@ export default class TopicConfigurator extends WebComponent {
     templateConfigurationModelState: State<TemplateConfigurationModel>,
     selectedTitlesState: State<Array<string>>
   ) {
-    super(html);
+    super(html, css);
     this.templateConfigurationModelState = templateConfigurationModelState;
     this.selectedTitlesState = selectedTitlesState;
   }

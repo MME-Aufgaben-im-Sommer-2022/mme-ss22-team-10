@@ -29,3 +29,7 @@
     /*add separator under*/
     border-bottom: 1px solid var(--border-color);
 }
+
+.underlined {
+    text-decoration: underline;
+}

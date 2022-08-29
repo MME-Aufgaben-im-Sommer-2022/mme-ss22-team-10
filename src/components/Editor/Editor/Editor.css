@@ -17,11 +17,9 @@ note-editor {
 }
 
 .editor-blocks-container {
-    justify-content: space-between;
+    display: inline;
 }
-
 .editor-blocks-container > * {
-
     margin-right: auto;
 }
 
@@ -31,6 +29,7 @@ check-list-item {
     list-style: none !important;
 }
 
-.new-item-input {
+.editor input {
     margin-top: var(--spacing-small);
+    width: 15em;
 }
