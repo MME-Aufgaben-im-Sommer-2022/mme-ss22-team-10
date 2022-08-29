@@ -1,16 +1,20 @@
-.text-input.single-line {
+.live-text-input-container > .text-input.single-line {
     resize: none;
 }
 
-.text-input.multi-line {
+.live-text-input-container > .text-input.multi-line {
     width: 100%;
     resize: vertical;
 }
 
-.text-preview {
+.live-text-input-container > .text-preview {
     flex-grow: 1;
 }
 
-.live-text-input-container {
+.live-text-input-container > .live-text-input-container {
     cursor: pointer;
+}
+
+.text-input:focus {
+    background-color: var(--background-focus)
 }

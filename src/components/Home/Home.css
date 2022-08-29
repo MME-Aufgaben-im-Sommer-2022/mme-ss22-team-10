@@ -3,8 +3,13 @@ home-component {
     overflow: hidden;
 }
 
+#home-container {
+    overflow: hidden;
+}
+
 #home-container-content {
     display: flex;
     flex-direction: row;
     height: 100%;
+    overflow: hidden;
 }

@@ -1,5 +1,6 @@
 import WebComponent from "../../../lib/components/WebComponent";
 import html from "./EditorBlock.html";
+import css from "./EditorBlock.css";
 import FreeTextInputField from "../InputFields/FreeTextInputField/FreeTextInputField";
 import State from "../../../lib/state/State";
 import { AppEvent } from "../../../lib/events/AppEvent";
@@ -24,7 +25,7 @@ export default class EditorBlock extends WebComponent {
     | CheckListInputField;
 
   constructor(blockContentState: State<BlockContent>) {
-    super(html);
+    super(html, css);
     this.blockContentState = blockContentState;
     this.inputValueState = new State<string>(
       this.blockContentState.value.inputValue ?? ""

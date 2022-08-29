@@ -2,7 +2,13 @@ import WebComponent from "../../../../lib/components/WebComponent";
 import html from "./FreeTextInputField.html";
 import css from "./FreeTextInputField.css";
 import State from "../../../../lib/state/State";
-import LiveTextInput from "../../../atomics/LiveTextInput/LiveTextInput";
+import EventBus from "../../../../lib/events/EventBus";
+import {
+  CLOSE_ALL_EDITOR_INPUTS_EVENT,
+  CloseAllEditorInputsData,
+} from "../../../../events/CloseAllEditorInputs";
+import { AppEvent } from "../../../../lib/events/AppEvent";
+import { log } from "../../../../lib/utils/Logger";
 
 // Input field for free text
 // (= a wrapper around LiveTextInput)
@@ -13,10 +19,9 @@ import LiveTextInput from "../../../atomics/LiveTextInput/LiveTextInput";
 //   - the state is updated the user finishes editing the text
 
 export default class FreeTextInputField extends WebComponent {
-  private $inputFieldContainer!: HTMLInputElement;
-  private $liveTextInput!: LiveTextInput;
-
   private readonly inputValueState: State<string>;
+
+  private $textArea!: HTMLTextAreaElement;
 
   constructor(inputValueState: State<string>) {
     super(html, css);
@@ -29,13 +34,50 @@ export default class FreeTextInputField extends WebComponent {
 
   onCreate(): Promise<void> | void {
     this.$initHtml();
+    this.initListeners();
   }
 
   private $initHtml(): void {
-    this.$inputFieldContainer = this.select(
-      ".free-text-input-field-container"
-    )!;
-    this.$liveTextInput = new LiveTextInput(this.inputValueState, false);
-    this.$inputFieldContainer.appendChild(this.$liveTextInput);
+    this.$textArea = this.select(".text-input")!;
+  }
+
+  private initListeners(): void {
+    this.$textArea.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        this.toggleActive(false);
+      }
+    });
+
+    this.$textArea.addEventListener("click", (event) => {
+      event.stopPropagation();
+      this.toggleActive(true);
+    });
+
+    EventBus.addEventListener(
+      CLOSE_ALL_EDITOR_INPUTS_EVENT,
+      (event: AppEvent) => {
+        if (
+          (event.data as CloseAllEditorInputsData).triggerWebComponentId !==
+          this.getWebComponentId()
+        ) {
+          log(event, this.getWebComponentId());
+          this.toggleActive(false);
+        }
+      }
+    );
+  }
+
+  private toggleActive(isActive: boolean): void {
+    if (isActive) {
+      this.$textArea.classList.add("active");
+      EventBus.notifyAll(CLOSE_ALL_EDITOR_INPUTS_EVENT, {
+        triggerWebComponentId: this.getWebComponentId(),
+      });
+    } else {
+      this.$textArea.classList.remove("active");
+      this.$textArea.blur();
+      this.inputValueState.value = this.$textArea.value;
+    }
   }
 }

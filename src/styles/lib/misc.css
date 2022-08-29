@@ -2,14 +2,14 @@
 * Misc styles, which would not warrant their own file
 */
 
-.list-item {
-    display: list-item;
-}
-
 *:disabled {
     opacity: 0.5;
 }
 
 [hidden] {
     display: none !important;
+}
+
+.no-list-style {
+    list-style-type: none !important;
 }

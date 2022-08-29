@@ -8,6 +8,7 @@ When the body element has the class "theme-dark", it will use the dark theme.
 
 .theme-light {
     --background-primary: #FDF7F1;
+    --background-focus: #e3ded9;
 
     --text-normal: #3c3c3c;
     --text-header: rgb(44, 44, 44);
@@ -21,6 +22,7 @@ When the body element has the class "theme-dark", it will use the dark theme.
 
 .theme-dark {
     --background-primary: rgb(28, 30, 32);
+    --background-focus: rgb(33, 36, 38);
 
     --text-normal: rgb(216, 216, 216);
     --text-header: rgb(198, 213, 224);

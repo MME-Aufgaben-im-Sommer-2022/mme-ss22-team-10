@@ -30,7 +30,12 @@
   font-weight: bold;
 }
 
-.doodle ul li {
+.doodle ul {
+  padding-left: 20px;
+}
+
+.doodle ul li, .list-item {
+  display: list-item !important;
   list-style-type: "* ";
 }
 

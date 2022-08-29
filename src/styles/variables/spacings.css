@@ -9,5 +9,5 @@ Global style variables (e.g. borders, padding go here)
     --spacing-xlarge: 2rem;
 
     /*Special spacings*/
-    --margin-editor-side: 6em;
+    --spacing-editor-side: 3em;
 }
