@@ -66,6 +66,10 @@ export default class DataManager {
     return connected;
   }
 
+  static async signOut() {
+    await ApiClient.disconnectCurrentSession();
+  }
+
   // Calendar Model
   static async getCalendarModel(): Promise<CalendarModel> {
     const noteDays: Years = {},
