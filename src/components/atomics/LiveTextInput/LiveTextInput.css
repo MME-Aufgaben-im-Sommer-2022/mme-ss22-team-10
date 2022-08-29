@@ -14,7 +14,3 @@
 .live-text-input-container > .live-text-input-container {
     cursor: pointer;
 }
-
-.text-input:focus {
-    background-color: var(--background-focus)
-}
