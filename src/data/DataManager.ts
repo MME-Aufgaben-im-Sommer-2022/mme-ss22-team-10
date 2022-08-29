@@ -283,17 +283,20 @@ export default class DataManager {
       inputType: BlockContentInputType.Checkbox,
       inputValue: `[-] unchecked
         [X] checked`,
+      documentId: ``,
     });
     blockContents.push({
       title: "Title 2",
       inputType: BlockContentInputType.FreeText,
       inputValue: generateRandomLoremIpsum(100),
+      documentId: ``,
     });
     blockContents.push({
       title: "Title 3",
       inputType: BlockContentInputType.BulletPoint,
       inputValue: `first point
       second point`,
+      documentId: ``,
     });
 
     return new EditorModel(day, blockContents);
