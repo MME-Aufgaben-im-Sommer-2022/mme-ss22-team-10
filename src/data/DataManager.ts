@@ -118,18 +118,12 @@ export default class DataManager {
 
   static async updateEditorModel(editorModel: EditorModel): Promise<void> {
     log(this.convertDateToString(editorModel.day));
-    const noteDocument = await ApiClient.getNoteDocument(
-      this.convertDateToString(editorModel.day)
-    );
-    editorModel.blockContents.forEach(async (blockContent) => {
-      const blockContentDocument = await ApiClient.getBlockContentDocument(
-        noteDocument.$id,
-        blockContent.title
-      );
-      ApiClient.updateBlockContentDocument(
-        blockContentDocument.$id,
-        blockContent
-      );
+    editorModel.blockContents.forEach((blockContent) => {
+      ApiClient.updateBlockContentDocument(blockContent.documentId, {
+        title: blockContent.title,
+        inputType: blockContent.inputType,
+        inputValue: blockContent.inputValue,
+      });
     });
   }
 

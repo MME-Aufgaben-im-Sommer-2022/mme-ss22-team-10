@@ -132,12 +132,11 @@ export default class ApiClient {
   }
 
   static async getBlockContentDocument(
-    noteID: string,
-    title: string
+    documentId: string
   ): Promise<Models.Document> {
-    const blockContents = await this.databaseManager.listDocuments(
+    const blockContents = await this.databaseManager.getDocument(
       Server.COLLECTION_BLOCK_CONTENTS,
-      [Query.equal("noteID", noteID), Query.equal("title", title)]
+      documentId
     );
     return blockContents.documents[0];
   }
@@ -165,12 +164,12 @@ export default class ApiClient {
   }
 
   static async updateBlockContentDocument(
-    blockContentId: string,
-    blockContent: BlockContent
+    documentId: string,
+    blockContent: { title: string; inputType: string; inputValue: string }
   ): Promise<Models.Document> {
     return this.databaseManager.updateDocument(
       Server.COLLECTION_BLOCK_CONTENTS,
-      blockContentId,
+      documentId,
       blockContent
     );
   }
