@@ -50,8 +50,10 @@ export default class HomeBar extends WebComponent {
     this.$logoutButton.addEventListener("click", this.$onLogoutButtonClicked);
   }
 
-  private $onLogoutButtonClicked = () => {
+  private $onLogoutButtonClicked = async () => {
+    await DataManager.signOut();
     EventBus.notifyAll(LOGOUT_EVENT, {});
+    window.location.reload();
   };
 
   $initHtml(): void {
