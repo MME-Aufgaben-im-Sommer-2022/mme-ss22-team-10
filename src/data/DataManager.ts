@@ -118,18 +118,12 @@ export default class DataManager {
 
   static async updateEditorModel(editorModel: EditorModel): Promise<void> {
     log(this.convertDateToString(editorModel.day));
-    const noteDocument = await ApiClient.getNoteDocument(
-      this.convertDateToString(editorModel.day)
-    );
-    editorModel.blockContents.forEach(async (blockContent) => {
-      const blockContentDocument = await ApiClient.getBlockContentDocument(
-        noteDocument.$id,
-        blockContent.title
-      );
-      ApiClient.updateBlockContentDocument(
-        blockContentDocument.$id,
-        blockContent
-      );
+    editorModel.blockContents.forEach((blockContent) => {
+      ApiClient.updateBlockContentDocument(blockContent.documentId, {
+        title: blockContent.title,
+        inputType: blockContent.inputType,
+        inputValue: blockContent.inputValue,
+      });
     });
   }
 
@@ -189,6 +183,7 @@ export default class DataManager {
         title: entry.title,
         inputType: entry.inputType,
         inputValue: entry.inputValue,
+        documentId: entry.$id,
       });
     });
     return blockContents;
@@ -288,17 +283,20 @@ export default class DataManager {
       inputType: BlockContentInputType.Checkbox,
       inputValue: `[-] unchecked
         [X] checked`,
+      documentId: ``,
     });
     blockContents.push({
       title: "Title 2",
       inputType: BlockContentInputType.FreeText,
       inputValue: generateRandomLoremIpsum(100),
+      documentId: ``,
     });
     blockContents.push({
       title: "Title 3",
       inputType: BlockContentInputType.BulletPoint,
       inputValue: `first point
       second point`,
+      documentId: ``,
     });
 
     return new EditorModel(day, blockContents);
