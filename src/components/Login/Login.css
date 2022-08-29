@@ -16,29 +16,36 @@ login-register{
     margin: var(--spacing-medium);
 }
 
-svg {
-    width: 150px;
-    height: 150px;
-}
-
-image {
-    width: 100px;
+.login-form svg {
+    width: 90px;
     height: 100px;
+    margin: auto;
+}
+
+.login-form image {
+    width: 90px;
+    height: 100px;
+
+}
+.login-form input{
+    margin-top: var(--spacing-medium);
 }
 
 
-p{
-    color: #ff0000;
-}
-
-.login-form span{
+ span{
     text-align: center;
+    margin-top: var(--spacing-large);
 }
 
-.connect-message{
+.login-form .connect-message{
     color: red;
+    margin-top: var(--spacing-large);
+    visibility: hidden ;
 }
 
-.register-toggle{
+.login-form .register-toggle{
     color: var(--text-accent);
+}
+.login-form .retype-password{
+    visibility: hidden ;
 }
