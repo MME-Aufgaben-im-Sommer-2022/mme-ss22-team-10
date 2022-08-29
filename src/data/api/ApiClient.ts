@@ -60,6 +60,14 @@ export default class ApiClient {
     return this.accountManager.account.updateName(name);
   }
 
+  static async createAccount(
+    email: string,
+    password: string,
+    name: string
+  ): Promise<Models.User<Models.Preferences>> {
+    return this.accountManager.createNewAccount(email, password, name);
+  }
+
   static async getUserSettingsDocument(): Promise<Models.Document> {
     const userSettings = await this.databaseManager.listDocuments(
       Server.COLLECTION_SETTINGS,

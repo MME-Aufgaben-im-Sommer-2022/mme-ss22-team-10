@@ -48,6 +48,14 @@ export default class DataManager {
     return true;
   }
 
+  static async signUp(email: string, password: string, name: string) {
+    await ApiClient.createAccount(email, password, name);
+    const connected = await this.signInViaMail(email, password);
+    if (connected) {
+      await ApiClient.createNewSettingsDocument([]);
+    }
+  }
+
   private static async connectToSession(sessionId: string): Promise<boolean> {
     const session = await ApiClient.getSession(sessionId);
     if (this.convertNumberToDate(session.expire) > new Date()) {
