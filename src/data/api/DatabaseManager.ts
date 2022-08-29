@@ -22,6 +22,10 @@ export default class DatabaseManager {
     return this.database.listDocuments(collection, query, 100, 0, cursor);
   }
 
+  async getDocument(collection: string, documentId: string) {
+    return this.database.getDocument(collection, documentId);
+  }
+
   async updateDocument(
     collection: string,
     document: string,
