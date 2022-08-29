@@ -3,6 +3,7 @@ import html from "../Login/Login.html";
 import css from "../Login/Login.css";
 import { log } from "../../lib/utils/Logger";
 import State from "../../lib/state/State";
+import DataManager from "../../data/DataManager";
 
 export default class Login extends WebComponent {
   $loginButton!: HTMLButtonElement;
@@ -48,9 +49,13 @@ export default class Login extends WebComponent {
     }
   };
 
-  readInput = () => {
-    log(this.$emailInput.value);
-    log(this.$passwordInput.value);
-    log(this.registerState.value);
+  readInput = async () => {
+    this.registerState.value = await DataManager.signInViaMail(
+      this.$emailInput.value,
+      this.$passwordInput.value
+    );
+    if (this.registerState.value) {
+      window.location.reload();
+    }
   };
 }
