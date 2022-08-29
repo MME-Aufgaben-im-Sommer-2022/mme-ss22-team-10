@@ -183,6 +183,7 @@ export default class DataManager {
         title: entry.title,
         inputType: entry.inputType,
         inputValue: entry.inputValue,
+        documentId: entry.$id,
       });
     });
     return blockContents;
