@@ -114,6 +114,9 @@ export default class Calendar extends WebComponent {
 
   private getEntryData(): Array<string> {
     const entryData: Array<string> = this.getDaysFromNoteDays();
+    if (entryData.length === 0 && this.currentNumbersMatchToday()) {
+      entryData.push(this.today.getDate() + "");
+    }
     return entryData;
   }
 
