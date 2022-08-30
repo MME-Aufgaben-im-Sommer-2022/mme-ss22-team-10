@@ -87,9 +87,7 @@ export default class Calendar extends WebComponent {
   }
 
   private getEntriesForMonth(directionForward: boolean): void {
-    if (this.currentMonthNumber < 1 || this.currentMonthNumber > 12) {
-      this.changeYearNumber();
-    }
+    this.checkForYearTransition();
     this.entriesForCurrentMonth = this.getEntryData();
     log(this.entriesForCurrentMonth);
     log(this.entriesForCurrentMonth.includes(this.today.getDate()) + "");
@@ -103,11 +101,12 @@ export default class Calendar extends WebComponent {
     this.checkEntries(directionForward);
   }
 
-  private changeYearNumber(): void {
+  private checkForYearTransition(): void {
     if (this.currentMonthNumber < 1) {
       this.currentMonthNumber = this.monthNumberDecember;
       this.currentYearNumber = parseInt(this.currentYear) - 1;
-    } else {
+    }
+    if (this.currentMonthNumber > 12) {
       this.currentMonthNumber = this.monthNumberJanuary;
       this.currentYearNumber = parseInt(this.currentYear) + 1;
     }
