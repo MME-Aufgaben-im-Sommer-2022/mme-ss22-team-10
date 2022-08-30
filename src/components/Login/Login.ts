@@ -65,7 +65,7 @@ export default class Login extends WebComponent {
       await DataManager.signUp(
         this.$emailInput.value,
         this.$passwordInput.value,
-        "testAccountCreation"
+        this.$usernameInput.value
       );
       window.location.reload();
     } else {
