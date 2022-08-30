@@ -233,9 +233,15 @@ export default class DataManager {
   private static async deleteUserNotes() {
     const userNotes: Array<any> = await ApiClient.getNoteDocumentList();
     userNotes.forEach(async (note) => {
-      await ApiClient.deleteNoteDocument(note.$id);
       await ApiClient.deleteBlockContents(note.$id);
+      await ApiClient.deleteNoteDocument(note.$id);
     });
+  }
+
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  private static async deleteUserSettings() {
+    return await ApiClient.updateUserSettingsDocument(this.stringifyArray([]));
   }
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
