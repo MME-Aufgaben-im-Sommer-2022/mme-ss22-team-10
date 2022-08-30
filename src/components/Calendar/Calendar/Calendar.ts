@@ -112,16 +112,20 @@ export default class Calendar extends WebComponent {
     this.currentYear = this.currentYearNumber.toString();
   }
 
-  private getEntryData(): Array<string> | undefined {
+  private getEntryData(): Array<string> {
+    const entryData: Array<string> = this.getDaysFromNoteDays();
+    return entryData;
+  }
+
+  private getDaysFromNoteDays(): Array<string> {
+    let days: Array<string> = [];
     if (
       this.noteDays[this.currentYear] &&
       this.noteDays[this.currentYear][this.currentMonthNumber]
     ) {
-      return this.noteDays[this.currentYear][this.currentMonthNumber];
-    } else {
-      this.currentMonthNumber++;
+      days = this.noteDays[this.currentYear][this.currentMonthNumber];
     }
-    return new Array<string>();
+    return days;
   }
 
   private currentNumbersMatchToday(): boolean {
