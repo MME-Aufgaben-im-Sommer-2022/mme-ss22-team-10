@@ -8,8 +8,11 @@ import DataManager from "../../data/DataManager";
 export default class Login extends WebComponent {
   $loginButton!: HTMLButtonElement;
   $emailInput!: HTMLInputElement;
+  $usernameInput!: HTMLInputElement;
   $passwordInput!: HTMLInputElement;
+  $verifyPasswordInput!: HTMLInputElement;
   $registerToggle!: HTMLLinkElement;
+  $connectMessage!: HTMLSpanElement;
   registerState: State<boolean> = new State(false);
 
   constructor() {
@@ -31,7 +34,10 @@ export default class Login extends WebComponent {
     this.$loginButton = this.select("button")!;
     this.$emailInput = this.select('input[name="email"]')!;
     this.$passwordInput = this.select('input[name="password"]')!;
-    this.$registerToggle = this.select("a")!;
+    this.$verifyPasswordInput = this.select(".retype-password")!;
+    this.$registerToggle = this.select("span")!;
+    this.$connectMessage = this.select(".connect-message")!;
+    this.$usernameInput = this.select('input[name="username"]')!;
   }
 
   private initListeners(): void {
@@ -42,9 +48,14 @@ export default class Login extends WebComponent {
   changeRegisterMode = () => {
     if (!this.registerState.value) {
       this.$loginButton.innerText = "Register";
+      this.$verifyPasswordInput.style.visibility = "visible";
+      this.$usernameInput.style.visibility = "visible";
+      this.checkPassword();
       this.registerState.value = true;
     } else {
       this.$loginButton.innerText = "Login";
+      this.$verifyPasswordInput.style.visibility = "hidden";
+      this.$usernameInput.style.visibility = "hidden";
       this.registerState.value = false;
     }
   };
@@ -67,4 +78,16 @@ export default class Login extends WebComponent {
       }
     }
   };
+
+  checkPassword(): void {
+    if (!(this.$passwordInput.value === this.$verifyPasswordInput.value)) {
+      this.showConnectMessage("The passwords do not match");
+      //this.showConnectMessage("No Account was found");
+    }
+  }
+
+  showConnectMessage(msg: string): void {
+    this.$connectMessage.innerText = msg;
+    this.$connectMessage.style.visibility = "visible";
+  }
 }

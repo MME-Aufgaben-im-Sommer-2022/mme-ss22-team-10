@@ -62,7 +62,7 @@ export default class Calendar extends WebComponent {
   }
 
   private $initHtml(): void {
-    this.$monthTitle = this.select(".calendar-navigation h3")!;
+    this.$monthTitle = this.select(".calendar-navigation span")!;
     this.$previousButton = this.select(".previous")!;
     this.$nextButton = this.select(".next")!;
   }
@@ -78,8 +78,9 @@ export default class Calendar extends WebComponent {
   }
 
   private changeMonthTitle(): void {
-    const date: Date = new Date();
-    date.setMonth(this.currentMonthNumber - 1);
+    const date: Date = new Date(
+      `${this.currentMonthNumber}/${1}/${this.currentYear}`
+    );
     this.currentMonthText = date.toLocaleString("default", { month: "long" });
     this.$monthTitle.innerText = this.currentMonthText;
   }
@@ -93,9 +94,10 @@ export default class Calendar extends WebComponent {
     log(this.entriesForCurrentMonth.includes(this.today.getDate()) + "");
     if (
       this.currentMonthNumber === this.today.getMonth() + 1 &&
+      this.currentYear === this.today.getFullYear().toString() &&
       !this.entriesForCurrentMonth.includes(this.today.getDate() + "")
     ) {
-      //this.entriesForCurrentMonth.push(this.today.getDate() + "");
+      this.entriesForCurrentMonth.push(this.today.getDate() + "");
     }
     this.checkEntries(directionForward);
   }
@@ -113,10 +115,12 @@ export default class Calendar extends WebComponent {
 
   private getEntryData(): Array<string> | undefined {
     if (
-      this.noteDays[this.currentYear] !== undefined &&
-      this.noteDays[this.currentYear][this.currentMonthNumber] !== undefined
+      this.noteDays[this.currentYear] &&
+      this.noteDays[this.currentYear][this.currentMonthNumber]
     ) {
       return this.noteDays[this.currentYear][this.currentMonthNumber];
+    } else {
+      this.currentMonthNumber++;
     }
     return new Array<string>();
   }
@@ -153,10 +157,8 @@ export default class Calendar extends WebComponent {
   };
 
   onNextClicked = () => {
-    if (this.currentMonthNumber + 1 <= this.today.getMonth() + 1) {
-      this.currentMonthNumber += 1;
-      this.getEntriesForMonth(true);
-    }
+    this.currentMonthNumber += 1;
+    this.getEntriesForMonth(true);
   };
 
   removeMonthEntries = () => {

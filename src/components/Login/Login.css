@@ -1,11 +1,55 @@
-p{
-    color: #ff0000;
+login-register{
+    display: flex;
+    flex-grow: 1;
+
+
 }
 
-.loginForm{
-    align-content: center;
+.login-form{
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+
 }
 
-.loginForm a{
-    text-underline: #965454;
+.login-form button{
+    margin: var(--spacing-medium);
+}
+
+.login-form svg {
+    width: 90px;
+    height: 100px;
+    margin: auto;
+}
+
+.login-form image {
+    width: 90px;
+    height: 100px;
+
+}
+.login-form input{
+    margin-top: var(--spacing-medium);
+}
+
+
+ span{
+    text-align: center;
+    margin-top: var(--spacing-large);
+}
+
+.login-form .connect-message{
+    color: red;
+    margin-top: var(--spacing-large);
+    visibility: hidden ;
+}
+
+.login-form .register-toggle{
+    color: var(--text-accent);
+}
+.login-form .retype-password{
+    visibility: hidden ;
+}
+
+.login-form input[name="username"]{
+    visibility: hidden ;
 }

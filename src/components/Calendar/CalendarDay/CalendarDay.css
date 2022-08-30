@@ -1,13 +1,23 @@
-.calendarDay {
+calendar-day{
+    display: flex;
+    flex-grow: 1;
+}
+
+
+.calendar-day {
     width: 130px;
-    height: 100px;
-    border: 2px solid black;
+    height: 80px;
     display: flex;
     justify-content: center;
     align-items: center;
-    background: #d8d7d3;
-    margin: 10px;
 }
-.calendarDay:hover{
-    background: #965454;
+
+.calendar-day > .date {
+    margin: 0;
+}
+
+
+
+.calendar-day:hover {
+    background: var(--text-accent-hover);
 }
