@@ -26,7 +26,6 @@ export default class CalendarMonth extends WebComponent {
   }
 
   onCreate(): Promise<void> | void {
-    //log(this.entriesForCurrentMonth);
     this.$initHtml();
     this.formatMonth();
     this.appendCalenderEntry();
@@ -70,14 +69,4 @@ export default class CalendarMonth extends WebComponent {
       }
     }
   }
-
-  // colorEntry(data: any): void {
-  //   const test = document.querySelectorAll(".calendar-day");
-  //
-  //   for (let i = 0; i < test.length; i++) {
-  //     test[i].style.backgroundColor = "red";
-  //   }
-  //   log(data);
-  //   data.style.background = "blue";
-  // }
 }

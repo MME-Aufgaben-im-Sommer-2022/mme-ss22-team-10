@@ -34,7 +34,7 @@ export default class Calendar extends WebComponent {
     this.$initHtml();
     this.initListeners();
     this.noteDays = this.calendarModel.noteDays;
-    //log(this.noteDays);
+    log(this.noteDays);
     this.today = this.calendarModel.today;
     this.getCurrentData();
     this.getEntriesForMonth(false);
@@ -57,8 +57,9 @@ export default class Calendar extends WebComponent {
   }
 
   private changeMonthTitle(): void {
-    const date: Date = new Date();
-    date.setMonth(this.currentMonthNumber - 1);
+    const date: Date = new Date(
+      `${this.currentMonthNumber}/${1}/${this.currentYear}`
+    );
     this.currentMonthText = date.toLocaleString("default", { month: "long" });
     this.$monthTitle.innerText = this.currentMonthText;
   }
@@ -68,15 +69,12 @@ export default class Calendar extends WebComponent {
       this.changeYearNumber();
     }
     this.entriesForCurrentMonth = this.getEntryData();
-    log(this.entriesForCurrentMonth);
-    log(this.today.getDate() + "");
-    log(this.today.getDate());
-    log(this.entriesForCurrentMonth.includes(this.today.getDate() + ""));
     if (
       this.currentMonthNumber === this.today.getMonth() + 1 &&
+      this.currentYear === this.today.getFullYear().toString() &&
       !this.entriesForCurrentMonth.includes(this.today.getDate() + "")
     ) {
-      //this.entriesForCurrentMonth.push(this.today.getDate() + "");
+      this.entriesForCurrentMonth.push(this.today.getDate() + "");
     }
     this.checkEntries(directionForward);
   }
@@ -94,9 +92,12 @@ export default class Calendar extends WebComponent {
 
   private getEntryData(): Array<string> | undefined {
     if (
-      this.noteDays[this.currentYear][this.currentMonthNumber] !== undefined
+      this.noteDays[this.currentYear] &&
+      this.noteDays[this.currentYear][this.currentMonthNumber]
     ) {
       return this.noteDays[this.currentYear][this.currentMonthNumber];
+    } else {
+      this.currentMonthNumber++;
     }
     return new Array<string>();
   }

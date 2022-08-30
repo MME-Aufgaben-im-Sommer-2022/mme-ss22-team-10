@@ -15,9 +15,9 @@ export default class Playground extends WebComponent {
   }
 
   onCreate(): Promise<void> | void {
-    //const homeComponent = new Home();
-    //this.appendChild(homeComponent);
-    const login = new Login();
-    this.appendChild(login);
+    const homeComponent = new Home();
+    this.appendChild(homeComponent);
+    //const login = new Login();
+    //this.appendChild(login);
   }
 }

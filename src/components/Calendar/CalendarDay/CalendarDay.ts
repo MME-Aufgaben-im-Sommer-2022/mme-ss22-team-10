@@ -46,9 +46,9 @@ export default class CalendarDay extends WebComponent {
 
     this.isSelected.addEventListener("change", () => {
       if (this.isSelected.value) {
-        this.style.background = "green";
+        this.style.background = "var(--text-accent)";
       } else {
-        this.style.background = "red";
+        this.style.background = "var(--background-primary)";
       }
     });
   }

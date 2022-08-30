@@ -34,6 +34,7 @@ main-calendar {
 .calendar-navigation > span{
     display: flex;
     align-items: center;
+    margin: 0;
 }
 
 .calendar-navigation a:hover {

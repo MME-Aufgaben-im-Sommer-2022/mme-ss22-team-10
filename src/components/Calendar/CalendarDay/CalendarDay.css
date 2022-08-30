@@ -10,8 +10,14 @@ calendar-day{
     display: flex;
     justify-content: center;
     align-items: center;
-
 }
+
+.calendar-day > .date {
+    margin: 0;
+}
+
+
+
 .calendar-day:hover {
     background: var(--text-accent-hover);
 }
