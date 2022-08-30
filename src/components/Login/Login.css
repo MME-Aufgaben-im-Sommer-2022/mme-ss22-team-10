@@ -49,3 +49,7 @@ login-register{
 .login-form .retype-password{
     visibility: hidden ;
 }
+
+.login-form input[name="username"]{
+    visibility: hidden ;
+}

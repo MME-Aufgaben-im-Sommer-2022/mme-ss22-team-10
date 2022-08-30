@@ -7,8 +7,9 @@ import State from "../../lib/state/State";
 export default class Login extends WebComponent {
   $loginButton!: HTMLButtonElement;
   $emailInput!: HTMLInputElement;
+  $usernameInput!: HTMLInputElement;
   $passwordInput!: HTMLInputElement;
-  $retypePasswordInput!: HTMLInputElement;
+  $verifyPasswordInput!: HTMLInputElement;
   $registerToggle!: HTMLLinkElement;
   $connectMessage!: HTMLSpanElement;
   registerState: State<boolean> = new State(false);
@@ -32,9 +33,10 @@ export default class Login extends WebComponent {
     this.$loginButton = this.select("button")!;
     this.$emailInput = this.select('input[name="email"]')!;
     this.$passwordInput = this.select('input[name="password"]')!;
-    this.$retypePasswordInput = this.select(".retype-password")!;
+    this.$verifyPasswordInput = this.select(".retype-password")!;
     this.$registerToggle = this.select("span")!;
-    this.$connectMessage = this.select(".connect-message");
+    this.$connectMessage = this.select(".connect-message")!;
+    this.$usernameInput = this.select('input[name="username"]')!;
   }
 
   private initListeners(): void {
@@ -45,26 +47,29 @@ export default class Login extends WebComponent {
   changeRegisterMode = () => {
     if (!this.registerState.value) {
       this.$loginButton.innerText = "Register";
-      this.$retypePasswordInput.style.visibility = "visible";
+      this.$verifyPasswordInput.style.visibility = "visible";
+      this.$usernameInput.style.visibility = "visible";
+      this.checkPassword();
       this.registerState.value = true;
     } else {
       this.$loginButton.innerText = "Login";
-      this.$retypePasswordInput.style.visibility = "hidden";
+      this.$verifyPasswordInput.style.visibility = "hidden";
+      this.$usernameInput.style.visibility = "hidden";
       this.registerState.value = false;
     }
   };
 
   readInput = () => {
-    this.checkPassword();
+    log(this.$emailInput.value);
+    log(this.$passwordInput.value);
+    log(this.$usernameInput.value);
   };
 
   checkPassword(): void {
-    if (!(this.$passwordInput.value === this.$retypePasswordInput.value)) {
+    if (!(this.$passwordInput.value === this.$verifyPasswordInput.value)) {
       this.showConnectMessage("The passwords do not match");
       //this.showConnectMessage("No Account was found");
     }
-    //log(this.$emailInput.value);
-    //log(this.$passwordInput.value);
   }
 
   showConnectMessage(msg: string): void {
