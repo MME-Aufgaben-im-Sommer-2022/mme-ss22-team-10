@@ -73,7 +73,8 @@ export default class Calendar extends WebComponent {
   }
 
   private getCurrentData(): void {
-    this.currentYear = this.today.getFullYear().toString();
+    this.currentYearNumber = this.today.getFullYear();
+    this.currentYear = this.currentYearNumber.toString();
     this.currentMonthNumber = this.today.getMonth() + 1;
   }
 
