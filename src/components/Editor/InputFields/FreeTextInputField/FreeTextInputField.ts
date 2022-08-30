@@ -39,6 +39,7 @@ export default class FreeTextInputField extends WebComponent {
 
   private $initHtml(): void {
     this.$textArea = this.select(".text-input")!;
+    this.$textArea.value = this.inputValueState.value;
   }
 
   private initListeners(): void {

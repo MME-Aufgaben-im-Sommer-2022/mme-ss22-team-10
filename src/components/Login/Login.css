@@ -32,7 +32,7 @@ login-register{
 }
 
 
- span{
+.login-form > span{
     text-align: center;
     margin-top: var(--spacing-large);
 }
