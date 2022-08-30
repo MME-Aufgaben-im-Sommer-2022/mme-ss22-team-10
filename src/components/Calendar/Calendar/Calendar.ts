@@ -3,7 +3,6 @@ import html from "../../Calendar/Calendar/Calendar.html";
 import css from "../../Calendar/Calendar/Calendar.css";
 import CalendarMonth from "../CalendarMonth/CalendarMonth";
 import CalendarModel, { Years } from "../../../data/models/CalendarModel";
-import { log } from "../../../lib/utils/Logger";
 import { GlobalStates } from "../../../state/GlobalStates";
 import GlobalState from "../../../lib/state/GlobalState";
 import DataManager from "../../../data/DataManager";
@@ -78,7 +77,7 @@ export default class Calendar extends WebComponent {
     this.currentMonthNumber = this.today.getMonth() + 1;
   }
 
-  private changeMonthTitle(): void {
+  private setMonthTitle(): void {
     const date: Date = new Date(
       `${this.currentMonthNumber}/${1}/${this.currentYear}`
     );
@@ -89,15 +88,13 @@ export default class Calendar extends WebComponent {
   private getEntriesForMonth(directionForward: boolean): void {
     this.checkForYearTransition();
     this.entriesForCurrentMonth = this.getEntryData();
-    log(this.entriesForCurrentMonth);
-    log(this.entriesForCurrentMonth.includes(this.today.getDate()) + "");
     if (
       this.currentNumbersMatchToday() &&
       !this.entriesForCurrentMonth.includes(this.today.getDate() + "")
     ) {
       this.entriesForCurrentMonth.push(this.today.getDate() + "");
     }
-    this.checkEntries(directionForward);
+    this.setEntries(directionForward);
   }
 
   private checkForYearTransition(): void {
@@ -138,10 +135,10 @@ export default class Calendar extends WebComponent {
     );
   }
 
-  private checkEntries(directionForward: boolean): void {
+  private setEntries(directionForward: boolean): void {
     if (this.entriesForCurrentMonth.length > 0) {
       this.removeMonthEntries();
-      this.changeMonthTitle();
+      this.setMonthTitle();
       this.showEntries();
     } else {
       if (this.currentMonthNumber + 1 <= this.today.getMonth() + 1) {
