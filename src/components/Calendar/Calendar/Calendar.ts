@@ -92,8 +92,7 @@ export default class Calendar extends WebComponent {
     log(this.entriesForCurrentMonth);
     log(this.entriesForCurrentMonth.includes(this.today.getDate()) + "");
     if (
-      this.currentMonthNumber === this.today.getMonth() + 1 &&
-      this.currentYear === this.today.getFullYear().toString() &&
+      this.currentNumbersMatchToday() &&
       !this.entriesForCurrentMonth.includes(this.today.getDate() + "")
     ) {
       this.entriesForCurrentMonth.push(this.today.getDate() + "");
@@ -123,6 +122,13 @@ export default class Calendar extends WebComponent {
       this.currentMonthNumber++;
     }
     return new Array<string>();
+  }
+
+  private currentNumbersMatchToday(): boolean {
+    return (
+      this.currentMonthNumber === this.today.getMonth() + 1 &&
+      this.currentYear === this.today.getFullYear().toString()
+    );
   }
 
   private checkEntries(directionForward: boolean): void {
