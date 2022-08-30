@@ -261,7 +261,7 @@ export default class DataManager {
         date.setDate(Number(day));
         date.setMonth(month);
         // eslint-disable-next-line one-var
-        const editorModel = this.generateMockEditorModel(date);
+        const editorModel = await this.generateMockEditorModel(date);
         try {
           await this.createEditorModel(editorModel);
         } catch (e) {
@@ -292,31 +292,21 @@ export default class DataManager {
   }
 
   // Editor Model
-  private static generateMockEditorModel(date: Date): EditorModel {
+  private static async generateMockEditorModel(
+    date: Date
+  ): Promise<EditorModel> {
     const day = date,
-      blockContents: Array<BlockContent> = [];
+      blockContents: Array<BlockContent> = [],
+      userSettings = await this.getUserSettingsModel();
 
-    blockContents.push({
-      title: "Title 1",
-      inputType: BlockContentInputType.Checkbox,
-      inputValue: `[-] unchecked
-        [X] checked`,
-      documentId: ``,
+    userSettings.settings.template.forEach((block) => {
+      blockContents.push(<BlockContent>{
+        title: block.title,
+        inputType: block.inputType,
+        inputValue: "",
+        documentId: "",
+      });
     });
-    blockContents.push({
-      title: "Title 2",
-      inputType: BlockContentInputType.FreeText,
-      inputValue: generateRandomLoremIpsum(100),
-      documentId: ``,
-    });
-    blockContents.push({
-      title: "Title 3",
-      inputType: BlockContentInputType.BulletPoint,
-      inputValue: `first point
-      second point`,
-      documentId: ``,
-    });
-
     return new EditorModel(day, blockContents);
   }
 
