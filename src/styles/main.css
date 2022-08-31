@@ -10,6 +10,7 @@
 @import url(lib/misc.css);
 @import url(lib/web-component.css);
 @import url(lib/interactions.css);
+@import url(lib/animations.css);
 
 html, body, #app {
     height: 100%;

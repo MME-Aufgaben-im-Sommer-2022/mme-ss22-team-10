@@ -35,6 +35,7 @@ export default class Editor extends WebComponent {
   }
 
   onCreate(): Promise<void> | void {
+    this.$toggleLoading(true);
     return this.initData().then(() => {
       this.$initHtml();
       this.initListeners();
@@ -58,8 +59,11 @@ export default class Editor extends WebComponent {
   private $initHtml(): void {
     this.$editor = this.select(".editor")!;
     this.$editorBlocksContainer = this.select(".editor-blocks-container")!;
-
     this.$appendEditorBlocks();
+  }
+
+  private $toggleLoading(isLoading: boolean): void {
+    //
   }
 
   private $appendEditorBlocks(): void {
@@ -67,10 +71,12 @@ export default class Editor extends WebComponent {
       const blockContentState = this.editorModelState.createSubState(
         `value.blockContents.${index}`
       );
-      this.$editorBlocksContainer.appendChild(
-        new EditorBlock(blockContentState)
+      this.$editorBlocksContainer.insertBefore(
+        new EditorBlock(blockContentState),
+        this.select(".spacer")!
       );
     });
+    this.$toggleLoading(false);
   }
 
   private initListeners(): void {
@@ -94,6 +100,7 @@ export default class Editor extends WebComponent {
       CalendarDay.CALENDAR_DAY_CLICKED_EVENT,
       (event: AppEvent) => {
         const newDate = event.data;
+        this.$toggleLoading(true);
         DataManager.getEditorModel(parseDateFromString(newDate)).then(
           (editorModel) => {
             this.editorModelState.value = editorModel;

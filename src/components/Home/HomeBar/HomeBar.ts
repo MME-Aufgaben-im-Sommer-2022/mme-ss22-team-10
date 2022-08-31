@@ -63,6 +63,6 @@ export default class HomeBar extends WebComponent {
   }
 
   $setGreetText(): void {
-    this.$greetText.innerHTML = `👋 Hello ${this.userSettingsModelState.value.username}!`;
+    this.$greetText.innerHTML = `🌱 Hello ${this.userSettingsModelState.value.username}!`;
   }
 }

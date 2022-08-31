@@ -17,7 +17,7 @@ note-editor {
 }
 
 .editor-blocks-container {
-    display: inline;
+    display: flex;
 }
 .editor-blocks-container > * {
     margin-right: auto;

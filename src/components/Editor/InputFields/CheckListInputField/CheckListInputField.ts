@@ -96,20 +96,23 @@ export default class CheckListInputField extends WebComponent {
     }
 
     // listen for changes and update the original state
-    isCheckedState.addEventListener("change", () =>
+    isCheckedState.addEventListener("change", () => {
       this.onCheckListItemChanged(
         checkListIndex,
         isCheckedState.value,
         checkListContentState.value
-      )
-    );
-    checkListContentState.addEventListener("change", () =>
+      );
+    });
+    checkListContentState.addEventListener("change", () => {
+      if (checkListContentState.value.trim() === "") {
+        $checkListItem.remove();
+      }
       this.onCheckListItemChanged(
         checkListIndex,
         isCheckedState.value,
         checkListContentState.value
-      )
-    );
+      );
+    });
     return $checkListItem;
   };
 
@@ -143,7 +146,16 @@ export default class CheckListInputField extends WebComponent {
 
   private onBulletPointsStateChanged = () => {
     // update the original string state
-    this.inputValueState.value = this.checkListStates.value.join("\n");
+    this.inputValueState.value = this.checkListStates.value
+      .filter(
+        (checkListItem) =>
+          checkListItem
+            .split(CheckListInputField.CHECK_LIST_CONTENT_SEPARATOR)
+            .splice(1)
+            .join(CheckListInputField.CHECK_LIST_CONTENT_SEPARATOR)
+            .trim() !== ""
+      )
+      .join("\n");
   };
 
   private onCheckListItemChanged = (

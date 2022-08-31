@@ -71,6 +71,10 @@ export default class BulletPointInputField extends WebComponent {
 
     // when one of the new states changes, update the original state
     bulletPointTextValueState.addEventListener("change", (event) => {
+      const data = event.data as StateChangedData;
+      if (data.newValue === "") {
+        $bulletPoint.remove();
+      }
       this.bulletPointsState.value[bulletPointIndex] = (
         event.data as StateChangedData
       ).newValue;
@@ -93,7 +97,9 @@ export default class BulletPointInputField extends WebComponent {
 
   private onBulletPointsStateChanged = () => {
     // update the original string state, when an item is changed
-    this.bulletPointsListState.value = this.bulletPointsState.value.join("\n");
+    this.bulletPointsListState.value = this.bulletPointsState.value
+      .filter((value) => value.trim() !== "")
+      .join("\n");
   };
 
   private $addNewBulletPointItem = () => {

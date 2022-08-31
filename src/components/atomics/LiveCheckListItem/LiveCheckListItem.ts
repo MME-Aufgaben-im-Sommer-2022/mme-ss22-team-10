@@ -39,6 +39,7 @@ export default class LiveCheckListItem extends WebComponent {
 
   private $initHtml(): void {
     this.classList.add("list-item");
+    this.classList.add("editor-atomic-item");
 
     this.$checkListItemContainer = this.select(".check-list-item-container")!;
     this.$checkbox = this.select("input")!;
