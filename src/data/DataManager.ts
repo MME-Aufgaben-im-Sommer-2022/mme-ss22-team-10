@@ -5,10 +5,7 @@ import EditorModel, {
   BlockContentInputType,
 } from "./models/EditorModel";
 import UserSettingsModel, { Template } from "./models/UserSettingsModel";
-import {
-  generateRandomAscendingArray,
-  generateRandomLoremIpsum,
-} from "../lib/utils";
+import { generateRandomAscendingArray } from "../lib/utils";
 import ApiClient from "./api/ApiClient";
 import TemplateConfigurationModel, {
   Topic,

@@ -1,7 +1,6 @@
 import WebComponentLoader from "./lib/components/WebComponentLoader";
 import GlobalState from "./lib/state/GlobalState";
 import DataManager from "./data/DataManager";
-import Playground from "./components/Playground/Playground";
 import "./styles/main.css";
 import { log } from "./lib/utils/Logger";
 import Login from "./components/Login/Login";
@@ -17,10 +16,10 @@ const app = () => {
     .then(() => GlobalState.init()) // Initialize the global state
     .then(() => onApplicationStart()); // Start the application
 
-  const appendDevPlayground = () => {
-    const playground = new Playground();
-    $app.append(playground);
-  };
+  // const appendDevPlayground = () => {
+  //   const playground = new Playground();
+  //   $app.append(playground);
+  // };
 
   async function onApplicationStart() {
     const IS_IN_DEV_MODE = import.meta.env.DEV;
