@@ -12,9 +12,10 @@ import TemplateConfigurationModel, {
 } from "./models/TemplateConfigurationModel";
 import templateConfigurationModel from "./models/templateConfigurationModel.json";
 import { log } from "../lib/utils/Logger";
+import { Models } from "appwrite";
 
 // `DataManager` is a singleton, in which you define functions to fetch/save/delete Models.
-
+const NUMBER_OF_BLOCK_CONTENTS_WITHOUT_GPT3 = 3;
 // Usage guide & examples:
 // https://github.com/MME-Aufgaben-im-Sommer-2022/mme-ss22-team-10/blob/dev/docs/lib/DataManager.md
 export default class DataManager {
@@ -108,6 +109,18 @@ export default class DataManager {
         blockContents = this.convertArrayToBlockContent(
           blockContentsDocuments.documents
         );
+      if (
+        this.dayIsToday(day) &&
+        blockContents.length === NUMBER_OF_BLOCK_CONTENTS_WITHOUT_GPT3
+      ) {
+        const newBlockContent = await this.getGPT3BlockContent(),
+          apiBlockContent = await ApiClient.createNewBlockContentDocument(
+            noteDocument.$id,
+            newBlockContent
+          );
+        newBlockContent.documentId = apiBlockContent.$id;
+        blockContents.push(newBlockContent);
+      }
       return new EditorModel(day, blockContents);
     } catch (e) {
       const editorModel = await this.createEditorModelFromTemplate();
@@ -138,9 +151,11 @@ export default class DataManager {
 
   private static async createEditorModelFromTemplate(): Promise<EditorModel> {
     const promise = await DataManager.getUserSettingsModel(),
+      blockContent = await this.getGPT3BlockContent(),
       blockContents = this.convertArrayToBlockContent(
         promise.settings.template
       );
+    blockContents.push(blockContent);
     return new EditorModel(new Date(), blockContents);
   }
 
@@ -150,6 +165,46 @@ export default class DataManager {
     );
     await ApiClient.deleteNoteDocument(noteDocument.$id);
     return await ApiClient.deleteBlockContents(noteDocument.$id);
+  }
+
+  private static async getGPT3BlockContent() {
+    const blocks = await this.getGPT3BlockContentParameter(),
+      response = await ApiClient.getGeneratedTitle(blocks);
+    return {
+      title: response.gptTitle,
+      inputType: BlockContentInputType.FreeText,
+      inputValue: "",
+      documentId: "",
+    };
+  }
+
+  private static async getGPT3BlockContentParameter(): Promise<
+    Array<Models.Document>
+  > {
+    const notes = await this.getLastNotes(),
+      blockContents: Models.Document[] = [];
+    notes.forEach(async (note) => {
+      const blockContentsList = await ApiClient.getBlockContentDocumentList(
+        note.$id
+      );
+      blockContentsList.documents.forEach((blockContent) =>
+        blockContents.push(blockContent)
+      );
+    });
+    return blockContents;
+  }
+
+  private static async getLastNotes(): Promise<Array<Models.Document>> {
+    const notes = await ApiClient.getNoteDocumentList(),
+      noteWithoutToday = notes.filter((note) => {
+        return note.day !== this.convertDateToString(new Date());
+      }),
+      sortedNotes = noteWithoutToday
+        .sort((note1, note2) =>
+          new Date(note1.day) < new Date(note2.day) ? 1 : -1
+        )
+        .slice(0, NUMBER_OF_BLOCK_CONTENTS_WITHOUT_GPT3);
+    return sortedNotes;
   }
 
   // User Settings Model
@@ -185,6 +240,15 @@ export default class DataManager {
   }
 
   // HELPER FUNCTIONS
+  private static dayIsToday(day: Date) {
+    const today = new Date();
+    return (
+      day.getDate() === today.getDate() &&
+      day.getMonth() === today.getMonth() &&
+      day.getFullYear() === today.getFullYear()
+    );
+  }
+
   private static convertArrayToBlockContent(array: Array<any>) {
     const blockContents: Array<BlockContent> = [];
     array.forEach((entry) => {

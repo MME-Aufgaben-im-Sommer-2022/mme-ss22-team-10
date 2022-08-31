@@ -139,6 +139,21 @@ export default class ApiClient {
     );
   }
 
+  static async getGeneratedTitle(blockContents: Array<any>): Promise<any> {
+    const url = "https://gpt-title.deno.dev/",
+      method = "POST",
+      headers = {
+        "Content-Type": "application/json; charset=utf-8",
+      };
+    return await fetch(url, {
+      headers: headers,
+      method: method,
+      body: JSON.stringify({ blockContents }),
+    })
+      .then((response) => response.json())
+      .then((data) => data);
+  }
+
   static async getBlockContentDocument(
     documentId: string
   ): Promise<Models.Document> {
