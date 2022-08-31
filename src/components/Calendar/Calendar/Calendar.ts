@@ -6,13 +6,14 @@ import CalendarModel, { Years } from "../../../data/models/CalendarModel";
 import { GlobalStates } from "../../../state/GlobalStates";
 import GlobalState from "../../../lib/state/GlobalState";
 import DataManager from "../../../data/DataManager";
-import { log } from "../../../lib/utils/Logger";
 
 export default class Calendar extends WebComponent {
   monthNumberDecember = 12;
   monthNumberJanuary = 1;
+  yearNumberToStop = 2020;
   calendarMonth!: CalendarMonth;
   currentMonthNumber!: number;
+  lastFoundEntries!: number;
   currentMonthText!: string;
   currentYear!: string;
   calendarModel!: CalendarModel;
@@ -76,6 +77,7 @@ export default class Calendar extends WebComponent {
     this.currentYearNumber = this.today.getFullYear();
     this.currentYear = this.currentYearNumber.toString();
     this.currentMonthNumber = this.today.getMonth() + 1;
+    this.lastFoundEntries = this.today.getMonth() + 1;
   }
 
   private setMonthTitle(): void {
@@ -87,10 +89,14 @@ export default class Calendar extends WebComponent {
   }
 
   private getEntriesForMonth(directionForward: boolean): void {
-    log(this.currentMonthNumber);
     this.checkForYearTransition();
-    this.entriesForCurrentMonth = this.getEntryData();
-    this.setEntries(directionForward);
+    if (this.currentYearNumber > this.yearNumberToStop) {
+      this.entriesForCurrentMonth = this.getEntryData();
+      this.setEntries(directionForward);
+    } else {
+      this.currentMonthNumber = this.lastFoundEntries;
+      this.currentYearNumber++;
+    }
   }
 
   private checkForYearTransition(): void {
@@ -98,7 +104,7 @@ export default class Calendar extends WebComponent {
       this.currentMonthNumber = this.monthNumberDecember;
       this.currentYearNumber = parseInt(this.currentYear) - 1;
     }
-    if (this.currentMonthNumber > 12) {
+    if (this.currentMonthNumber > this.monthNumberDecember) {
       this.currentMonthNumber = this.monthNumberJanuary;
       this.currentYearNumber = parseInt(this.currentYear) + 1;
     }
@@ -106,7 +112,6 @@ export default class Calendar extends WebComponent {
   }
 
   private getEntryData(): Array<string> {
-    log("get Entry " + this.currentMonthNumber);
     const entryData: Array<string> = this.getDaysFromNoteDays();
     if (entryData.length === 0 && this.currentNumbersMatchToday()) {
       entryData.push(this.today.getDate() + "");
@@ -121,8 +126,8 @@ export default class Calendar extends WebComponent {
       this.noteDays[this.currentYear][this.currentMonthNumber]
     ) {
       days = this.noteDays[this.currentYear][this.currentMonthNumber];
+      this.lastFoundEntries = this.currentMonthNumber;
     }
-    log(days);
     return days;
   }
 
@@ -140,22 +145,22 @@ export default class Calendar extends WebComponent {
       this.showEntries();
     } else {
       if (directionForward) {
-        log(this.checkForClickInTheFuture());
-        if (this.checkForClickInTheFuture()) {
-          this.currentMonthNumber++;
-        }
+        this.checkForClickInTheFuture();
       } else {
         this.currentMonthNumber--;
-        this.getEntriesForMonth(directionForward);
       }
+      this.getEntriesForMonth(directionForward);
     }
   }
 
-  private checkForClickInTheFuture(): boolean {
-    return (
-      this.currentMonthNumber + 1 <= this.today.getMonth() + 1 &&
-      this.currentYear === this.today.getFullYear().toString()
-    );
+  private checkForClickInTheFuture(): void {
+    if (this.currentYear === this.today.getFullYear().toString()) {
+      if (this.currentMonthNumber + 1 <= this.today.getMonth() + 1) {
+        this.currentMonthNumber++;
+      }
+    } else {
+      this.currentMonthNumber++;
+    }
   }
 
   private showEntries(): void {
@@ -168,14 +173,14 @@ export default class Calendar extends WebComponent {
   }
 
   onPreviousClicked = () => {
-    log("previous");
-    this.currentMonthNumber--;
-    this.getEntriesForMonth(false);
+    if (this.currentYearNumber > this.yearNumberToStop) {
+      this.currentMonthNumber--;
+      this.getEntriesForMonth(false);
+    }
   };
 
   onNextClicked = () => {
-    log("next");
-    this.currentMonthNumber++;
+    this.checkForClickInTheFuture();
     this.getEntriesForMonth(true);
   };
 
