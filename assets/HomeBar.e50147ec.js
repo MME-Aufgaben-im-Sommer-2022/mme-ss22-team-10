@@ -1,4 +1,4 @@
-var r=Object.defineProperty;var l=(o,t,e)=>t in o?r(o,t,{enumerable:!0,configurable:!0,writable:!0,value:e}):o[t]=e;var n=(o,t,e)=>(l(o,typeof t!="symbol"?t+"":t,e),e);import{W as u,G as s,a as i,D as a}from"./index.ea27e9d7.js";import{E as d}from"./EventBus.e2d55265.js";const g=`<div id="home-bar-container">
+var r=Object.defineProperty;var l=(o,t,e)=>t in o?r(o,t,{enumerable:!0,configurable:!0,writable:!0,value:e}):o[t]=e;var n=(o,t,e)=>(l(o,typeof t!="symbol"?t+"":t,e),e);import{W as u,G as s,a as i,D as a}from"./index.2bb824ab.js";import{E as d}from"./EventBus.244da95f.js";const g=`<div id="home-bar-container">
   <div class="spacer"></div>
   <span id="greet-text"></span>
   <div class="spacer"></div>

@@ -1,4 +1,4 @@
-var a=Object.defineProperty;var r=(i,n,t)=>n in i?a(i,n,{enumerable:!0,configurable:!0,writable:!0,value:t}):i[n]=t;var e=(i,n,t)=>(r(i,typeof n!="symbol"?n+"":n,t),t);import{W as h,S as s}from"./index.ea27e9d7.js";import p from"./LiveBulletPointItem.99be14a3.js";import"./LiveTextInput.f11ff188.js";import"./EventBus.e2d55265.js";import"./CloseAllEditorInputs.40019b73.js";const P=`<ul class="bullet-point-container">
+var a=Object.defineProperty;var r=(i,n,t)=>n in i?a(i,n,{enumerable:!0,configurable:!0,writable:!0,value:t}):i[n]=t;var e=(i,n,t)=>(r(i,typeof n!="symbol"?n+"":n,t),t);import{W as h,S as s}from"./index.2bb824ab.js";import p from"./LiveBulletPointItem.6c24a58a.js";import"./LiveTextInput.5b8a2bf4.js";import"./EventBus.244da95f.js";import"./CloseAllEditorInputs.40019b73.js";const P=`<ul class="bullet-point-container">
   <!--LiveBulletPoints will be appended here-->
 </ul>
 <input type="text" class="new-bullet-point-input text-input new-item-input editor-atomic-item" placeholder="Add a bullet point">
