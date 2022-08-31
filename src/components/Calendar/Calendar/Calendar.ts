@@ -3,7 +3,6 @@ import html from "../../Calendar/Calendar/Calendar.html";
 import css from "../../Calendar/Calendar/Calendar.css";
 import CalendarMonth from "../CalendarMonth/CalendarMonth";
 import CalendarModel, { Years } from "../../../data/models/CalendarModel";
-import { log } from "../../../lib/utils/Logger";
 import { GlobalStates } from "../../../state/GlobalStates";
 import GlobalState from "../../../lib/state/GlobalState";
 import DataManager from "../../../data/DataManager";
@@ -73,11 +72,12 @@ export default class Calendar extends WebComponent {
   }
 
   private getCurrentData(): void {
-    this.currentYear = this.today.getFullYear().toString();
+    this.currentYearNumber = this.today.getFullYear();
+    this.currentYear = this.currentYearNumber.toString();
     this.currentMonthNumber = this.today.getMonth() + 1;
   }
 
-  private changeMonthTitle(): void {
+  private setMonthTitle(): void {
     const date: Date = new Date(
       `${this.currentMonthNumber}/${1}/${this.currentYear}`
     );
@@ -86,49 +86,53 @@ export default class Calendar extends WebComponent {
   }
 
   private getEntriesForMonth(directionForward: boolean): void {
-    if (this.currentMonthNumber < 1 || this.currentMonthNumber > 12) {
-      this.changeYearNumber();
-    }
+    this.checkForYearTransition();
     this.entriesForCurrentMonth = this.getEntryData();
-    log(this.entriesForCurrentMonth);
-    log(this.entriesForCurrentMonth.includes(this.today.getDate()) + "");
-    if (
-      this.currentMonthNumber === this.today.getMonth() + 1 &&
-      this.currentYear === this.today.getFullYear().toString() &&
-      !this.entriesForCurrentMonth.includes(this.today.getDate() + "")
-    ) {
-      this.entriesForCurrentMonth.push(this.today.getDate() + "");
-    }
-    this.checkEntries(directionForward);
+    this.setEntries(directionForward);
   }
 
-  private changeYearNumber(): void {
+  private checkForYearTransition(): void {
     if (this.currentMonthNumber < 1) {
       this.currentMonthNumber = this.monthNumberDecember;
       this.currentYearNumber = parseInt(this.currentYear) - 1;
-    } else {
+    }
+    if (this.currentMonthNumber > 12) {
       this.currentMonthNumber = this.monthNumberJanuary;
       this.currentYearNumber = parseInt(this.currentYear) + 1;
     }
     this.currentYear = this.currentYearNumber.toString();
   }
 
-  private getEntryData(): Array<string> | undefined {
+  private getEntryData(): Array<string> {
+    const entryData: Array<string> = this.getDaysFromNoteDays();
+    if (entryData.length === 0 && this.currentNumbersMatchToday()) {
+      entryData.push(this.today.getDate() + "");
+    }
+    return entryData;
+  }
+
+  private getDaysFromNoteDays(): Array<string> {
+    let days: Array<string> = [];
     if (
       this.noteDays[this.currentYear] &&
       this.noteDays[this.currentYear][this.currentMonthNumber]
     ) {
-      return this.noteDays[this.currentYear][this.currentMonthNumber];
-    } else {
-      this.currentMonthNumber++;
+      days = this.noteDays[this.currentYear][this.currentMonthNumber];
     }
-    return new Array<string>();
+    return days;
   }
 
-  private checkEntries(directionForward: boolean): void {
+  private currentNumbersMatchToday(): boolean {
+    return (
+      this.currentMonthNumber === this.today.getMonth() + 1 &&
+      this.currentYear === this.today.getFullYear().toString()
+    );
+  }
+
+  private setEntries(directionForward: boolean): void {
     if (this.entriesForCurrentMonth.length > 0) {
       this.removeMonthEntries();
-      this.changeMonthTitle();
+      this.setMonthTitle();
       this.showEntries();
     } else {
       if (this.currentMonthNumber + 1 <= this.today.getMonth() + 1) {
