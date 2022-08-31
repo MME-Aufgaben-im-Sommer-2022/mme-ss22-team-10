@@ -188,6 +188,15 @@ export default class DataManager {
   }
 
   // HELPER FUNCTIONS
+  private static dayIsToday(day: Date) {
+    const today = new Date();
+    return (
+      day.getDate() === today.getDate() &&
+      day.getMonth() === today.getMonth() &&
+      day.getFullYear() === today.getFullYear()
+    );
+  }
+
   private static convertArrayToBlockContent(array: Array<any>) {
     const blockContents: Array<BlockContent> = [];
     array.forEach((entry) => {
