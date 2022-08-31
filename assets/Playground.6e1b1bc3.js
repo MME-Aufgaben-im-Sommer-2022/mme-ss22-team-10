@@ -1,2 +1,2 @@
-import{W as o,H as n}from"./index.0ac03f07.js";const t="",s=`dev-playground{display:flex;flex-grow:1}
+import{W as o,H as n}from"./index.f41c5b66.js";const t="",s=`dev-playground{display:flex;flex-grow:1}
 `;class l extends o{constructor(){super(t,s)}get htmlTagName(){return"dev-playground"}onCreate(){const e=new n;this.appendChild(e)}}export{l as default};
