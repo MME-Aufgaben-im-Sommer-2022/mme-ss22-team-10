@@ -17,3 +17,10 @@ _Beschreiben Sie die zentralen Funktionen Ihrer Anwendung und deren Verwendung. 
 ### Team
 
 _Listen Sie tabelarisch alle Teammitglieder mit Name, E-Mail-Adresse und Foto auf. Halten Sie für jedes Mitglied kurz fest, welchen Teilbereich der Anwendung die jeweilige Person maßgeblich bearbeitet hat._
+
+Name | E-Mail-Adresse | Github-Nutzer | Foto | Komponenten der Anwendung
+--- | --- | --- | --- | ---
+Alexander Weichart | alexander.weichart@stud.uni-regensburg.de | ??? | ![???] | 
+Brooke Pintsuk | brooke.pintsuk@stud.uni-regensburg.de | ??? | ![???] | 
+My | my.my@stud.uni-regensburg.de | ??? | ![???] |
+Samuel Roeben | samuel.roeben@stud.uni-regensburg.de | ??? | ![???] |
