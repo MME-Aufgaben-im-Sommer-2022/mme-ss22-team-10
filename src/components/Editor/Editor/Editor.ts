@@ -89,7 +89,11 @@ export default class Editor extends WebComponent {
     this.editorModelState.addEventListener("change", (event: AppEvent) => {
       const data: StateChangedData = event.data;
       if (data.currentPath === "") {
-        this.$editorBlocksContainer.innerHTML = "";
+        this.$editorBlocksContainer
+          .querySelectorAll("editor-block")
+          .forEach((block) => {
+            block.remove();
+          });
         this.$appendEditorBlocks();
       } else {
         DataManager.updateEditorModel(this.editorModelState.value);
