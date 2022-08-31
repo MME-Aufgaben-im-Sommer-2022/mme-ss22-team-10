@@ -70,9 +70,13 @@ export default class CheckListInputField extends WebComponent {
     checkListIndex: number
   ): LiveCheckListItem => {
     const checkListItemString = this.checkListStates.value[checkListIndex],
-      [isChecked, checkListContent] = checkListItemString.split(
+      [isChecked] = checkListItemString.split(
         CheckListInputField.CHECK_LIST_CONTENT_SEPARATOR
-      ),
+      )[0],
+      checkListContent = checkListItemString
+        .split(CheckListInputField.CHECK_LIST_CONTENT_SEPARATOR)
+        .splice(1)
+        .join(CheckListInputField.CHECK_LIST_CONTENT_SEPARATOR),
       isCheckedState = new State(
         isChecked.trim() === CheckListInputField.CHECK_LIST_IS_CHECKED_MARK
       ),
