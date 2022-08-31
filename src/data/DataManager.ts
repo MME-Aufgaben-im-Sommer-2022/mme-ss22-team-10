@@ -5,10 +5,7 @@ import EditorModel, {
   BlockContentInputType,
 } from "./models/EditorModel";
 import UserSettingsModel, { Template } from "./models/UserSettingsModel";
-import {
-  generateRandomAscendingArray,
-  generateRandomLoremIpsum,
-} from "../lib/utils";
+import { generateRandomAscendingArray } from "../lib/utils";
 import ApiClient from "./api/ApiClient";
 import TemplateConfigurationModel, {
   Topic,
@@ -18,7 +15,6 @@ import { log } from "../lib/utils/Logger";
 import { Models } from "appwrite";
 
 // `DataManager` is a singleton, in which you define functions to fetch/save/delete Models.
-
 const NUMBER_OF_BLOCK_CONTENTS_WITHOUT_GPT3 = 3;
 // Usage guide & examples:
 // https://github.com/MME-Aufgaben-im-Sommer-2022/mme-ss22-team-10/blob/dev/docs/lib/DataManager.md
