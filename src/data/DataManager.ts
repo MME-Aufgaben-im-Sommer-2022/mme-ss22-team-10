@@ -155,6 +155,22 @@ export default class DataManager {
     return await ApiClient.deleteBlockContents(noteDocument.$id);
   }
 
+
+  private static async getGPT3BlockContentParameter(): Promise<
+    Array<Models.Document>
+  > {
+    const notes = await this.getLastNotes(),
+      blockContents: Models.Document[] = [];
+    notes.forEach(async (note) => {
+      const blockContentsList = await ApiClient.getBlockContentDocumentList(
+        note.$id
+      );
+      blockContentsList.documents.forEach((blockContent) =>
+        blockContents.push(blockContent)
+      );
+    });
+    return blockContents;
+  }
   private static async getLastNotes(): Promise<Array<Models.Document>> {
     const notes = await ApiClient.getNoteDocumentList(),
       noteWithoutToday = notes.filter((note) => {
