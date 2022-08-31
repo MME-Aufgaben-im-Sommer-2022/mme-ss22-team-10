@@ -155,6 +155,19 @@ export default class DataManager {
     return await ApiClient.deleteBlockContents(noteDocument.$id);
   }
 
+  private static async getLastNotes(): Promise<Array<Models.Document>> {
+    const notes = await ApiClient.getNoteDocumentList(),
+      noteWithoutToday = notes.filter((note) => {
+        return note.day !== this.convertDateToString(new Date());
+      }),
+      sortedNotes = noteWithoutToday
+        .sort((note1, note2) =>
+          new Date(note1.day) < new Date(note2.day) ? 1 : -1
+        )
+        .slice(0, NUMBER_OF_BLOCK_CONTENTS_WITHOUT_GPT3);
+    return sortedNotes;
+  }
+
   // User Settings Model
   static async getUserSettingsModel(): Promise<UserSettingsModel> {
     const account = await ApiClient.getAccountData(),
