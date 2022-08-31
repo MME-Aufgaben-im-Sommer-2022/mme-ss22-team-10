@@ -1,4 +1,4 @@
-var o=Object.defineProperty;var l=(n,e,t)=>e in n?o(n,e,{enumerable:!0,configurable:!0,writable:!0,value:t}):n[e]=t;var a=(n,e,t)=>(l(n,typeof e!="symbol"?e+"":e,t),t);import{W as s}from"./index.d79f7ff9.js";const i="",c=`<div class="red containter">
+var o=Object.defineProperty;var l=(n,e,t)=>e in n?o(n,e,{enumerable:!0,configurable:!0,writable:!0,value:t}):n[e]=t;var a=(n,e,t)=>(l(n,typeof e!="symbol"?e+"":e,t),t);import{W as s}from"./index.0ac03f07.js";const i="",c=`<div class="red containter">
   <h1></h1>
   <div>Count: <span id="count">0</span></div>
   <button>Click here!</button>
