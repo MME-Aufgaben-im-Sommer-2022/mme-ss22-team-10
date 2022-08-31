@@ -13,6 +13,7 @@ import { StateChangedData } from "../../../events/StateChanged";
 import { parseDateFromString } from "../../../lib/utils";
 import GlobalState from "../../../lib/state/GlobalState";
 import { GlobalStates } from "../../../state/GlobalStates";
+import { log } from "../../../lib/utils/Logger";
 
 // HTML element that serves as the main editor component
 
@@ -63,7 +64,8 @@ export default class Editor extends WebComponent {
   }
 
   private $toggleLoading(isLoading: boolean): void {
-    //
+    log(isLoading);
+    // todo maybe: loading animation
   }
 
   private $appendEditorBlocks(): void {
