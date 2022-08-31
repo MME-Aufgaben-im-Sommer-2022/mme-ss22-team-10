@@ -113,8 +113,13 @@ export default class DataManager {
         this.dayIsToday(day) &&
         blockContents.length === NUMBER_OF_BLOCK_CONTENTS_WITHOUT_GPT3
       ) {
-        const blockContent = await this.getGPT3BlockContent();
-        blockContents.push(blockContent);
+        const newBlockContent = await this.getGPT3BlockContent(),
+          apiBlockContent = await ApiClient.createNewBlockContentDocument(
+            noteDocument.$id,
+            newBlockContent
+          );
+        newBlockContent.documentId = apiBlockContent.$id;
+        blockContents.push(newBlockContent);
       }
       return new EditorModel(day, blockContents);
     } catch (e) {
