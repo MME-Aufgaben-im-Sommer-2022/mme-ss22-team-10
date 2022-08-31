@@ -1,0 +1,1 @@
+calendar-day{display:flex;flex-grow:1}.calendar-day{width:130px;height:80px;display:flex;justify-content:center;align-items:center}.calendar-day>.date{margin:0}.calendar-day:hover{background:var(--text-accent-hover)}

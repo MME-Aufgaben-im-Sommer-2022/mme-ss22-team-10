@@ -1,0 +1,1 @@
+calendar-month{display:flex;flex-grow:1}.entry-container{display:grid;grid-column-gap:var(--spacing-medium);grid-row-gap:var(--spacing-medium);grid-template-columns:repeat(auto-fit,minmax(130px,130px))}

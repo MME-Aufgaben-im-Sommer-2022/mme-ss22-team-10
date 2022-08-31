@@ -1,0 +1,8 @@
+var r=Object.defineProperty;var l=(o,t,e)=>t in o?r(o,t,{enumerable:!0,configurable:!0,writable:!0,value:e}):o[t]=e;var n=(o,t,e)=>(l(o,typeof t!="symbol"?t+"":t,e),e);import{W as u,G as s,a as i,D as a}from"./index.8d3f5313.js";import{E as d}from"./EventBus.9b451a44.js";const g=`<div id="home-bar-container">
+  <div class="spacer"></div>
+  <span id="greet-text"></span>
+  <div class="spacer"></div>
+  <button id="logout-button">Logout</button>
+</div>
+`,c=`#home-bar-container{display:flex;flex-direction:row;width:100%;justify-content:flex-end}#home-bar-container>#greet-text{align-self:center;text-align:center;font-size:var(--font-size-large);border-bottom:var(--text-accent) solid 2px;white-space:nowrap;text-overflow:ellipsis}
+`,h="logout";class f extends u{constructor(){super(g,c);n(this,"$greetText");n(this,"$logoutButton");n(this,"userSettingsModelState");n(this,"$onLogoutButtonClicked",async()=>{await a.signOut(),d.notifyAll(h,{}),window.location.reload()})}get htmlTagName(){return"home-bar"}onCreate(){return this.initData().then(()=>{this.$initHtml(),this.initListener()})}async initData(){if(!s.hasState(i.userSettingsModel)){const e=await a.getUserSettingsModel();if(e)s.addState(e.toState(),i.userSettingsModel);else throw new Error("Could not load user settings model")}this.userSettingsModelState=s.getStateById(i.userSettingsModel)}initListener(){this.$logoutButton.addEventListener("click",this.$onLogoutButtonClicked)}$initHtml(){this.$greetText=this.select("#greet-text"),this.$logoutButton=this.select("#logout-button"),this.$setGreetText()}$setGreetText(){this.$greetText.innerHTML=`\u{1F331} Hello ${this.userSettingsModelState.value.username}!`}}export{f as default};

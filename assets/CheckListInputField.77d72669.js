@@ -1,0 +1,18 @@
+var L=Object.defineProperty;var S=(C,s,t)=>s in C?L(C,s,{enumerable:!0,configurable:!0,writable:!0,value:t}):C[s]=t;var e=(C,s,t)=>(S(C,typeof s!="symbol"?s+"":s,t),t);import{W as m,S as o}from"./index.8d3f5313.js";import I from"./LiveCheckListItem.6c205b19.js";import"./LiveTextInput.2896ffe0.js";import"./EventBus.9b451a44.js";import"./CloseAllEditorInputs.40019b73.js";const u=`<div class="check-list-container">
+  <!-- LiveCheckListItems will be appended here -->
+</div>
+<input type="text" class="new-check-list-item-input text-input new-item-input editor-atomic-item" placeholder="Add a check list item">
+`,i=class extends m{constructor(t){super(u);e(this,"$checkListContainer");e(this,"$newCheckListItemInputContainer");e(this,"$newCheckListItemInput");e(this,"inputValueState");e(this,"checkListStates");e(this,"$appendCheckListItems",()=>{this.checkListStates.value.forEach((t,n)=>{this.$checkListContainer.insertBefore(this.$createCheckListItem(n),this.$newCheckListItemInputContainer)})});e(this,"$createCheckListItem",t=>{const n=this.checkListStates.value[t],c=n.split(i.CHECK_LIST_CONTENT_SEPARATOR)[0],l=n.split(i.CHECK_LIST_CONTENT_SEPARATOR).splice(1).join(i.CHECK_LIST_CONTENT_SEPARATOR),r=new o(c.trim()===i.CHECK_LIST_IS_CHECKED_MARK),a=new o(l.trim()),E=new I(a,r);if(c===void 0||l===void 0)throw new _(this.checkListStates.value[t],this.inputValueState.value,c,l);return r.addEventListener("change",()=>{this.onCheckListItemChanged(t,r.value,a.value)}),a.addEventListener("change",()=>{a.value.trim()===""&&E.remove(),this.onCheckListItemChanged(t,r.value,a.value)}),E});e(this,"onBulletPointsStateChanged",()=>{this.inputValueState.value=this.checkListStates.value.filter(t=>t.split(i.CHECK_LIST_CONTENT_SEPARATOR).splice(1).join(i.CHECK_LIST_CONTENT_SEPARATOR).trim()!=="").join(`
+`)});e(this,"onCheckListItemChanged",(t,n,c)=>{this.checkListStates.value[t]=`${n?i.CHECK_LIST_IS_CHECKED_MARK:i.CHECK_LIST_IS_UNCHECKED_MARK}${i.CHECK_LIST_CONTENT_SEPARATOR}${c}`});this.inputValueState=t;const n=this.inputValueState.value.split(`
+`);this.checkListStates=new o([]),n.forEach(c=>{c!==""&&this.checkListStates.value.push(c)})}get htmlTagName(){return"check-list-input-field"}onCreate(){this.$initHtml(),this.initListeners()}$initHtml(){this.$checkListContainer=this.select(".check-list-container"),this.$newCheckListItemInputContainer=this.select(".new-check-list-item-input-container"),this.$newCheckListItemInput=this.select(".new-check-list-item-input"),this.$appendCheckListItems()}initListeners(){this.checkListStates.addEventListener("change",this.onBulletPointsStateChanged),this.$newCheckListItemInput.addEventListener("keydown",t=>{t.key==="Enter"&&this.addNewCheckListItem()})}addNewCheckListItem(){const t=this.$newCheckListItemInput.value.trim();t.length>0&&(this.checkListStates.value.push(i.CHECK_LIST_IS_UNCHECKED_MARK+i.CHECK_LIST_CONTENT_SEPARATOR+t),this.$checkListContainer.insertBefore(this.$createCheckListItem(this.checkListStates.value.length-1),this.$newCheckListItemInputContainer),this.$newCheckListItemInput.value="")}};let h=i;e(h,"CHECK_LIST_CONTENT_SEPARATOR"," "),e(h,"CHECK_LIST_IS_CHECKED_MARK","[X]"),e(h,"CHECK_LIST_IS_UNCHECKED_MARK","[-]");class _ extends Error{constructor(s,t,n,c){super(`Invalid check list item: ${s}
+    
+    Is the item of the following format?
+    - ${h.CHECK_LIST_IS_CHECKED_MARK}${h.CHECK_LIST_CONTENT_SEPARATOR}example content
+    - ${h.CHECK_LIST_IS_UNCHECKED_MARK}${h.CHECK_LIST_CONTENT_SEPARATOR}example content
+    
+    Detailed error:
+    - fullCheckListString: ${t}
+    - checkListItem: ${s}
+    - isChecked: ${n}
+    - content: ${c}
+    `)}}export{_ as InvalidCheckListItemError,h as default};
