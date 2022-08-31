@@ -15,6 +15,7 @@ import TemplateConfigurationModel, {
 } from "./models/TemplateConfigurationModel";
 import templateConfigurationModel from "./models/templateConfigurationModel.json";
 import { log } from "../lib/utils/Logger";
+import { Models } from "appwrite";
 
 // `DataManager` is a singleton, in which you define functions to fetch/save/delete Models.
 
@@ -112,6 +113,13 @@ export default class DataManager {
         blockContents = this.convertArrayToBlockContent(
           blockContentsDocuments.documents
         );
+      if (
+        this.dayIsToday(day) &&
+        blockContents.length === NUMBER_OF_BLOCK_CONTENTS_WITHOUT_GPT3
+      ) {
+        const blockContent = await this.getGPT3BlockContent();
+        blockContents.push(blockContent);
+      }
       return new EditorModel(day, blockContents);
     } catch (e) {
       const editorModel = await this.createEditorModelFromTemplate();
@@ -142,9 +150,11 @@ export default class DataManager {
 
   private static async createEditorModelFromTemplate(): Promise<EditorModel> {
     const promise = await DataManager.getUserSettingsModel(),
+      blockContent = await this.getGPT3BlockContent(),
       blockContents = this.convertArrayToBlockContent(
         promise.settings.template
       );
+    blockContents.push(blockContent);
     return new EditorModel(new Date(), blockContents);
   }
 
