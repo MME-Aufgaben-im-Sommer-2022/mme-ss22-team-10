@@ -45,6 +45,7 @@ login-register{
 
 .login-form .register-toggle{
     color: var(--text-accent);
+    cursor: pointer;
 }
 .login-form .retype-password{
     visibility: hidden ;

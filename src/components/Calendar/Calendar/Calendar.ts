@@ -6,6 +6,7 @@ import CalendarModel, { Years } from "../../../data/models/CalendarModel";
 import { GlobalStates } from "../../../state/GlobalStates";
 import GlobalState from "../../../lib/state/GlobalState";
 import DataManager from "../../../data/DataManager";
+import { log } from "../../../lib/utils/Logger";
 
 export default class Calendar extends WebComponent {
   monthNumberDecember = 12;
@@ -86,6 +87,7 @@ export default class Calendar extends WebComponent {
   }
 
   private getEntriesForMonth(directionForward: boolean): void {
+    log(this.currentMonthNumber);
     this.checkForYearTransition();
     this.entriesForCurrentMonth = this.getEntryData();
     this.setEntries(directionForward);
@@ -104,6 +106,7 @@ export default class Calendar extends WebComponent {
   }
 
   private getEntryData(): Array<string> {
+    log("get Entry " + this.currentMonthNumber);
     const entryData: Array<string> = this.getDaysFromNoteDays();
     if (entryData.length === 0 && this.currentNumbersMatchToday()) {
       entryData.push(this.today.getDate() + "");
@@ -119,6 +122,7 @@ export default class Calendar extends WebComponent {
     ) {
       days = this.noteDays[this.currentYear][this.currentMonthNumber];
     }
+    log(days);
     return days;
   }
 
@@ -135,15 +139,23 @@ export default class Calendar extends WebComponent {
       this.setMonthTitle();
       this.showEntries();
     } else {
-      if (this.currentMonthNumber + 1 <= this.today.getMonth() + 1) {
-        if (directionForward) {
-          this.currentMonthNumber += 1;
-        } else {
-          this.currentMonthNumber -= 1;
+      if (directionForward) {
+        log(this.checkForClickInTheFuture());
+        if (this.checkForClickInTheFuture()) {
+          this.currentMonthNumber++;
         }
+      } else {
+        this.currentMonthNumber--;
         this.getEntriesForMonth(directionForward);
       }
     }
+  }
+
+  private checkForClickInTheFuture(): boolean {
+    return (
+      this.currentMonthNumber + 1 <= this.today.getMonth() + 1 &&
+      this.currentYear === this.today.getFullYear().toString()
+    );
   }
 
   private showEntries(): void {
@@ -156,12 +168,14 @@ export default class Calendar extends WebComponent {
   }
 
   onPreviousClicked = () => {
-    this.currentMonthNumber -= 1;
+    log("previous");
+    this.currentMonthNumber--;
     this.getEntriesForMonth(false);
   };
 
   onNextClicked = () => {
-    this.currentMonthNumber += 1;
+    log("next");
+    this.currentMonthNumber++;
     this.getEntriesForMonth(true);
   };
 
