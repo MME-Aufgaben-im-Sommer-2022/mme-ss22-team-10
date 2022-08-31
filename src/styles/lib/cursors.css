@@ -1,0 +1,17 @@
+/*
+* Cursor styles
+*/
+
+button,
+input,
+select {
+    cursor: pointer;
+}
+
+input[type=text] {
+    cursor: text;
+}
+
+*:disabled {
+    cursor: not-allowed;
+}

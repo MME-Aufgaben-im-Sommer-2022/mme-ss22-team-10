@@ -1,0 +1,35 @@
+/*
+Colors
+
+This css file contains all the colors as variables.
+When the body element has the class "theme-light", it will use the light theme.
+When the body element has the class "theme-dark", it will use the dark theme.
+*/
+
+.theme-light {
+    --background-primary: #FDF7F1;
+    --background-focus: #e3ded9;
+
+    --text-normal: #3c3c3c;
+    --text-header: rgb(44, 44, 44);
+    --text-faint: rgb(150, 150, 150);
+
+    --text-accent: #808c27;
+    --text-accent-hover: #6a7326;
+
+    --border-color: #bbb;
+}
+
+.theme-dark {
+    --background-primary: rgb(28, 30, 32);
+    --background-focus: rgb(33, 36, 38);
+
+    --text-normal: rgb(216, 216, 216);
+    --text-header: rgb(198, 213, 224);
+    --text-faint: rgb(150, 150, 150);
+
+    --text-accent: rgb(116, 190, 247);
+    --text-accent-hover: rgb(24, 147, 242);
+
+    --border-color: rgb(216, 216, 216);
+}

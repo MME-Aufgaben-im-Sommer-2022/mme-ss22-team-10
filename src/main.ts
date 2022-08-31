@@ -1,32 +1,93 @@
-import ExampleComponent from "./components/ExampleComponent/ExampleComponent";
 import WebComponentLoader from "./lib/components/WebComponentLoader";
-import State from "./lib/state/State";
-import ExampleModel from "./data/models/ExampleModel";
 import GlobalState from "./lib/state/GlobalState";
 import DataManager from "./data/DataManager";
+import "./styles/main.css";
 import { log } from "./lib/utils/Logger";
+import Login from "./components/Login/Login";
+import TemplateConfigurator from "./components/TemplateConfigurator/TemplateConfigurator";
+import Home from "./components/Home/Home";
+import { GlobalStates } from "./state/GlobalStates";
 
 const app = () => {
+  const $app = document.querySelector<HTMLDivElement>("#app")!;
+
   WebComponentLoader.loadAll() // Initialize the WebComponent definitions
     .then(() => DataManager.init()) // Initialize the database connection etc.
     .then(() => GlobalState.init()) // Initialize the global state
     .then(() => onApplicationStart()); // Start the application
 
-  function onApplicationStart() {
-    // retrieve the example Model from the model store
-    const exampleState = GlobalState.findState(
-        (exampleModel) => exampleModel.name === "John",
-        ExampleModel
-      )!,
-      // create the example component and append it to the body
-      exampleComponent: ExampleComponent = new ExampleComponent(exampleState);
-    document.querySelector<HTMLDivElement>("#app")!.append(exampleComponent);
+  // const appendDevPlayground = () => {
+  //   const playground = new Playground();
+  //   $app.append(playground);
+  // };
 
-    // listen to changes on the exampleModel
-    exampleState.addEventListener(State.STATE_CHANGE_EVENT, (data: any) => {
-      log("MAIN Model changed:", data);
-      log(GlobalState);
-    });
+  async function onApplicationStart() {
+    const IS_IN_DEV_MODE = import.meta.env.DEV;
+    if (IS_IN_DEV_MODE) {
+      // temp disable
+      // appendDevPlayground();
+    }
+
+    await onProductionStart();
+  }
+
+  async function onProductionStart() {
+    const isLoggedIn = await DataManager.checkIfUserLoggedIn();
+    if (isLoggedIn) {
+      await onLoggedIn();
+    } else {
+      await onLoggedOut();
+    }
+  }
+
+  async function onLoggedIn() {
+    log("user is logged in");
+    const userModel = await DataManager.getUserSettingsModel();
+    GlobalState.addState(userModel.toState(), GlobalStates.userSettingsModel);
+    if (userModel.settings.template.length === 0) {
+      onNewUser();
+    } else {
+      onReturningUser();
+    }
+  }
+
+  async function onReturningUser() {
+    log("returning user");
+    $showHome();
+  }
+
+  async function $showHome() {
+    $app.innerHTML = "";
+    $app.append(new Home());
+  }
+
+  async function onNewUser() {
+    log("new user");
+    $showTemplateConfigurator();
+  }
+
+  function $showTemplateConfigurator() {
+    $app.innerHTML = "";
+    const templateConfigurator = new TemplateConfigurator();
+    templateConfigurator.addEventListener(
+      TemplateConfigurator.FINISH_TEMPLATE_CONFIGURATION_EVENT,
+      () => {
+        log("template configurator finished");
+        $showHome();
+      }
+    );
+    $app.append(templateConfigurator);
+  }
+
+  async function onLoggedOut() {
+    log("user is logged out");
+    $showLogin();
+  }
+
+  function $showLogin() {
+    $app.innerHTML = "";
+    const loginPage = new Login();
+    $app.append(loginPage);
   }
 };
 

@@ -1,0 +1,11 @@
+input-type-configurator-item {
+    flex-direction: row !important;
+    align-items: center;
+    flex-grow: 0 !important;
+    margin-bottom: var(--spacing-medium);
+}
+
+.input-type-configuration-selection {
+    margin-left: var(--spacing-medium);
+    margin-right: auto;
+}

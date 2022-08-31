@@ -1,4 +1,7 @@
 import { Observable } from "../events/Observable";
+import { StateChangedData } from "../../events/StateChanged";
+//import { log } from "../utils/Logger";
+import ObservableSlim from "observable-slim";
 
 // ====================================================== //
 // ====================== State ====================== //
@@ -6,90 +9,127 @@ import { Observable } from "../events/Observable";
 
 // Wrapper class to make any object/primitive observable
 
-// Usage:
-// 1. create a new State object: new State(data)
-// 2. to listen for changes, call addEventListener(State.STATE_CHANGE_EVENT, callback) on the State object
-// 3. to get the value of the State object, call exampleState.value
-// 4. to set the value of the State object, call exampleState.value = newValue
-
-// Example:
-// import { State } from "./State";
-// let exampleState = new State("some data");
-// exampleState.addEventListener(State.STATE_CHANGE_EVENT, (data) => {...}) // listen for State.STATE_CHANGE_EVENT events
-// log(exampleState.value) // get the value of the State object and print it (-> "some data")
-// exampleState.value = "new data" // set the value of the State object (-> automatically notifies all listeners)
+// Usage guide & examples:
+// https://github.com/MME-Aufgaben-im-Sommer-2022/mme-ss22-team-10/blob/dev/docs/lib/State.md
 
 export default class State<T> extends Observable {
-  static STATE_CHANGE_EVENT = "change";
-  private val!: T;
-
-  id = ""; // unique id that identifies any state
-  private static stateCounts: Map<string, number> = new Map<string, number>();
+  private val: ProxyConstructor | T;
+  private static stateCount = 0;
+  readonly id: number;
 
   constructor(value: T) {
     super();
-    this.generateId();
-    this.setValue(value);
-  }
+    State.stateCount++;
+    this.id = State.stateCount;
 
-  private setValue(_value: T): void {
     this.val =
-      typeof _value === "object"
-        ? this.createProxy(_value as Record<string, unknown>)
-        : _value;
+      typeof value === "object"
+        ? ObservableSlim.create(value, false, this.onValueChange)
+        : value;
   }
-
-  private createProxy(value: Record<string, unknown>): T {
-    return new Proxy(value, this.proxyHandler) as T;
-  }
-
-  private proxyHandler = {
-    set: (object: any, key: string | symbol, value: any) => {
-      if (object[key] !== value) {
-        object[key] = value;
-        this.notifyAll(State.STATE_CHANGE_EVENT, value);
-      }
-      return true;
-    },
-
-    // return new proxy for nested objects
-    // to avoid creating new proxies for already proxied objects, the following code was adopted from:
-    // https://stackoverflow.com/questions/41299642/how-to-use-javascript-proxy-for-nested-objects
-    get: (object: any, key: string | symbol) => {
-      if (key === "isProxy") {
-        return true;
-      }
-
-      const prop = object[key];
-      if (typeof prop === "undefined") {
-        return undefined;
-      } else if (!prop.isProxy) {
-        if (typeof prop === "object") {
-          return this.createProxy(prop);
-        }
-      }
-
-      return prop;
-    },
-  };
 
   get value(): T {
-    return this.val;
+    return this.val as T;
   }
 
-  set value(value: T) {
-    this.setValue(value);
-    this.notifyAll(State.STATE_CHANGE_EVENT, this.val);
-  }
-
-  private generateId() {
-    const name = this.constructor.name;
-    let count = State.stateCounts.get(name);
-    if (count === undefined) {
-      count = 0;
+  set value(val: T) {
+    const previousValue = this.val;
+    if (typeof val !== "object") {
+      this.val = val;
+    } else {
+      this.val = ObservableSlim.create(val, false, this.onValueChange);
     }
-    State.stateCounts.set(name, count + 1);
-    this.id = name + "-" + count;
-    Object.freeze(this.id);
+    this.onValueChange([
+      {
+        type: "update",
+        property: "",
+        currentPath: "",
+        jsonPointer: "",
+        target: this.val,
+        // eslint-disable-next-line no-underscore-dangle
+        proxy: (this.val as any).__getProxy,
+        previousValue,
+        newValue: this.val,
+      },
+    ]);
   }
+
+  onValueChange = (changes: ObservableSlimChanges[]) => {
+    changes.forEach((change) => {
+      this.notifyAll(
+        "change",
+        Object.assign({}, change, { triggerStateId: this.id })
+      );
+    });
+  };
+
+  createSubState(key: string): State<any> {
+    const subStateKeys = key.split("."),
+      subStateValue: any = subStateKeys.reduce((obj: any, key: string) => {
+        const val = obj[key];
+        if (val !== undefined) {
+          return val;
+        }
+        throw new InvalidStateKeyError(key, this);
+      }, this);
+    if (typeof subStateValue === "object") {
+      // eslint-disable-next-line no-underscore-dangle
+      const subState = new State(subStateValue.__getTarget);
+      return subState;
+    }
+    throw new Error(
+      "SubStates of properties that are Primitives are not supported yet."
+    );
+  }
+}
+
+// custom error type for invalid state keys
+export class InvalidStateKeyError<T> extends Error {
+  private static readonly DOCS_LINK =
+    "https://github.com/MME-Aufgaben-im-Sommer-2022/mme-ss22-team-10/blob/master/docs/lib.md#state";
+
+  constructor(subStateKey: string, state: State<T>) {
+    super();
+    this.message = `Key does not exist!
+    
+    Pro tip: Check the dev docs on how to use the key parameter: ${
+      InvalidStateKeyError.DOCS_LINK
+    }
+    
+    Detailed error:
+    ${subStateKey} could not be found in "value":${JSON.stringify(state.value)}
+    `;
+  }
+}
+
+export class ChangedParentStateError extends Error {
+  constructor(
+    propertyName: string,
+    state: State<unknown>,
+    data: StateChangedData
+  ) {
+    super();
+    this.message = `The property "${propertyName}", which is referenced by a SubState cannot be found in the Parent state anymore.
+    
+    Did you change the value of the parent state using state.value = ... ?
+    
+    Detailed error:
+    Parent state value: "value: ${JSON.stringify(state.value)}"
+    Missing property: ${JSON.stringify(propertyName)}
+    State change event data: ${JSON.stringify(data)}
+    `;
+  }
+}
+
+export interface ObservableSlimChanges {
+  type: "add" | "delete" | "update";
+  property: string; // equals "value" if the whole state is changed
+
+  currentPath: string; // path of the property
+  jsonPointer: string; // path as json pointer syntax
+  target: any; // the target object
+  proxy?: ProxyConstructor; // the proxy of the object
+
+  previousValue?: any; // may be undefined if the property is new
+  newValue?: any; // may be undefined if the property is deleted
 }
