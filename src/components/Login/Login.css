@@ -17,14 +17,13 @@ login-register{
 }
 
 .login-form svg {
-    width: 90px;
-    height: 100px;
-    margin: auto;
+    width: 100%;
+    height: 100%;
 }
 
 .login-form image {
-    width: 90px;
-    height: 100px;
+    width: 100%;
+    height: 100%;
 
 }
 .login-form input{
