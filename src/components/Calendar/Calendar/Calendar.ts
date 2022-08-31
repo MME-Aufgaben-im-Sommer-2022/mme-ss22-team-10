@@ -106,6 +106,7 @@ export default class Calendar extends WebComponent {
   }
 
   private getEntryData(): Array<string> {
+    log("get Entry " + this.currentMonthNumber);
     const entryData: Array<string> = this.getDaysFromNoteDays();
     if (entryData.length === 0 && this.currentNumbersMatchToday()) {
       entryData.push(this.today.getDate() + "");
@@ -121,6 +122,7 @@ export default class Calendar extends WebComponent {
     ) {
       days = this.noteDays[this.currentYear][this.currentMonthNumber];
     }
+    log(days);
     return days;
   }
 
@@ -137,16 +139,23 @@ export default class Calendar extends WebComponent {
       this.setMonthTitle();
       this.showEntries();
     } else {
-      if (this.currentMonthNumber + 1 <= this.today.getMonth() + 1) {
-        if (directionForward) {
+      if (directionForward) {
+        log(this.checkForClickInTheFuture());
+        if (this.checkForClickInTheFuture()) {
           this.currentMonthNumber++;
-        } else {
-          this.currentMonthNumber--;
         }
-        log(this.currentMonthNumber);
+      } else {
+        this.currentMonthNumber--;
         this.getEntriesForMonth(directionForward);
       }
     }
+  }
+
+  private checkForClickInTheFuture(): boolean {
+    return (
+      this.currentMonthNumber + 1 <= this.today.getMonth() + 1 &&
+      this.currentYear === this.today.getFullYear().toString()
+    );
   }
 
   private showEntries(): void {
