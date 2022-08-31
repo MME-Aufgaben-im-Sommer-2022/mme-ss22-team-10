@@ -1,4 +1,4 @@
-var r=Object.defineProperty;var o=(n,i,t)=>i in n?r(n,i,{enumerable:!0,configurable:!0,writable:!0,value:t}):n[i]=t;var e=(n,i,t)=>(o(n,typeof i!="symbol"?i+"":i,t),t);import{W as u}from"./index.8d3f5313.js";import{E as s}from"./EventBus.9b451a44.js";import{C as l}from"./CloseAllEditorInputs.40019b73.js";const p=`<div class="live-text-input-container container">
+var r=Object.defineProperty;var o=(n,i,t)=>i in n?r(n,i,{enumerable:!0,configurable:!0,writable:!0,value:t}):n[i]=t;var e=(n,i,t)=>(o(n,typeof i!="symbol"?i+"":i,t),t);import{W as u}from"./index.642516bc.js";import{E as s}from"./EventBus.dbf2ca07.js";import{C as l}from"./CloseAllEditorInputs.40019b73.js";const p=`<div class="live-text-input-container container">
   <span class="text-preview animate-slide"></span>
   <input type="text" class="text-input animate-slide" placeholder="type here..." maxlength="100" hidden></input>
 </div>

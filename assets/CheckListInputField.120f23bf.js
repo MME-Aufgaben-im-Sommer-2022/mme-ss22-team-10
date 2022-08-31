@@ -1,4 +1,4 @@
-var L=Object.defineProperty;var S=(C,s,t)=>s in C?L(C,s,{enumerable:!0,configurable:!0,writable:!0,value:t}):C[s]=t;var e=(C,s,t)=>(S(C,typeof s!="symbol"?s+"":s,t),t);import{W as m,S as o}from"./index.8d3f5313.js";import I from"./LiveCheckListItem.6c205b19.js";import"./LiveTextInput.2896ffe0.js";import"./EventBus.9b451a44.js";import"./CloseAllEditorInputs.40019b73.js";const u=`<div class="check-list-container">
+var L=Object.defineProperty;var S=(C,s,t)=>s in C?L(C,s,{enumerable:!0,configurable:!0,writable:!0,value:t}):C[s]=t;var e=(C,s,t)=>(S(C,typeof s!="symbol"?s+"":s,t),t);import{W as m,S as o}from"./index.642516bc.js";import I from"./LiveCheckListItem.e3b98c9b.js";import"./LiveTextInput.778fc168.js";import"./EventBus.dbf2ca07.js";import"./CloseAllEditorInputs.40019b73.js";const u=`<div class="check-list-container">
   <!-- LiveCheckListItems will be appended here -->
 </div>
 <input type="text" class="new-check-list-item-input text-input new-item-input editor-atomic-item" placeholder="Add a check list item">
