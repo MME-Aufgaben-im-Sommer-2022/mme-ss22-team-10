@@ -88,12 +88,6 @@ export default class Calendar extends WebComponent {
   private getEntriesForMonth(directionForward: boolean): void {
     this.checkForYearTransition();
     this.entriesForCurrentMonth = this.getEntryData();
-    if (
-      this.currentNumbersMatchToday() &&
-      !this.entriesForCurrentMonth.includes(this.today.getDate() + "")
-    ) {
-      this.entriesForCurrentMonth.push(this.today.getDate() + "");
-    }
     this.setEntries(directionForward);
   }
 
