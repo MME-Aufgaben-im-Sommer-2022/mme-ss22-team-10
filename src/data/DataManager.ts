@@ -18,6 +18,7 @@ import { log } from "../lib/utils/Logger";
 
 // `DataManager` is a singleton, in which you define functions to fetch/save/delete Models.
 
+const NUMBER_OF_BLOCK_CONTENTS_WITHOUT_GPT3 = 3;
 // Usage guide & examples:
 // https://github.com/MME-Aufgaben-im-Sommer-2022/mme-ss22-team-10/blob/dev/docs/lib/DataManager.md
 export default class DataManager {
