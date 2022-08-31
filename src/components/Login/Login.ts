@@ -1,7 +1,6 @@
 import WebComponent from "../../lib/components/WebComponent";
 import html from "../Login/Login.html";
 import css from "../Login/Login.css";
-import { log } from "../../lib/utils/Logger";
 import State from "../../lib/state/State";
 import DataManager from "../../data/DataManager";
 

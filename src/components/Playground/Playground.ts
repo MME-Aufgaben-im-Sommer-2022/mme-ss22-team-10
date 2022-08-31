@@ -3,7 +3,6 @@ import WebComponent from "../../lib/components/WebComponent";
 import html from "./Playground.html";
 import css from "./Playground.css";
 import Home from "../Home/Home";
-import Login from "../Login/Login";
 
 export default class Playground extends WebComponent {
   constructor() {
