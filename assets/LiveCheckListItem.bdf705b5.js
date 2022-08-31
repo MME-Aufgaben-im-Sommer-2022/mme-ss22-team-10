@@ -1,4 +1,4 @@
-var h=Object.defineProperty;var n=(c,i,t)=>i in c?h(c,i,{enumerable:!0,configurable:!0,writable:!0,value:t}):c[i]=t;var e=(c,i,t)=>(n(c,typeof i!="symbol"?i+"":i,t),t);import{W as a}from"./index.f41c5b66.js";import o from"./LiveTextInput.abba42d1.js";import"./EventBus.5f19274c.js";import"./CloseAllEditorInputs.40019b73.js";const d=`<div class="check-list-item-container">
+var h=Object.defineProperty;var n=(c,i,t)=>i in c?h(c,i,{enumerable:!0,configurable:!0,writable:!0,value:t}):c[i]=t;var e=(c,i,t)=>(n(c,typeof i!="symbol"?i+"":i,t),t);import{W as a}from"./index.b76b9a49.js";import o from"./LiveTextInput.9ea8888f.js";import"./EventBus.9c9f6620.js";import"./CloseAllEditorInputs.40019b73.js";const d=`<div class="check-list-item-container">
   <input type="checkbox" class="checkbox">
   <!--LiveTextInput will be appended here-->
 </div>`,l=`.check-list-item-container{width:100%;display:flex;flex-direction:row;align-items:center}.checked{text-decoration:line-through}.checkbox{cursor:pointer}
