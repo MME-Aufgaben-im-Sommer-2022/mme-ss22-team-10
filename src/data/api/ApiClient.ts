@@ -14,6 +14,10 @@ export default class ApiClient {
 
   static async init() {
     this.client = new Client();
+    console.log("Client initializing");
+    console.log("server endopoint", Server.ENDPOINT);
+    console.log("Host", document.location.host);
+    console.log("Localhost", document.location.hostname);
     this.client.setEndpoint(Server.ENDPOINT);
     this.client.setProject(Server.PROJECT_ID);
     this.accountManager = new AccountManager(this.client);
