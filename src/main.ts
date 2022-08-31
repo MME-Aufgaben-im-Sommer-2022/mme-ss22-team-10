@@ -41,7 +41,8 @@ const app = () => {
   }
 
   async function onLoggedIn() {
-    log("user is logged in");
+    // ok
+    log("user is logged inn");
     const userModel = await DataManager.getUserSettingsModel();
     GlobalState.addState(userModel.toState(), GlobalStates.userSettingsModel);
     if (userModel.settings.template.length === 0) {
