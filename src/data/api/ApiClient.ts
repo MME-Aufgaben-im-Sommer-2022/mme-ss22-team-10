@@ -239,16 +239,6 @@ export default class ApiClient {
       .then((data) => data);
   }
 
-  static async getBlockContentDocument(
-    documentId: string
-  ): Promise<Models.Document> {
-    const blockContents = await this.databaseManager.getDocument(
-      Server.COLLECTION_BLOCK_CONTENTS,
-      documentId
-    );
-    return blockContents.documents[0];
-  }
-
   /**
    * create a new document for an EditorModel object
    * @param day
