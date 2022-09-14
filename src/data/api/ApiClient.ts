@@ -5,6 +5,9 @@ import DatabaseManager from "./DatabaseManager";
 import { TemplateItem } from "../models/UserSettingsModel";
 import { BlockContent } from "../models/EditorModel";
 
+/**
+ * class that handles all REST API and session related functions
+ */
 export default class ApiClient {
   private static client: Client;
   private static accountManager: AccountManager;
@@ -12,6 +15,9 @@ export default class ApiClient {
   private static userId: string;
   private static sessionId: string;
 
+  /**
+   * initialize Client for account and database access
+   */
   static async init() {
     this.client = new Client();
     this.client.setEndpoint(Server.ENDPOINT);
@@ -20,6 +26,10 @@ export default class ApiClient {
     this.databaseManager = new DatabaseManager(this.client, Server.DATABASE_ID);
   }
 
+  /**
+   * set sessionId and userId in this class and local storage
+   * @param session
+   */
   static connectSession(session: Models.Session): void {
     this.sessionId = session.$id;
     this.userId = session.userId;
@@ -27,6 +37,9 @@ export default class ApiClient {
     localStorage.setItem("userId", this.userId);
   }
 
+  /**
+   * remove current sessionId and userId
+   */
   static async disconnectCurrentSession(): Promise<void> {
     await this.removeSession(this.sessionId);
     this.userId = "";
@@ -35,10 +48,21 @@ export default class ApiClient {
     localStorage.removeItem("userId");
   }
 
+  /**
+   * get a session via id
+   * @param sessionId
+   * @returns {@link https://appwrite.io/docs/models/session Session Object}
+   */
   static async getSession(sessionId: string): Promise<Models.Session> {
     return this.accountManager.getAccountSession(sessionId);
   }
 
+  /**
+   * create a session if email and password are valid
+   * @param email
+   * @param password
+   * @returns {@link https://appwrite.io/docs/models/session Session Object}
+   */
   static async createNewSession(
     email: string,
     password: string
@@ -46,28 +70,53 @@ export default class ApiClient {
     return await this.accountManager.createNewAccountSession(email, password);
   }
 
+  /**
+   * remove session from api
+   * @param sessionId
+   * @private
+   */
   private static async removeSession(sessionId: string): Promise<any> {
     return this.accountManager.deleteAccountSession(sessionId);
   }
 
+  /**
+   * get currently logged-in user data
+   * @returns {@link https://appwrite.io/docs/models/user User Object}
+   */
   static async getAccountData(): Promise<Models.User<Models.Preferences>> {
     return this.accountManager.getAccountData();
   }
 
+  /**
+   * Update currently logged-in user account name.
+   * @param username
+   */
   static async updateAccountName(
-    name: string
+    username: string
   ): Promise<Models.User<Models.Preferences>> {
-    return this.accountManager.account.updateName(name);
+    return this.accountManager.account.updateName(username);
   }
 
+  /**
+   * creates new user
+   * @remarks Only accepts 10 requests every 60 minutes per IP address
+   * @param email
+   * @param password
+   * @param username
+   * @returns {@link https://appwrite.io/docs/models/user User Object}
+   */
   static async createAccount(
     email: string,
     password: string,
-    name: string
+    username: string
   ): Promise<Models.User<Models.Preferences>> {
-    return this.accountManager.createNewAccount(email, password, name);
+    return this.accountManager.createNewAccount(email, password, username);
   }
 
+  /**
+   * get the document used for the user settings
+   * @returns {@link https://appwrite.io/docs/models/document Document Object}
+   */
   static async getUserSettingsDocument(): Promise<Models.Document> {
     const userSettings = await this.databaseManager.listDocuments(
       Server.COLLECTION_SETTINGS,
@@ -76,6 +125,11 @@ export default class ApiClient {
     return userSettings.documents[0];
   }
 
+  /**
+   * create a new document for the user settings
+   * @param template
+   * @returns {@link https://appwrite.io/docs/models/document Document Object}
+   */
   static async createNewSettingsDocument(
     template: Array<TemplateItem>
   ): Promise<Models.Document> {
@@ -85,6 +139,11 @@ export default class ApiClient {
     });
   }
 
+  /**
+   * update the document used for the user settings
+   * @param template
+   * @returns {@link https://appwrite.io/docs/models/document Document Object}
+   */
   static async updateUserSettingsDocument(
     template: Array<string>
   ): Promise<void> {
@@ -96,6 +155,11 @@ export default class ApiClient {
     );
   }
 
+  /**
+   * get document for an EditorModel object by day
+   * @param day format: 'yyyy-mm-dd'
+   * @returns {@link https://appwrite.io/docs/models/document Document Object}
+   */
   static async getNoteDocument(day: string): Promise<Models.Document> {
     const noteDocument = await this.databaseManager.listDocuments(
       Server.COLLECTION_NOTES,
@@ -104,8 +168,12 @@ export default class ApiClient {
     return noteDocument.documents[0];
   }
 
+  /**
+   * get all existing documents from a user
+   * @returns array of {@link https://appwrite.io/docs/models/document Document Objects}
+   */
   static async getNoteDocumentList(): Promise<Array<Models.Document>> {
-    const array: Array<Models.Document> = [],
+    const noteDocumentArray: Array<Models.Document> = [],
       noteDocument = await this.databaseManager.listDocuments(
         Server.COLLECTION_NOTES,
         [Query.equal("userID", this.userId)]
@@ -114,9 +182,11 @@ export default class ApiClient {
     if (noteDocumentLength !== 0) {
       let lastDocumentId =
         noteDocument.documents[noteDocument.documents.length - 1].$id;
-      noteDocument.documents.forEach((document) => array.push(document));
-
-      while (array.length < noteDocumentLength) {
+      noteDocument.documents.forEach((document) =>
+        noteDocumentArray.push(document)
+      );
+      // the loop is needed, as only 100 documents can be fetched at once
+      while (noteDocumentArray.length < noteDocumentLength) {
         const noteDocument = await this.databaseManager.listDocuments(
           Server.COLLECTION_NOTES,
           [Query.equal("userID", this.userId)],
@@ -124,12 +194,19 @@ export default class ApiClient {
         );
         lastDocumentId =
           noteDocument.documents[noteDocument.documents.length - 1].$id;
-        noteDocument.documents.forEach((document) => array.push(document));
+        noteDocument.documents.forEach((document) =>
+          noteDocumentArray.push(document)
+        );
       }
     }
-    return array;
+    return noteDocumentArray;
   }
 
+  /**
+   * get a list of documents containing data for an EditorModel object's BlockContents
+   * @param noteId
+   * @returns {@link https://appwrite.io/docs/models/documentList Document List Object}
+   */
   static async getBlockContentDocumentList(
     noteId: string
   ): Promise<Models.DocumentList<Models.Document>> {
@@ -139,7 +216,15 @@ export default class ApiClient {
     );
   }
 
-  static async getGeneratedTitle(blockContents: Array<any>): Promise<any> {
+  /**
+   * get a generated title based on given Notes (list of BlockContents)
+   * @param blockContents
+   * @returns {@link https://developer.mozilla.org/en-US/docs/Web/API/Response Response} object
+   * @remarks generated title can be accessed via response.gptTitle
+   */
+  static async getGeneratedTitle(
+    blockContents: Array<Models.Document>
+  ): Promise<any> {
     const url = "https://gpt-title.deno.dev/",
       method = "POST",
       headers = {
@@ -164,6 +249,11 @@ export default class ApiClient {
     return blockContents.documents[0];
   }
 
+  /**
+   * create a new document for an EditorModel object
+   * @param day
+   * @returns {@link https://appwrite.io/docs/models/document Document Object}
+   */
   static async createNewNoteDocument(day: string): Promise<Models.Document> {
     return this.databaseManager.createNewDocument(Server.COLLECTION_NOTES, {
       userID: this.userId,
@@ -171,6 +261,12 @@ export default class ApiClient {
     });
   }
 
+  /**
+   * create a new document for a BlockContent object
+   * @param noteId
+   * @param blockContent
+   * @returns {@link https://appwrite.io/docs/models/document Document Object}
+   */
   static async createNewBlockContentDocument(
     noteId: string,
     blockContent: BlockContent
@@ -186,6 +282,12 @@ export default class ApiClient {
     );
   }
 
+  /**
+   * update a BlockContent document
+   * @param blockContentId
+   * @param blockContent
+   * @returns {@link https://appwrite.io/docs/models/document Document Object}
+   */
   static async updateBlockContentDocument(
     documentId: string,
     blockContent: { title: string; inputType: string; inputValue: string }
@@ -197,10 +299,18 @@ export default class ApiClient {
     );
   }
 
+  /**
+   * delete a note document
+   * @param noteId
+   */
   static async deleteNoteDocument(noteId: string): Promise<void> {
     this.databaseManager.deleteDocument(Server.COLLECTION_NOTES, noteId);
   }
 
+  /**
+   * delete the BlockContent documents belonging to a note document
+   * @param noteId
+   */
   static async deleteBlockContents(noteId: string): Promise<void> {
     const blockContents = await this.getBlockContentDocumentList(noteId);
     blockContents.documents.forEach((blockContent) => {

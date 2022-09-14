@@ -11,26 +11,35 @@ import TemplateConfigurationModel, {
   Topic,
 } from "./models/TemplateConfigurationModel";
 import templateConfigurationModel from "./models/templateConfigurationModel.json";
-import { log } from "../lib/utils/Logger";
 import { Models } from "appwrite";
 
-// `DataManager` is a singleton, in which you define functions to fetch/save/delete Models.
 const NUMBER_OF_BLOCK_CONTENTS_WITHOUT_GPT3 = 3;
-// Usage guide & examples:
-// https://github.com/MME-Aufgaben-im-Sommer-2022/mme-ss22-team-10/blob/dev/docs/lib/DataManager.md
+
+/**
+ * Class that contains functions to fetch/save/delete Models.
+ * @see {@link https://github.com/MME-Aufgaben-im-Sommer-2022/mme-ss22-team-10/blob/dev/docs/lib/DataManager.md DataManager}
+ */
 export default class DataManager {
   static async init() {
     await ApiClient.init();
   }
 
-  // Write methods to fetch or save data to Database etc. here
-
-  // Returns the example model
+  /**
+   * get an object of the ExampleModel class
+   * @remarks this was used as an example to get into the project
+   * @deprecated actually not needed
+   */
   static async getExampleModel(): Promise<ExampleModel> {
     // would query database here or other networking stuff
     return new ExampleModel("John", 0);
   }
 
+  /**
+   * sign in by creating a new session
+   * @param email
+   * @param password
+   * @returns true if the session was created successfully
+   */
   static async signInViaMail(
     email: string,
     password: string
@@ -46,14 +55,27 @@ export default class DataManager {
     return true;
   }
 
-  static async signUp(email: string, password: string, name: string) {
-    await ApiClient.createAccount(email, password, name);
+  /**
+   * creates a new account and empty document for the user settings
+   * signs user in automatically
+   * @param email
+   * @param password
+   * @param username
+   */
+  static async signUp(email: string, password: string, username: string) {
+    await ApiClient.createAccount(email, password, username);
     const connected = await this.signInViaMail(email, password);
     if (connected) {
       await ApiClient.createNewSettingsDocument([]);
     }
   }
 
+  /**
+   * check if the session is still valid and connect to it
+   * @param sessionId
+   * @private
+   * @returns true if connected successfully
+   */
   private static async connectToSession(sessionId: string): Promise<boolean> {
     const session = await ApiClient.getSession(sessionId);
     if (this.convertNumberToDate(session.expire) > new Date()) {
@@ -63,6 +85,10 @@ export default class DataManager {
     return false;
   }
 
+  /**
+   * will check if there is a session in the local storage and will try to connect to it
+   * @returns true if connected successfully
+   */
   static async checkIfUserLoggedIn(): Promise<boolean> {
     const localSessionId = localStorage.getItem("sessionId");
     let connected = false;
@@ -72,11 +98,17 @@ export default class DataManager {
     return connected;
   }
 
+  /**
+   * removes current sessions
+   */
   static async signOut() {
     await ApiClient.disconnectCurrentSession();
   }
 
-  // Calendar Model
+  /**
+   * fetches all note documents from the user and prepares data for a CalendarModel object
+   * @returns {@link CalendarModel} object
+   */
   static async getCalendarModel(): Promise<CalendarModel> {
     const noteDays: Years = {},
       noteDaysArray = await ApiClient.getNoteDocumentList();
@@ -98,6 +130,12 @@ export default class DataManager {
   }
 
   // Editor Model
+  /**
+   * fetch Note and BlockContent documents from user to create an EditorModel object
+   * if there are no documents for given day, new ones will be created
+   * @param day
+   * @returns {@link EditorModel} object
+   */
   static async getEditorModel(day: Date): Promise<EditorModel> {
     try {
       const noteDocument = await ApiClient.getNoteDocument(
@@ -129,6 +167,10 @@ export default class DataManager {
     }
   }
 
+  /**
+   * create new Note and BlockContent documents by given object
+   * @param editorModel
+   */
   static async createEditorModel(editorModel: EditorModel) {
     const noteDocument = await ApiClient.createNewNoteDocument(
       this.convertDateToString(editorModel.day)
@@ -138,8 +180,11 @@ export default class DataManager {
     });
   }
 
+  /**
+   * update Note and BlockContent documents
+   * @param editorModel
+   */
   static async updateEditorModel(editorModel: EditorModel): Promise<void> {
-    log(this.convertDateToString(editorModel.day));
     editorModel.blockContents.forEach((blockContent) => {
       ApiClient.updateBlockContentDocument(blockContent.documentId, {
         title: blockContent.title,
@@ -149,6 +194,11 @@ export default class DataManager {
     });
   }
 
+  /**
+   * fetch user settings and get GPT3-BlockContent to create a new EditorModel
+   * @private
+   * @returns {@link EditorModel} object
+   */
   private static async createEditorModelFromTemplate(): Promise<EditorModel> {
     const promise = await DataManager.getUserSettingsModel(),
       blockContent = await this.getGPT3BlockContent(),
@@ -159,6 +209,10 @@ export default class DataManager {
     return new EditorModel(new Date(), blockContents);
   }
 
+  /**
+   * delete Note and BlockContent documents
+   * @param editorModel
+   */
   static async deleteEditorModel(editorModel: EditorModel): Promise<void> {
     const noteDocument = await ApiClient.getNoteDocument(
       this.convertDateToString(editorModel.day)
@@ -167,6 +221,11 @@ export default class DataManager {
     return await ApiClient.deleteBlockContents(noteDocument.$id);
   }
 
+  /**
+   * get a gpt3 generated title and create a new BlockContent
+   * @private
+   * @returns {@link BlockContent} object
+   */
   private static async getGPT3BlockContent() {
     const blocks = await this.getGPT3BlockContentParameter(),
       response = await ApiClient.getGeneratedTitle(blocks);
@@ -178,6 +237,12 @@ export default class DataManager {
     };
   }
 
+  /**
+   * put the BlockContents of the user's last notes into an array
+   * @remarks currently fetches last 3 notes
+   * @private
+   * @returns array of {@link BlockContent} objects
+   */
   private static async getGPT3BlockContentParameter(): Promise<
     Array<Models.Document>
   > {
@@ -194,6 +259,11 @@ export default class DataManager {
     return blockContents;
   }
 
+  /**
+   * get the last 3 notes documents from user
+   * @private
+   * @returns array of {@link https://appwrite.io/docs/models/document Document Objects}
+   */
   private static async getLastNotes(): Promise<Array<Models.Document>> {
     const notes = await ApiClient.getNoteDocumentList(),
       noteWithoutToday = notes.filter((note) => {
@@ -207,7 +277,10 @@ export default class DataManager {
     return sortedNotes;
   }
 
-  // User Settings Model
+  /**
+   * get current user settings
+   * @returns {@link UserSettingsModel} object
+   */
   static async getUserSettingsModel(): Promise<UserSettingsModel> {
     const account = await ApiClient.getAccountData(),
       userSettings = await ApiClient.getUserSettingsDocument(),
@@ -216,6 +289,10 @@ export default class DataManager {
     return new UserSettingsModel(account.name, { template });
   }
 
+  /**
+   * update current user settings
+   * @param userSettingsModel
+   */
   static async updateUserSettingsModel(
     userSettingsModel: UserSettingsModel
   ): Promise<void> {
@@ -225,13 +302,19 @@ export default class DataManager {
     );
   }
 
+  /**
+   * create a new document for user settings
+   * @param userSettingsModel
+   */
   static async createUserSettingsModel(userSettingsModel: UserSettingsModel) {
     return await ApiClient.createNewSettingsDocument(
       userSettingsModel.settings.template
     );
   }
 
-  // Template config screen
+  /**
+   * @returns {@link templateConfigurationModel}
+   */
   static async getTemplateConfigurationModel(): Promise<TemplateConfigurationModel> {
     const configModel = new TemplateConfigurationModel(
       templateConfigurationModel.map((topic: Topic) => topic)
@@ -239,7 +322,11 @@ export default class DataManager {
     return configModel;
   }
 
-  // HELPER FUNCTIONS
+  /**
+   * @param day
+   * @private
+   * @returns true if given day is today
+   */
   private static dayIsToday(day: Date) {
     const today = new Date();
     return (
@@ -249,6 +336,13 @@ export default class DataManager {
     );
   }
 
+  /**
+   * convert Array<any> to Array<BlockContent>
+   * @remarks fetched BlockContent documents from the API don't fit the {@link BlockContent} Interface and have to be converted
+   * @param array
+   * @private
+   * @returns array of {@link BlockContent}s
+   */
   private static convertArrayToBlockContent(array: Array<any>) {
     const blockContents: Array<BlockContent> = [];
     array.forEach((entry) => {
@@ -262,22 +356,48 @@ export default class DataManager {
     return blockContents;
   }
 
+  /**
+   * convert timestamp to Date
+   * @param timestamp primitive value of a Date object.
+   * @private
+   * @returns {@link Date} object
+   */
   private static convertNumberToDate(timestamp: number): Date {
     return new Date(timestamp * 1000);
   }
 
+  /**
+   * convert Array<string> to Array<any>
+   * @remarks user setting documents are saved as Array<string> and need to be converted to create an {@link UserSettingsModel} object
+   * @param array
+   * @private
+   * @returns array of {@link any objects}
+   */
   private static jsonParseArray(array: Array<string>): Array<any> {
     const objArray: Array<any> = [];
     array.forEach((entry) => objArray.push(JSON.parse(entry)));
     return objArray;
   }
 
+  /**
+   * convert Array<any> to Array<string>
+   * @remarks user setting documents are saved as Array<string> so {@link BlockContent} arrays have to be converted
+   * @param array
+   * @private
+   * @returns array of Strings
+   */
   private static stringifyArray(array: Array<any>): Array<string> {
     const stringArray: Array<string> = [];
     array.forEach((entry) => stringArray.push(JSON.stringify(entry)));
     return stringArray;
   }
 
+  /**
+   * convert {@link Date} object to String object
+   * @param date
+   * @private
+   * @returns date as String (format 'yyyy-mm-dd')
+   */
   private static convertDateToString(date: Date): string {
     return [
       date.getFullYear(),
