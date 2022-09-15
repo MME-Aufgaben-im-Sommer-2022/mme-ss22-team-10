@@ -45,6 +45,7 @@ export default class Login extends WebComponent {
   }
 
   changeRegisterMode = () => {
+    this.hideConnectMessage();
     if (this.registerState.value) {
       this.$loginButton.innerText = "Register";
       this.$verifyPasswordInput.style.visibility = "visible";
@@ -88,5 +89,10 @@ export default class Login extends WebComponent {
   showConnectMessage(msg: string): void {
     this.$connectMessage.innerText = msg;
     this.$connectMessage.style.visibility = "visible";
+  }
+
+  hideConnectMessage(): void {
+    this.$connectMessage.innerText = "";
+    this.$connectMessage.style.visibility = "hidden";
   }
 }
