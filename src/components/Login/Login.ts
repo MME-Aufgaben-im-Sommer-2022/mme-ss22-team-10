@@ -45,16 +45,16 @@ export default class Login extends WebComponent {
   }
 
   changeRegisterMode = () => {
-    if (!this.registerState.value) {
+    if (this.registerState.value) {
       this.$loginButton.innerText = "Register";
       this.$verifyPasswordInput.style.visibility = "visible";
       this.$usernameInput.style.visibility = "visible";
-      this.registerState.value = true;
+      this.registerState.value = false;
     } else {
       this.$loginButton.innerText = "Login";
       this.$verifyPasswordInput.style.visibility = "hidden";
       this.$usernameInput.style.visibility = "hidden";
-      this.registerState.value = false;
+      this.registerState.value = true;
     }
   };
 
