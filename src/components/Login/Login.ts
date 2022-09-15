@@ -49,7 +49,6 @@ export default class Login extends WebComponent {
       this.$loginButton.innerText = "Register";
       this.$verifyPasswordInput.style.visibility = "visible";
       this.$usernameInput.style.visibility = "visible";
-      this.checkPassword();
       this.registerState.value = true;
     } else {
       this.$loginButton.innerText = "Login";
@@ -60,7 +59,7 @@ export default class Login extends WebComponent {
   };
 
   readInput = async () => {
-    if (this.registerState.value) {
+    if (this.registerState.value && this.checkPassword()) {
       await DataManager.signUp(
         this.$emailInput.value,
         this.$passwordInput.value,
@@ -78,11 +77,12 @@ export default class Login extends WebComponent {
     }
   };
 
-  checkPassword(): void {
+  checkPassword(): boolean {
     if (!(this.$passwordInput.value === this.$verifyPasswordInput.value)) {
       this.showConnectMessage("The passwords do not match");
-      //this.showConnectMessage("No Account was found");
+      return false;
     }
+    return true;
   }
 
   showConnectMessage(msg: string): void {
