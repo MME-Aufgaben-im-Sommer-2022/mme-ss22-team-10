@@ -32,6 +32,10 @@ export default class Login extends WebComponent {
     this.initListeners();
   }
 
+  /**
+   * initializes html elements
+   * @private
+   */
   private $initHtml(): void {
     this.$loginForm = this.select(".login-form")!;
     this.$loginButton = this.select("button")!;
@@ -46,6 +50,10 @@ export default class Login extends WebComponent {
     this.changeRegisterMode();
   }
 
+  /**
+   * initializes listeners
+   * @private
+   */
   private initListeners(): void {
     this.$registerToggle.addEventListener("click", this.changeRegisterMode);
     this.$loginButton.addEventListener("click", this.readInput);
@@ -72,6 +80,10 @@ export default class Login extends WebComponent {
     this.$usernameInput.style.visibility = "visible";
   }
 
+  /**
+   * called when registerToggle is clicked
+   * toggles registerState and sets HTML elements accordingly
+   */
   changeRegisterMode = () => {
     this.hideConnectMessage();
     if (this.registerState.value) {
@@ -86,25 +98,60 @@ export default class Login extends WebComponent {
     }
   };
 
+  /**
+   * called when login Button is clicked. will sign in or sign up user depending on registerState
+   */
   readInput = async () => {
     if (this.registerState.value && this.checkPassword()) {
+      this.signUp();
+    } else {
+      this.signIn();
+    }
+  };
+
+  /**
+   * sign in user. show message when sign in failed
+   */
+  signUp = async () => {
+    try {
       await DataManager.signUp(
         this.$emailInput.value,
         this.$passwordInput.value,
         this.$usernameInput.value
       );
-      window.location.reload();
-    } else {
-      const connected = await DataManager.signInViaMail(
+    } catch (error) {
+      if (error instanceof Error) {
+        this.showConnectMessage(error.message);
+      }
+      return;
+    }
+    window.location.reload();
+  };
+
+  /**
+   * sign up user. show message when sign up failed
+   */
+  signIn = async () => {
+    let connected = false;
+    try {
+      connected = await DataManager.signInViaMail(
         this.$emailInput.value,
         this.$passwordInput.value
       );
-      if (connected) {
-        window.location.reload();
+    } catch (error) {
+      if (error instanceof Error) {
+        this.showConnectMessage(error.message);
       }
+      return;
+    }
+    if (connected) {
+      window.location.reload();
     }
   };
 
+  /**
+   * check if user typed in the right password
+   */
   checkPassword(): boolean {
     if (!(this.$passwordInput.value === this.$verifyPasswordInput.value)) {
       this.showConnectMessage("The passwords do not match");
@@ -113,8 +160,12 @@ export default class Login extends WebComponent {
     return true;
   }
 
-  showConnectMessage(msg: string): void {
-    this.$connectMessage.innerText = msg;
+  /**
+   * show message to notify user when sign in / sign up failed
+   * @param message
+   */
+  showConnectMessage(message: string): void {
+    this.$connectMessage.innerText = message;
     this.$connectMessage.style.visibility = "visible";
   }
 
