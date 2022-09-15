@@ -61,20 +61,43 @@ export default class Login extends WebComponent {
 
   readInput = async () => {
     if (this.registerState.value) {
+      this.signUp();
+    } else {
+      this.signIn();
+    }
+  };
+
+  signUp = async () => {
+    try {
       await DataManager.signUp(
         this.$emailInput.value,
         this.$passwordInput.value,
         this.$usernameInput.value
       );
-      window.location.reload();
-    } else {
-      const connected = await DataManager.signInViaMail(
+    } catch (error) {
+      if (error instanceof Error) {
+        this.showConnectMessage(error.message);
+      }
+      return;
+    }
+    window.location.reload();
+  };
+
+  signIn = async () => {
+    let connected = false;
+    try {
+      connected = await DataManager.signInViaMail(
         this.$emailInput.value,
         this.$passwordInput.value
       );
-      if (connected) {
-        window.location.reload();
+    } catch (error) {
+      if (error instanceof Error) {
+        this.showConnectMessage(error.message);
       }
+      return;
+    }
+    if (connected) {
+      window.location.reload();
     }
   };
 
