@@ -5,6 +5,7 @@ import State from "../../lib/state/State";
 import DataManager from "../../data/DataManager";
 
 export default class Login extends WebComponent {
+  $loginForm!: HTMLDivElement;
   $loginButton!: HTMLButtonElement;
   $emailInput!: HTMLInputElement;
   $usernameInput!: HTMLInputElement;
@@ -13,6 +14,8 @@ export default class Login extends WebComponent {
   $registerToggle!: HTMLLinkElement;
   $connectMessage!: HTMLSpanElement;
   registerState: State<boolean> = new State(false);
+  usernameInputHTML!: string;
+  verifyPasswordInputHTML!: string;
 
   constructor() {
     super(html, css);
@@ -30,13 +33,17 @@ export default class Login extends WebComponent {
   }
 
   private $initHtml(): void {
+    this.$loginForm = this.select(".login-form")!;
     this.$loginButton = this.select("button")!;
     this.$emailInput = this.select('input[name="email"]')!;
     this.$passwordInput = this.select('input[name="password"]')!;
     this.$verifyPasswordInput = this.select(".retype-password")!;
+    this.$usernameInput = this.select('input[name="username"]')!;
+    this.usernameInputHTML = this.$usernameInput.outerHTML;
+    this.verifyPasswordInputHTML = this.$verifyPasswordInput.outerHTML;
     this.$registerToggle = this.select("span")!;
     this.$connectMessage = this.select(".connect-message")!;
-    this.$usernameInput = this.select('input[name="username"]')!;
+    this.changeRegisterMode();
   }
 
   private initListeners(): void {
@@ -44,17 +51,37 @@ export default class Login extends WebComponent {
     this.$loginButton.addEventListener("click", this.readInput);
   }
 
+  private createRegisterInputEl(): void {
+    const inputElements = document.createElement("div");
+    inputElements.innerHTML = (
+      this.usernameInputHTML +
+      "\n" +
+      this.verifyPasswordInputHTML
+    ).trim();
+    this.$loginForm.insertBefore(
+      inputElements.childNodes[0],
+      this.$loginForm.children[1]
+    );
+    this.$loginForm.insertBefore(
+      inputElements.childNodes[1],
+      this.$loginForm.children[4]
+    );
+    this.$verifyPasswordInput = this.select(".retype-password")!;
+    this.$usernameInput = this.select('input[name="username"]')!;
+    this.$verifyPasswordInput.style.visibility = "visible";
+    this.$usernameInput.style.visibility = "visible";
+  }
+
   changeRegisterMode = () => {
     this.hideConnectMessage();
     if (this.registerState.value) {
       this.$loginButton.innerText = "Register";
-      this.$verifyPasswordInput.style.visibility = "visible";
-      this.$usernameInput.style.visibility = "visible";
+      this.createRegisterInputEl();
       this.registerState.value = false;
     } else {
       this.$loginButton.innerText = "Login";
-      this.$verifyPasswordInput.style.visibility = "hidden";
-      this.$usernameInput.style.visibility = "hidden";
+      this.$loginForm.removeChild(this.$verifyPasswordInput);
+      this.$loginForm.removeChild(this.$usernameInput);
       this.registerState.value = true;
     }
   };
