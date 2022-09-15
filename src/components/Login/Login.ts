@@ -29,6 +29,10 @@ export default class Login extends WebComponent {
     this.initListeners();
   }
 
+  /**
+   * initializes html elements
+   * @private
+   */
   private $initHtml(): void {
     this.$loginButton = this.select("button")!;
     this.$emailInput = this.select('input[name="email"]')!;
@@ -39,11 +43,19 @@ export default class Login extends WebComponent {
     this.$usernameInput = this.select('input[name="username"]')!;
   }
 
+  /**
+   * initializes listeners
+   * @private
+   */
   private initListeners(): void {
     this.$registerToggle.addEventListener("click", this.changeRegisterMode);
     this.$loginButton.addEventListener("click", this.readInput);
   }
 
+  /**
+   * called when registerToggle is clicked
+   * toggles registerState and sets HTML elements accordingly
+   */
   changeRegisterMode = () => {
     if (!this.registerState.value) {
       this.$loginButton.innerText = "Register";
@@ -59,6 +71,9 @@ export default class Login extends WebComponent {
     }
   };
 
+  /**
+   * called when login Button is clicked. will sign in or sign up user depending on registerState
+   */
   readInput = async () => {
     if (this.registerState.value) {
       this.signUp();
@@ -67,6 +82,9 @@ export default class Login extends WebComponent {
     }
   };
 
+  /**
+   * sign in user. show message when sign in failed
+   */
   signUp = async () => {
     try {
       await DataManager.signUp(
@@ -83,6 +101,9 @@ export default class Login extends WebComponent {
     window.location.reload();
   };
 
+  /**
+   * sign up user. show message when sign up failed
+   */
   signIn = async () => {
     let connected = false;
     try {
@@ -101,6 +122,9 @@ export default class Login extends WebComponent {
     }
   };
 
+  /**
+   * check if user typed in the right password
+   */
   checkPassword(): void {
     if (!(this.$passwordInput.value === this.$verifyPasswordInput.value)) {
       this.showConnectMessage("The passwords do not match");
@@ -108,8 +132,12 @@ export default class Login extends WebComponent {
     }
   }
 
-  showConnectMessage(msg: string): void {
-    this.$connectMessage.innerText = msg;
+  /**
+   * show message to notify user when sign in / sign up failed
+   * @param message
+   */
+  showConnectMessage(message: string): void {
+    this.$connectMessage.innerText = message;
     this.$connectMessage.style.visibility = "visible";
   }
 }
