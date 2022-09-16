@@ -6,7 +6,6 @@ import UserSettingsModel, {
 } from "../../data/models/UserSettingsModel";
 import html from "./TemplateConfigurator.html";
 import css from "./TemplateConfigurator.css";
-import { BlockContentInputType } from "../../data/models/EditorModel";
 import TopicConfigurator from "./TopicConfigurator/TopicConfigurator";
 import InputTypeConfigurator from "./InputTypeConfigurator/InputTypeConfigurator";
 import DataManager from "../../data/DataManager";
@@ -34,10 +33,7 @@ export default class TemplateConfigurator extends WebComponent {
     "onFinishTemplateConfiguration";
 
   private templateConfigurationModelState!: State<TemplateConfigurationModel>;
-  private readonly selectedTitlesState: State<Array<string>> = new State([]);
-  private readonly selectedInputTypesState: State<
-    Array<BlockContentInputType>
-  > = new State([]);
+  private readonly templateToEditState: State<Template> = new State([]);
 
   private readonly configurationProgressState: State<TemplateConfigurationProgress> =
     new State<TemplateConfigurationProgress>(
@@ -50,8 +46,11 @@ export default class TemplateConfigurator extends WebComponent {
   private $inputTypeConfiguratorContainer!: HTMLDivElement;
   private $inputTypeConfigurator!: InputTypeConfigurator;
 
-  constructor() {
+  constructor(templateToEdit?: Template) {
     super(html, css);
+    if (templateToEdit) {
+      this.templateToEditState.value = templateToEdit;
+    }
   }
 
   get htmlTagName(): string {
@@ -83,7 +82,7 @@ export default class TemplateConfigurator extends WebComponent {
     )!;
     this.$topicConfigurator = new TopicConfigurator(
       this.templateConfigurationModelState,
-      this.selectedTitlesState
+      this.templateToEditState
     );
     this.$topicConfiguratorContainer.appendChild(this.$topicConfigurator);
   };
@@ -93,8 +92,7 @@ export default class TemplateConfigurator extends WebComponent {
       "#input-type-configurator-container"
     )!;
     this.$inputTypeConfigurator = new InputTypeConfigurator(
-      this.selectedTitlesState,
-      this.selectedInputTypesState
+      this.templateToEditState
     );
     this.$inputTypeConfiguratorContainer.appendChild(
       this.$inputTypeConfigurator
@@ -145,18 +143,10 @@ export default class TemplateConfigurator extends WebComponent {
   private $onBackToTopicConfiguration = () => {
     this.configurationProgressState.value =
       TemplateConfigurationProgress.SELECT_TOPICS;
-    this.selectedInputTypesState.value = [];
   };
 
   private $onFinishInputTypeConfiguration = async () => {
-    const template: Template = this.selectedTitlesState.value.map(
-        (title, index) => {
-          return {
-            title,
-            inputType: this.selectedInputTypesState.value[index],
-          };
-        }
-      ),
+    const template: Template = this.templateToEditState.value,
       userSettingsModelState = GlobalState.getStateById<UserSettingsModel>(
         GlobalStates.userSettingsModel
       );

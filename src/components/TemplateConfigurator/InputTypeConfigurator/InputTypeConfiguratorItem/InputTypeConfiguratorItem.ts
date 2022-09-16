@@ -1,23 +1,18 @@
 import WebComponent from "../../../../lib/components/WebComponent";
 import html from "./InputTypeConfiguratorItem.html";
 import css from "./InputTypeConfiguratorItem.css";
-import State from "../../../../lib/state/State";
 import { BlockContentInputType } from "../../../../data/models/EditorModel";
+import { TemplateItem } from "../../../../data/models/UserSettingsModel";
 
 export default class InputTypeConfiguratorItem extends WebComponent {
-  private readonly topicTitle: string;
-  private readonly selectedInputTypeState: State<BlockContentInputType>;
-
   private $topicTitle!: HTMLSpanElement;
   private $inputTypeSelection!: HTMLSelectElement;
 
-  constructor(
-    topicTitle: string,
-    selectedInputTypeState: State<BlockContentInputType>
-  ) {
+  private readonly templateItem: TemplateItem;
+
+  constructor(templateItem: TemplateItem) {
     super(html, css);
-    this.topicTitle = topicTitle;
-    this.selectedInputTypeState = selectedInputTypeState;
+    this.templateItem = templateItem;
   }
 
   get htmlTagName(): string {
@@ -31,11 +26,12 @@ export default class InputTypeConfiguratorItem extends WebComponent {
 
   $initHtml(): void {
     this.$topicTitle = this.select(".topic-title")!;
-    this.$topicTitle.innerHTML = this.topicTitle;
+    this.$topicTitle.innerHTML = this.templateItem.title;
     this.$inputTypeSelection = this.select(
       ".input-type-configuration-selection"
     )!;
     this.$appendOptions();
+    this.$inputTypeSelection.value = this.templateItem.inputType;
   }
 
   private initListener(): void {
@@ -46,7 +42,7 @@ export default class InputTypeConfiguratorItem extends WebComponent {
   }
 
   $onSelectionChanged = (): void => {
-    this.selectedInputTypeState.value = this.$inputTypeSelection
+    this.templateItem.inputType = this.$inputTypeSelection
       .value as BlockContentInputType;
   };
 
