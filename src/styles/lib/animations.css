@@ -97,3 +97,16 @@ home-bar {
         transform: translate(0, -100%);
     }
 }
+
+.hover-spin:hover {
+    animation: infinite-rotate 5s linear infinite;
+}
+
+@keyframes infinite-rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}

@@ -26,6 +26,9 @@ export default class Editor extends WebComponent {
 
   private $editor!: HTMLDivElement;
   private $editorBlocksContainer!: HTMLDivElement;
+  private $editTemplateIcon!: HTMLDivElement;
+
+  public static EDIT_TEMPLATE_CLICKED_EVENT = "edit-template-clicked";
 
   constructor() {
     super(html, css);
@@ -61,6 +64,8 @@ export default class Editor extends WebComponent {
     this.$editor = this.select(".editor")!;
     this.$editorBlocksContainer = this.select(".editor-blocks-container")!;
     this.$appendEditorBlocks();
+
+    this.$editTemplateIcon = this.select("#edit-template-icon")!;
   }
 
   private $toggleLoading(isLoading: boolean): void {
@@ -87,6 +92,10 @@ export default class Editor extends WebComponent {
     this.$editor.addEventListener("click", () => {
       EventBus.notifyAll(CLOSE_ALL_EDITOR_INPUTS_EVENT, {});
     });
+
+    this.$editTemplateIcon.addEventListener("click", () =>
+      this.$onEditTemplateClicked()
+    );
 
     this.editorModelState.addEventListener("change", (event: AppEvent) => {
       const data: StateChangedData = event.data;
@@ -115,4 +124,8 @@ export default class Editor extends WebComponent {
       }
     );
   }
+
+  private $onEditTemplateClicked = () => {
+    EventBus.notifyAll(Editor.EDIT_TEMPLATE_CLICKED_EVENT, {});
+  };
 }

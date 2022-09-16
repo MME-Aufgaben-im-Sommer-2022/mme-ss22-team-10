@@ -2,4 +2,19 @@
     display: flex;
     flex-grow: 1;
     flex-direction: column;
+    background: var(--background-primary);
+}
+
+.floating-container {
+    overflow: hidden;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+
+    /*sketchy border*/
+    border: 3px solid var(--border-color);
+    border-radius: 15px;
 }

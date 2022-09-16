@@ -17,7 +17,7 @@ When the body element has the class "theme-dark", it will use the dark theme.
     --text-accent: #808c27;
     --text-accent-hover: #6a7326;
 
-    --border-color: #bbb;
+    --border-color: #343434;
 }
 
 .theme-dark {

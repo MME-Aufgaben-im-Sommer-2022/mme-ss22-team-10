@@ -3,7 +3,6 @@ note-editor {
     flex-grow: 1;
 }
 
-
 .editor {
     width: 100%;
     flex-grow: 1;
@@ -32,4 +31,12 @@ check-list-item {
 .editor input {
     margin-top: var(--spacing-small);
     width: 15em;
+}
+
+.editor #edit-template-icon {
+    position: absolute;
+    right: 2em;
+    bottom: 1em;
+    left: auto;
+    top: auto;
 }
