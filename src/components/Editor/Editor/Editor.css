@@ -1,42 +1,44 @@
 note-editor {
-    width: 65%;
-    flex-grow: 1;
+  width: 65%;
+  flex-grow: 1;
 }
 
 .editor {
-    width: 100%;
-    flex-grow: 1;
-    display: flex;
-    justify-content: center;
+  width: 100%;
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
 
-    padding-top: var(--spacing-medium);
-    padding-left: var(--spacing-editor-side);
+  padding-top: var(--spacing-medium);
+  padding-left: var(--spacing-editor-side);
 
-    overflow-y: scroll;
+  overflow-y: scroll;
 }
 
 .editor-blocks-container {
-    display: flex;
+  display: flex;
 }
 .editor-blocks-container > * {
-    margin-right: auto;
+  margin-right: auto;
 }
 
 check-list-item {
-    margin-left: 0;
-    padding-left: 0;
-    list-style: none !important;
+  margin-left: 0;
+  padding-left: 0;
+  list-style: none !important;
 }
 
 .editor input {
-    margin-top: var(--spacing-small);
-    width: 15em;
+  margin-top: var(--spacing-small);
+  width: 15em;
 }
 
 .editor #edit-template-icon {
-    position: absolute;
-    right: 2em;
-    bottom: 1em;
-    left: auto;
-    top: auto;
+  position: absolute;
+  right: 2em;
+  bottom: 1em;
+  left: auto;
+  top: auto;
+  background-color: var(--background-primary);
+  border-radius: 50%;
 }
