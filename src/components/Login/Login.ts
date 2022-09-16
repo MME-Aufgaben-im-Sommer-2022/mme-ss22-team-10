@@ -89,8 +89,12 @@ export default class Login extends WebComponent {
     if (this.loginState.value) {
       this.$loginButton.innerText = "Login";
       this.$registerToggle.innerText = "Sign Up";
+      this.$verifyPasswordInput.classList.add("remove");
+      this.$usernameInput.classList.add("remove");
+      setTimeout(() => {
         this.$verifyPasswordInput.remove();
         this.$usernameInput.remove();
+      }, 70);
       this.loginState.value = false;
     } else {
       this.$loginButton.innerText = "Register";
