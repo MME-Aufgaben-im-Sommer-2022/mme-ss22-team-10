@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import WebComponent from "../../../lib/components/WebComponent";
 import css from "./Toast.css";
 
@@ -49,6 +50,6 @@ export default class Toast extends WebComponent {
   $close = (): void => {
     this.classList.remove("slide-up-in");
     this.classList.add("slide-down-out");
-    setTimeout(() => this.remove(), 300);
+    setTimeout(() => this.remove(), 300); // 300ms is the duration of the animation
   };
 }
