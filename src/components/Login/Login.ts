@@ -13,7 +13,7 @@ export default class Login extends WebComponent {
   $verifyPasswordInput!: HTMLInputElement;
   $registerToggle!: HTMLLinkElement;
   $connectMessage!: HTMLSpanElement;
-  registerState: State<boolean> = new State(false);
+  loginState: State<boolean> = new State(true);
   usernameInputHTML!: string;
   verifyPasswordInputHTML!: string;
 
@@ -21,8 +21,10 @@ export default class Login extends WebComponent {
     super(html, css);
   }
 
-  // override htmlTagName to return the tag name our component
-  // -> <example-component /> can be used in the html to create a new instance of this component
+  /**
+   * override htmlTagName to return the tag name our component
+   * @example <example-component /> can be used in the html to create a new instance of this component
+   */
   get htmlTagName(): string {
     return "login-register";
   }
@@ -68,11 +70,11 @@ export default class Login extends WebComponent {
     ).trim();
     this.$loginForm.insertBefore(
       inputElements.childNodes[0],
-      this.$loginForm.children[1]
+      this.$loginForm.children[0]
     );
     this.$loginForm.insertBefore(
       inputElements.childNodes[1],
-      this.$loginForm.children[4]
+      this.$loginForm.children[3]
     );
     this.$verifyPasswordInput = this.select(".retype-password")!;
     this.$usernameInput = this.select('input[name="username"]')!;
@@ -86,15 +88,21 @@ export default class Login extends WebComponent {
    */
   changeRegisterMode = () => {
     this.hideConnectMessage();
-    if (this.registerState.value) {
-      this.$loginButton.innerText = "Register";
-      this.createRegisterInputEl();
-      this.registerState.value = false;
-    } else {
+    if (this.loginState.value) {
       this.$loginButton.innerText = "Login";
-      this.$loginForm.removeChild(this.$verifyPasswordInput);
-      this.$loginForm.removeChild(this.$usernameInput);
-      this.registerState.value = true;
+      this.$registerToggle.innerText = "Sign Up";
+      this.$verifyPasswordInput.classList.add("remove");
+      this.$usernameInput.classList.add("remove");
+      setTimeout(() => {
+        this.$verifyPasswordInput.remove();
+        this.$usernameInput.remove();
+      }, 70);
+      this.loginState.value = false;
+    } else {
+      this.$loginButton.innerText = "Register";
+      this.$registerToggle.innerText = "Sign In";
+      this.createRegisterInputEl();
+      this.loginState.value = true;
     }
   };
 
@@ -102,7 +110,7 @@ export default class Login extends WebComponent {
    * called when login Button is clicked. will sign in or sign up user depending on registerState
    */
   readInput = async () => {
-    if (this.registerState.value && this.checkPassword()) {
+    if (this.loginState.value && this.checkPassword()) {
       this.signUp();
     } else {
       this.signIn();
@@ -169,6 +177,9 @@ export default class Login extends WebComponent {
     this.$connectMessage.style.visibility = "visible";
   }
 
+  /**
+   * hide message in case there is nothing to notify the user about (anymore)
+   */
   hideConnectMessage(): void {
     this.$connectMessage.innerText = "";
     this.$connectMessage.style.visibility = "hidden";
