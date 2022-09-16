@@ -99,6 +99,7 @@ export default class Editor extends WebComponent {
 
     this.editorModelState.addEventListener("change", (event: AppEvent) => {
       const data: StateChangedData = event.data;
+      console.log("change:", data);
       if (data.currentPath === "") {
         this.$editorBlocksContainer
           .querySelectorAll("editor-block")
@@ -106,7 +107,7 @@ export default class Editor extends WebComponent {
             block.remove();
           });
         this.$appendEditorBlocks();
-      } else {
+      } else if (data.property === "inputValue") {
         DataManager.updateEditorModel(this.editorModelState.value);
       }
     });

@@ -38,11 +38,11 @@
     "items": [
       {
         "title": "TODOs for today:",
-        "inputType": "checkbox-point-input-field"
+        "inputType": "checkbox-input-field"
       },
       {
         "title": "Goals for today:",
-        "inputType": "checkbox-point-input-field"
+        "inputType": "checkbox-input-field"
       },
       {
         "title": "If today was the ideal day, what would it look like?",

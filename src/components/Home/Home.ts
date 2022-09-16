@@ -6,10 +6,15 @@ import Editor from "../Editor/Editor/Editor";
 import State from "../../lib/state/State";
 import { STATE_CHANGE_EVENT } from "../../events/StateChanged";
 import TemplateConfigurator from "../TemplateConfigurator/TemplateConfigurator";
+import { GlobalStates } from "../../state/GlobalStates";
+import GlobalState from "../../lib/state/GlobalState";
+import UserSettingsModel from "../../data/models/UserSettingsModel";
+import { ToastFactory } from "../atomics/Toast/ToastFactory";
+import { ToastDuration, ToastType } from "../atomics/Toast/Toast";
 
 export default class Home extends WebComponent {
   private $templateEditorContainer!: HTMLDivElement;
-  private $templateConfiguratorBackroundDimmer!: HTMLDivElement;
+  private $bgDimmer!: HTMLDivElement;
   private isShowingTemplateEditorState = new State(false);
 
   constructor() {
@@ -27,9 +32,7 @@ export default class Home extends WebComponent {
 
   $initHtml(): void {
     this.$templateEditorContainer = this.select("#template-editor-container")!;
-    this.$templateConfiguratorBackroundDimmer = this.select(
-      "#template-configurator-background-dimmer"
-    )!;
+    this.$bgDimmer = this.select("#template-configurator-background-dimmer")!;
   }
 
   private initListener(): void {
@@ -41,21 +44,41 @@ export default class Home extends WebComponent {
       STATE_CHANGE_EVENT,
       this.toggleTemplateEditor
     );
-    this.$templateConfiguratorBackroundDimmer.addEventListener("click", () => {
+    this.$bgDimmer.addEventListener("click", () => {
       this.isShowingTemplateEditorState.value = false;
     });
   }
+
+  private onFinishedTemplateConfiguration = () => {
+    this.isShowingTemplateEditorState.value = false;
+  };
 
   private toggleTemplateEditor = (): void => {
     this.$templateEditorContainer.hidden =
       !this.isShowingTemplateEditorState.value;
     if (this.isShowingTemplateEditorState.value) {
-      const $templateConfigurator = new TemplateConfigurator();
+      const userSettings = GlobalState.getStateById<UserSettingsModel>(
+          GlobalStates.userSettingsModel
+        )?.value,
+        $templateConfigurator = new TemplateConfigurator(
+          userSettings?.settings?.template
+        );
+
+      $templateConfigurator.addEventListener(
+        TemplateConfigurator.FINISH_TEMPLATE_CONFIGURATION_EVENT,
+        () => this.onFinishedTemplateConfiguration()
+      );
       this.$templateEditorContainer.appendChild($templateConfigurator);
-      this.$templateConfiguratorBackroundDimmer.hidden = false;
+      this.$bgDimmer.hidden = false;
     } else {
       this.$templateEditorContainer.innerHTML = "";
-      this.$templateConfiguratorBackroundDimmer.hidden = true;
+      this.$bgDimmer.hidden = true;
+
+      new ToastFactory()
+        .setMessage("Your template has been saved")
+        .setType(ToastType.Success)
+        .setDuration(ToastDuration.Short)
+        .show();
     }
   };
 }

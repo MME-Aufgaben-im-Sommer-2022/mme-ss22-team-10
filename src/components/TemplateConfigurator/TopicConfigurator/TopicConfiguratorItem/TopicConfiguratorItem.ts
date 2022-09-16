@@ -87,7 +87,9 @@ export default class TopicConfiguratorItem extends WebComponent {
       this.selectedTemplateItems.value.push(item);
     } else {
       this.selectedTemplateItems.value =
-        this.selectedTemplateItems.value.filter((_item) => _item !== item);
+        this.selectedTemplateItems.value.filter(
+          (_item) => _item.title !== item.title
+        );
     }
   };
 }

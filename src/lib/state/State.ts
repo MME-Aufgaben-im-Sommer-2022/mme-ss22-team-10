@@ -54,6 +54,11 @@ export default class State<T> extends Observable {
     ]);
   }
 
+  get rawValue(): T {
+    // eslint-disable-next-line no-underscore-dangle
+    return (this.val as any).__getTarget as T;
+  }
+
   onValueChange = (changes: ObservableSlimChanges[]) => {
     changes.forEach((change) => {
       this.notifyAll(
