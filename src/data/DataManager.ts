@@ -210,7 +210,9 @@ export default class DataManager {
       blockContents = this.convertArrayToBlockContent(
         promise.settings.template
       );
-    blockContents.push(blockContent);
+    if (blockContent !== undefined) {
+      blockContents.push(<BlockContent>blockContent);
+    }
     return new EditorModel(new Date(), blockContents);
   }
 
@@ -232,14 +234,17 @@ export default class DataManager {
    * @returns {@link BlockContent} object
    */
   private static async getGPT3BlockContent() {
-    const blocks = await this.getGPT3BlockContentParameter(),
-      response = await ApiClient.getGeneratedTitle(blocks);
-    return {
-      title: response.gptTitle,
-      inputType: BlockContentInputType.FreeText,
-      inputValue: "",
-      documentId: "",
-    };
+    const blocks = await this.getGPT3BlockContentParameter();
+    if (blocks.length >= 3) {
+      const response = await ApiClient.getGeneratedTitle(blocks);
+      return {
+        title: response.gptTitle,
+        inputType: BlockContentInputType.FreeText,
+        inputValue: "",
+        documentId: "",
+      };
+    }
+    return undefined;
   }
 
   /**
