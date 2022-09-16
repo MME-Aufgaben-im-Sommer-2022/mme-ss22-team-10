@@ -20,9 +20,10 @@ When the body element has the class "theme-dark", it will use the dark theme.
   --border-color: #343434;
 
   --success-color: #808c27;
-  --error-color: #f44336;
-  --info-color: #2196f3;
-  --warning-color: #ff9800;
+  /* colors from https://www.color-hex.com/color-palette/20141 */
+  --error-color: #bb2124;
+  --info-color: #5bc0de;
+  --warning-color: #f0ad4e;
 }
 
 .theme-dark {

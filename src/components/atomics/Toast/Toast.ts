@@ -9,7 +9,7 @@ export enum ToastType {
 }
 
 export enum ToastDuration {
-  Short = 3000,
+  Short = 2000,
   Medium = 5000,
   Long = 10000,
 }

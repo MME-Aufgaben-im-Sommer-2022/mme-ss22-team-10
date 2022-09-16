@@ -51,6 +51,11 @@ export default class Home extends WebComponent {
 
   private onFinishedTemplateConfiguration = () => {
     this.isShowingTemplateEditorState.value = false;
+    new ToastFactory()
+      .setMessage("Your template has been saved")
+      .setType(ToastType.Success)
+      .setDuration(ToastDuration.Short)
+      .show();
   };
 
   private toggleTemplateEditor = (): void => {
@@ -73,10 +78,9 @@ export default class Home extends WebComponent {
     } else {
       this.$templateEditorContainer.innerHTML = "";
       this.$bgDimmer.hidden = true;
-
       new ToastFactory()
-        .setMessage("Your template has been saved")
-        .setType(ToastType.Success)
+        .setMessage("🗑️ Your changes have been discarded")
+        .setType(ToastType.Info)
         .setDuration(ToastDuration.Short)
         .show();
     }

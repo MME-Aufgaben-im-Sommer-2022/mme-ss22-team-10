@@ -7,6 +7,8 @@ import Login from "./components/Login/Login";
 import TemplateConfigurator from "./components/TemplateConfigurator/TemplateConfigurator";
 import Home from "./components/Home/Home";
 import { GlobalStates } from "./state/GlobalStates";
+import { ToastFactory } from "./components/atomics/Toast/ToastFactory";
+import { ToastDuration, ToastType } from "./components/atomics/Toast/Toast";
 
 const app = () => {
   const $app = document.querySelector<HTMLDivElement>("#app")!;
@@ -15,11 +17,6 @@ const app = () => {
     .then(() => DataManager.init()) // Initialize the database connection etc.
     .then(() => GlobalState.init()) // Initialize the global state
     .then(() => onApplicationStart()); // Start the application
-
-  // const appendDevPlayground = () => {
-  //   const playground = new Playground();
-  //   $app.append(playground);
-  // };
 
   async function onApplicationStart() {
     const IS_IN_DEV_MODE = import.meta.env.DEV;
@@ -48,13 +45,18 @@ const app = () => {
     if (userModel.settings.template.length === 0) {
       onNewUser();
     } else {
-      onReturningUser();
+      onReturningUser(userModel.username);
     }
   }
 
-  async function onReturningUser() {
+  async function onReturningUser(username: string) {
     log("returning user");
     $showHome();
+    new ToastFactory()
+      .setMessage(`👋 Welcome back ${username}!`)
+      .setType(ToastType.Info)
+      .setDuration(ToastDuration.Short)
+      .show();
   }
 
   async function $showHome() {
@@ -65,6 +67,11 @@ const app = () => {
   async function onNewUser() {
     log("new user");
     $showTemplateConfigurator();
+    new ToastFactory()
+      .setMessage("🎉 Welcome, please configure your template!")
+      .setType(ToastType.Info)
+      .setDuration(ToastDuration.Medium)
+      .show();
   }
 
   function $showTemplateConfigurator() {
@@ -82,6 +89,11 @@ const app = () => {
 
   async function onLoggedOut() {
     log("user is logged out");
+    new ToastFactory()
+      .setMessage("👋 Bye bye - see you soon!")
+      .setType(ToastType.Info)
+      .setDuration(ToastDuration.Short)
+      .show();
     $showLogin();
   }
 

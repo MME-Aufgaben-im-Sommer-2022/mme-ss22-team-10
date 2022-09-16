@@ -99,7 +99,6 @@ export default class Editor extends WebComponent {
 
     this.editorModelState.addEventListener("change", (event: AppEvent) => {
       const data: StateChangedData = event.data;
-      console.log("change:", data);
       if (data.currentPath === "") {
         this.$editorBlocksContainer
           .querySelectorAll("editor-block")
