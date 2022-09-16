@@ -21,8 +21,10 @@ export default class Login extends WebComponent {
     super(html, css);
   }
 
-  // override htmlTagName to return the tag name our component
-  // -> <example-component /> can be used in the html to create a new instance of this component
+  /**
+   * override htmlTagName to return the tag name our component
+   * @example <example-component /> can be used in the html to create a new instance of this component
+   */
   get htmlTagName(): string {
     return "login-register";
   }
@@ -175,6 +177,9 @@ export default class Login extends WebComponent {
     this.$connectMessage.style.visibility = "visible";
   }
 
+  /**
+   * hide message in case there is nothing to notify the user about (anymore)
+   */
   hideConnectMessage(): void {
     this.$connectMessage.innerText = "";
     this.$connectMessage.style.visibility = "hidden";
