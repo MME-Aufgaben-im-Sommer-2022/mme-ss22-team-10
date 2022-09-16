@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "appwrite": "^9.0.1",
+    "lottie-web": "^5.9.6",
     "lucide": "^0.89.0",
     "observable-slim": "^0.1.6"
   }
