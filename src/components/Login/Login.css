@@ -1,55 +1,62 @@
-login-register{
+login-register {
     display: flex;
     flex-grow: 1;
-
-
+    margin-right: auto;
+    margin-left: auto;
 }
 
-.login-form{
+div {
     display: flex;
     flex-direction: column;
-    margin: auto;
-
 }
 
-.login-form button{
-    margin: var(--spacing-medium);
+.logo {
+    margin-top: auto;
 }
 
-.login-form svg {
+.logo > svg > image {
     width: 100%;
     height: 100%;
 }
 
-.login-form image {
-    width: 100%;
-    height: 100%;
-
-}
-.login-form input{
-    margin-top: var(--spacing-medium);
+.login-form button, input {
+    margin-top: var(--spacing-small);
 }
 
-
-.login-form > span{
-    text-align: center;
-    margin-top: var(--spacing-large);
+input {
+    cursor: text;
 }
 
-.login-form .connect-message{
-    color: red;
-    margin-top: var(--spacing-large);
-    visibility: hidden ;
+input:focus {
+    outline: none;
 }
 
-.login-form .register-toggle{
+.login-form .retype-password, input[name="username"] {
+    visibility: hidden;
+}
+
+.span-elements {
+    margin-bottom: auto;
+}
+
+.span-elements > span {
+    text-align: right;
+    font-size: 90%;
+    padding-right: 5%;
+    margin-top: var(--spacing-small);
+}
+
+.span-elements > .register-toggle {
     color: var(--text-accent);
     cursor: pointer;
 }
-.login-form .retype-password{
-    visibility: hidden ;
+
+.span-elements > .register-toggle:hover {
+    color: var(--text-accent-hover);
 }
 
-.login-form input[name="username"]{
-    visibility: hidden ;
+.span-elements > .connect-message {
+    color: red;
+    margin-top: var(--spacing-large);
+    visibility: hidden;
 }

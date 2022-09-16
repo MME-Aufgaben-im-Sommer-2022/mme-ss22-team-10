@@ -68,11 +68,11 @@ export default class Login extends WebComponent {
     ).trim();
     this.$loginForm.insertBefore(
       inputElements.childNodes[0],
-      this.$loginForm.children[1]
+      this.$loginForm.children[0]
     );
     this.$loginForm.insertBefore(
       inputElements.childNodes[1],
-      this.$loginForm.children[4]
+      this.$loginForm.children[3]
     );
     this.$verifyPasswordInput = this.select(".retype-password")!;
     this.$usernameInput = this.select('input[name="username"]')!;
