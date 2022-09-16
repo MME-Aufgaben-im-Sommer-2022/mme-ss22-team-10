@@ -162,8 +162,7 @@ export default class DataManager {
       return new EditorModel(day, blockContents);
     } catch (e) {
       const editorModel = await this.createEditorModelFromTemplate();
-      await this.createEditorModel(editorModel);
-      return editorModel;
+      return await this.createEditorModel(editorModel);
     }
   }
 
@@ -176,8 +175,14 @@ export default class DataManager {
       this.convertDateToString(editorModel.day)
     );
     editorModel.blockContents.forEach(async (blockContent) => {
-      ApiClient.createNewBlockContentDocument(noteDocument.$id, blockContent);
+      const blockContentDocument =
+        await ApiClient.createNewBlockContentDocument(
+          noteDocument.$id,
+          blockContent
+        );
+      blockContent.documentId = blockContentDocument.$id;
     });
+    return editorModel;
   }
 
   /**
