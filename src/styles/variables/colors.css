@@ -21,7 +21,7 @@ When the body element has the class "theme-dark", it will use the dark theme.
 
   --success-color: #808c27;
   /* colors from https://www.color-hex.com/color-palette/20141 */
-  --error-color: #bb2124;
+  --error-color: #ec9192;
   --info-color: #5bc0de;
   --warning-color: #f0ad4e;
 }
@@ -40,7 +40,7 @@ When the body element has the class "theme-dark", it will use the dark theme.
   --border-color: rgb(150, 150, 150);
 
   --success-color: #656e1f;
-  --error-color: #f44336;
+  --error-color: #f6c1bd;
   --info-color: #165991;
   --warning-color: #ff9800;
 }

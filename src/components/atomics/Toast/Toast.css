@@ -8,7 +8,6 @@ custom-toast {
 
   /* size */
   width: 20em;
-  height: 3em;
 
   /* border */
   border-radius: 15px;
@@ -21,11 +20,12 @@ custom-toast {
   align-content: center;
   margin-left: auto;
   margin-right: auto;
+  padding: 1em;
 
   /* text */
   font-size: var(--font-size-medium);
   text-align: center;
-  line-height: 3em;
+  line-height: 1.3em;
 
   /* nice background shadow */
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
