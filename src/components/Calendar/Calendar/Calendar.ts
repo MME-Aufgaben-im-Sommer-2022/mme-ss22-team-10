@@ -10,7 +10,7 @@ import DataManager from "../../../data/DataManager";
 export default class Calendar extends WebComponent {
   monthNumberDecember = 12;
   monthNumberJanuary = 1;
-  yearNumberToStop = 2020;
+  yearNumberToStop!: number;
   calendarMonth!: CalendarMonth;
   currentMonthNumber!: number;
   lastFoundEntries!: number;
@@ -56,7 +56,6 @@ export default class Calendar extends WebComponent {
         throw new Error("Could not load calendar model");
       }
     }
-    // TODO: change this to a state
     this.calendarModel = GlobalState.getStateById<CalendarModel>(
       GlobalStates.calendarModel
     )!.value;
@@ -85,11 +84,19 @@ export default class Calendar extends WebComponent {
       `${this.currentMonthNumber}/${1}/${this.currentYear}`
     );
     this.currentMonthText = date.toLocaleString("default", { month: "long" });
-    this.$monthTitle.innerText = this.currentMonthText;
+    this.$monthTitle.innerText = this.currentMonthText + " " + this.currentYear;
+  }
+
+  private getMinYearNumber() {
+    this.yearNumberToStop = this.currentYearNumber;
+    while (this.noteDays[this.yearNumberToStop] !== undefined) {
+      this.yearNumberToStop--;
+    }
   }
 
   private getEntriesForMonth(directionForward: boolean): void {
     this.checkForYearTransition();
+    this.getMinYearNumber();
     if (this.currentYearNumber > this.yearNumberToStop) {
       this.entriesForCurrentMonth = this.getEntryData();
       this.setEntries(directionForward);
@@ -100,7 +107,7 @@ export default class Calendar extends WebComponent {
   }
 
   private checkForYearTransition(): void {
-    if (this.currentMonthNumber < 1) {
+    if (this.currentMonthNumber < this.monthNumberJanuary) {
       this.currentMonthNumber = this.monthNumberDecember;
       this.currentYearNumber = parseInt(this.currentYear) - 1;
     }
@@ -165,9 +172,9 @@ export default class Calendar extends WebComponent {
 
   private showEntries(): void {
     this.calendarMonth = new CalendarMonth(
-      this.entriesForCurrentMonth,
-      this.currentMonthNumber,
-      this.currentYear
+      this.entriesForCurrentMonth
+      // this.currentMonthNumber,
+      // this.currentYear
     );
     this.select(".month")!.append(this.calendarMonth);
   }
