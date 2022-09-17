@@ -322,6 +322,25 @@ export default class DataManager {
     return configModel;
   }
 
+  // Dark mode
+  static getDarkMode(): boolean {
+    const savedPreference = localStorage.getItem("darkMode");
+    if (savedPreference === null) {
+      // get from browser preference
+      const isDarkMode = window.matchMedia(
+        "(prefers-color-scheme: dark)"
+      ).matches;
+      localStorage.setItem("darkMode", isDarkMode.toString());
+      return isDarkMode;
+    }
+    return savedPreference === "true";
+  }
+
+  static setDarkMode(darkMode: boolean): void {
+    localStorage.setItem("darkMode", darkMode.toString());
+  }
+
+  // HELPER FUNCTIONS
   /**
    * @param day
    * @private

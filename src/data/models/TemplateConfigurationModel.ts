@@ -1,8 +1,9 @@
 import Model from "../../lib/data/Model";
+import { TemplateItem } from "./UserSettingsModel";
 
 export interface Topic {
   name: string;
-  titles: Array<string>;
+  items: Array<TemplateItem>;
 }
 
 export default class TemplateConfigurationModel extends Model {

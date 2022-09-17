@@ -10,19 +10,19 @@ import {
 import { AppEvent } from "../../../../lib/events/AppEvent";
 import { log } from "../../../../lib/utils/Logger";
 
-// Input field for free text
-// (= a wrapper around LiveTextInput)
-
-// Necessary constructor parameters:
-// - inputValueState:
-//   - a string, that contains the text to edit
-//   - the state is updated the user finishes editing the text
-
+/**
+ * @class FreeTextInputField
+ * Input field for free text (= a wrapper around LiveTextInput)
+ */
 export default class FreeTextInputField extends WebComponent {
   private readonly inputValueState: State<string>;
 
   private $textArea!: HTMLTextAreaElement;
 
+  /**
+   * Creates a new FreeTextInputField
+   * @param inputValueState The state of the input value
+   */
   constructor(inputValueState: State<string>) {
     super(html, css);
     this.inputValueState = inputValueState;

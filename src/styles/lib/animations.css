@@ -1,99 +1,154 @@
-editor-block, calendar-day, .editor-atomic-item {
-    animation: scale-animate-in 0.2s cubic-bezier(0.075, 0.82, 0.165, 1);
+editor-block,
+calendar-day,
+.editor-atomic-item .scale-in {
+  animation: scale-animate-in 0.2s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
-note-editor {
-    animation: slide-left-animate 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+note-editor .slide-left-in {
+  animation: slide-left-animate-in 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
-main-calendar {
-    animation: slide-right-animate 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+main-calendar .slide-right-in {
+  animation: slide-right-animate-in 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
-home-bar {
-    animation: slide-down-animate 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+home-bar .slide-down-in {
+  animation: slide-down-animate-in 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
-.animate-slide {
-    animation: scale-animate-in 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+.slide-down-out {
+  animation: slide-down-animate-out 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+.slide-up-in {
+  animation: slide-up-animate-in 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+.hover-spin:hover {
+  animation: infinite-rotate 5s linear infinite;
+}
+
+.fade-in {
+  animation: fade-in 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+.fade-out {
+  animation: fade-out 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
 /* in */
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
 @keyframes visible-animate {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes scale-animate-in {
-    from {
-        transform: scale(0.5);
-        opacity: 0.5;
-    }
-    to {
-        transform: scale(1);
-        opacity: 1;
-    }
+  from {
+    transform: scale(0.5);
+    opacity: 0.5;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
-
-@keyframes slide-down-animate {
-    from {
-        opacity: 0;
-        transform: translate(0, -100%);
-    }
-    to {
-        opacity: 1;
-        transform: translate(0, 0);
-    }
+@keyframes slide-down-animate-in {
+  from {
+    opacity: 0;
+    transform: translate(0, -100%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
 }
 
-@keyframes slide-right-animate {
-    from {
-        opacity: 0;
-        transform: translate(-100%, 0);
-    }
-    to {
-        opacity: 1;
-        transform: translate(0, 0);
-    }
+@keyframes slide-up-animate-in {
+  from {
+    opacity: 0;
+    transform: translate(0, 100%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
 }
 
-@keyframes slide-left-animate {
-    from {
-        opacity: 0;
-        transform: translate(100%, 0);
-    }
-    to {
-        opacity: 1;
-        transform: translate(0, 0);
-    }
+@keyframes slide-right-animate-in {
+  from {
+    opacity: 0;
+    transform: translate(-100%, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
 }
 
+@keyframes slide-left-animate-in {
+  from {
+    opacity: 0;
+    transform: translate(100%, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+}
 
 /* out */
 
+@keyframes fade-out {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
 @keyframes scale-animate-out {
-    from {
-        transform: scale(1);
-        opacity: 1;
-    }
-    to {
-        transform: scale(0.5);
-        opacity: 0;
-    }
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: scale(0.5);
+    opacity: 0;
+  }
 }
 
 @keyframes slide-down-animate-out {
-    from {
-        opacity: 0;
-        transform: translate(0, 0);
-    }
-    to {
-        opacity: 1;
-        transform: translate(0, -100%);
-    }
+  from {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+  to {
+    opacity: 0;
+    transform: translate(0, 100%);
+  }
+}
+
+@keyframes infinite-rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }

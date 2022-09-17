@@ -4,23 +4,30 @@ import State from "../../../../lib/state/State";
 import { StateChangedData } from "../../../../events/StateChanged";
 import LiveBulletPointItem from "../../../atomics/LiveBulletPointItem/LiveBulletPointItem";
 
-// Input field for bullet point lists
-
-// Necessary constructor parameters:
-// - inputValueState:
-//   - a string, that contains all bullet point items, separated by newlines (\n)
-//   - the state is updated the user finishes editing an item
-
+/**
+ * @class BulletPointInputField
+ * An input field for bullet point lists
+ */
 export default class BulletPointInputField extends WebComponent {
   private $bulletPointContainer!: HTMLUListElement;
   private $newBulletPointInputContainer!: HTMLLIElement;
   private $newBulletPointInput!: HTMLInputElement;
 
-  // the whole list of bullet points as single string, separated by newlines (\n)
+  /**
+   * The whole list of bullet points as single string, separated by newlines (\n)
+   * @private
+   */
   private readonly bulletPointsListState: State<string>;
-  // the split up bullet points (e.g. ["item 1", "item 2"])
+  /**
+   * The split up bullet points (e.g. ["item 1", "item 2"])
+   * @private
+   */
   private readonly bulletPointsState: State<Array<string>>;
 
+  /**
+   * Creates a new bullet point input field
+   * @param bulletPointsListState The state of the bullet points list
+   */
   constructor(bulletPointsListState: State<string>) {
     super(html);
     this.bulletPointsListState = bulletPointsListState;
@@ -60,6 +67,10 @@ export default class BulletPointInputField extends WebComponent {
     });
   };
 
+  /**
+   * Creates a single bullet point item
+   * @param bulletPointIndex The index of the bullet point
+   */
   private $createBulletPoint = (
     bulletPointIndex: number
   ): LiveBulletPointItem => {

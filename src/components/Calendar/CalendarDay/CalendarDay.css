@@ -1,23 +1,22 @@
-calendar-day{
-    display: flex;
-    flex-grow: 1;
+calendar-day {
+  display: flex;
+  flex-grow: 1;
+  border-radius: 10px;
+  overflow: hidden;
 }
 
-
 .calendar-day {
-    width: 130px;
-    height: 80px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  width: 130px;
+  height: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .calendar-day > .date {
-    margin: 0;
+  margin: 0;
 }
 
-
-
 .calendar-day:hover {
-    background: var(--text-accent-hover);
+  background: var(--text-accent-hover);
 }
