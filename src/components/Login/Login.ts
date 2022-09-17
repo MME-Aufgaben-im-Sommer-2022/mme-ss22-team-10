@@ -14,7 +14,6 @@ export default class Login extends WebComponent {
   $passwordInput!: HTMLInputElement;
   $verifyPasswordInput!: HTMLInputElement;
   $registerToggle!: HTMLLinkElement;
-  $connectMessage!: HTMLSpanElement;
   loginState: State<boolean> = new State(true);
   usernameInputHTML!: string;
   verifyPasswordInputHTML!: string;
@@ -96,7 +95,7 @@ export default class Login extends WebComponent {
       setTimeout(() => {
         this.$verifyPasswordInput.remove();
         this.$usernameInput.remove();
-      }, 70);
+      }, 63);
       this.loginState.value = false;
     } else {
       this.$loginButton.innerText = "Register";
