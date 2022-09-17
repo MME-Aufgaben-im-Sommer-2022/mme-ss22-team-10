@@ -35,6 +35,9 @@ export default class CalendarMonth extends WebComponent {
     this.$entryContainer = this.select(".entry-container")!;
   }
 
+  /**
+   * adds a "0" to the monthNumber if the monthNumber is smaller than 10.
+   */
   private formatMonth(): void {
     if (this.currentMonthNumber < 10) {
       this.currentMonthNumberText = "0" + this.currentMonthNumber;
@@ -43,6 +46,10 @@ export default class CalendarMonth extends WebComponent {
     }
   }
 
+  /**
+   *adds a CalendarDay-Object to the DOM depending on the retrieved data.
+   *adds a "0" to the DayNumber if the DayNumber is smaller than 10.
+   */
   private appendCalenderEntry() {
     for (let i = 0; i < this.entriesForCurrentMonth.length; i++) {
       if (parseInt(this.entriesForCurrentMonth[i]) < 10) {
