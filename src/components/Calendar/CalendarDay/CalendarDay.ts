@@ -37,18 +37,27 @@ export default class CalendarDay extends WebComponent {
     this.isSelected.addEventListener("change", this.setColor);
   }
 
+  /**
+   * sets isSelected to true and informs the listeners.
+   */
   onDayItemClicked = () => {
     EventBus.notifyAll(CalendarDay.CALENDAR_DAY_CLICKED_EVENT, this.entryDate);
     this.isSelected.value = true;
     EventBus.notifyAll("setColor", this.entryDate);
   };
 
+  /**
+   * sets isSelected to false if the clicked DayItem isn't the currentDayItem
+   */
   checkClickedItem = (event: AppEvent) => {
     if (event.data !== this.entryDate) {
       this.isSelected.value = false;
     }
   };
 
+  /**
+   * sets the color of the dayItem depending on whether it was clicked or not.
+   */
   setColor = () => {
     if (this.isSelected.value) {
       this.style.background = "var(--text-accent)";
