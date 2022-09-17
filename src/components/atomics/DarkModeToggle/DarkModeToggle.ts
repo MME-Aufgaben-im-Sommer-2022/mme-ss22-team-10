@@ -8,13 +8,26 @@ import MoonSunToggleAnimationData from "./DarkModeToggleData.json";
 import { STATE_CHANGE_EVENT } from "../../../events/StateChanged";
 import DataManager from "../../../data/DataManager";
 
+/**
+ * The different segments of the animation
+ */
 const ToggleSegment = {
+  /**
+   * The segment that is played to go from light mode to dark mode
+   */
   Light: [0, 50] as AnimationSegment,
+  /**
+   * The segment that is played to go from dark mode to light mode
+   */
   Dark: [51, 96] as AnimationSegment,
 };
 
 // ADAPTED FROM: https://github.com/cawfree/react-dark-mode-toggle
 
+/**
+ * @class DarkModeToggle
+ * A toggle that allows the user to switch between light and dark mode.
+ */
 export default class DarkModeToggle extends WebComponent {
   private readonly isCheckedState = new State(false);
   private animationData!: AnimationItem;
@@ -33,6 +46,10 @@ export default class DarkModeToggle extends WebComponent {
     return "moon-sun-toggle";
   }
 
+  /**
+   * Initialise the animation.
+   * @private
+   */
   private $initAnimation(): void {
     this.animationData = lottie.loadAnimation({
       container: this,
