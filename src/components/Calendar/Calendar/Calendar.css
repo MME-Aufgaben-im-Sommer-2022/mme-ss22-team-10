@@ -26,6 +26,7 @@ main-calendar {
 
 .calendar-navigation {
   display: flex;
+  flex-direction: row;
   justify-content: center;
   font-size: var(--font-size-large);
   padding-bottom: var(--spacing-large);
