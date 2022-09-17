@@ -82,11 +82,6 @@
   border-image: var(--doodle-button) 10 10 10 10 stretch stretch;
 }
 
-.theme-dark .doodle .border svg {
-  filter: invert(48%) sepia(79%) saturate(2476%) hue-rotate(86deg)
-    brightness(118%) contrast(119%);
-}
-
 .doodle button,
 .doodle input,
 .doodle select {
