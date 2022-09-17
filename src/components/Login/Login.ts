@@ -110,10 +110,10 @@ export default class Login extends WebComponent {
    * called when login Button is clicked. will sign in or sign up user depending on registerState
    */
   readInput = async () => {
-    if (this.loginState.value && this.checkPassword()) {
-      this.signUp();
-    } else {
+    if (!this.loginState.value) {
       this.signIn();
+    } else if (this.checkPassword()) {
+      this.signUp();
     }
   };
 
