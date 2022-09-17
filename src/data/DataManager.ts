@@ -1,11 +1,9 @@
-import ExampleModel from "./models/ExampleModel";
 import CalendarModel, { Years } from "./models/CalendarModel";
 import EditorModel, {
   BlockContent,
   BlockContentInputType,
 } from "./models/EditorModel";
-import UserSettingsModel, { Template } from "./models/UserSettingsModel";
-import { generateRandomAscendingArray } from "../lib/utils";
+import UserSettingsModel from "./models/UserSettingsModel";
 import ApiClient from "./api/ApiClient";
 import TemplateConfigurationModel, {
   Topic,
@@ -22,16 +20,6 @@ const NUMBER_OF_BLOCK_CONTENTS_WITHOUT_GPT3 = 3;
 export default class DataManager {
   static async init() {
     await ApiClient.init();
-  }
-
-  /**
-   * get an object of the ExampleModel class
-   * @remarks this was used as an example to get into the project
-   * @deprecated actually not needed
-   */
-  static async getExampleModel(): Promise<ExampleModel> {
-    // would query database here or other networking stuff
-    return new ExampleModel("John", 0);
   }
 
   /**
@@ -151,19 +139,20 @@ export default class DataManager {
         this.dayIsToday(day) &&
         blockContents.length === NUMBER_OF_BLOCK_CONTENTS_WITHOUT_GPT3
       ) {
-        const newBlockContent = await this.getGPT3BlockContent(),
-          apiBlockContent = await ApiClient.createNewBlockContentDocument(
+        const newBlockContent = await this.getGPT3BlockContent();
+        if (newBlockContent !== undefined) {
+          const apiBlockContent = await ApiClient.createNewBlockContentDocument(
             noteDocument.$id,
             newBlockContent
           );
-        newBlockContent.documentId = apiBlockContent.$id;
-        blockContents.push(newBlockContent);
+          newBlockContent.documentId = apiBlockContent.$id;
+          blockContents.push(newBlockContent);
+        }
       }
       return new EditorModel(day, blockContents);
     } catch (e) {
       const editorModel = await this.createEditorModelFromTemplate();
-      await this.createEditorModel(editorModel);
-      return editorModel;
+      return await this.createEditorModel(editorModel);
     }
   }
 
@@ -176,8 +165,14 @@ export default class DataManager {
       this.convertDateToString(editorModel.day)
     );
     editorModel.blockContents.forEach(async (blockContent) => {
-      ApiClient.createNewBlockContentDocument(noteDocument.$id, blockContent);
+      const blockContentDocument =
+        await ApiClient.createNewBlockContentDocument(
+          noteDocument.$id,
+          blockContent
+        );
+      blockContent.documentId = blockContentDocument.$id;
     });
+    return editorModel;
   }
 
   /**
@@ -205,7 +200,9 @@ export default class DataManager {
       blockContents = this.convertArrayToBlockContent(
         promise.settings.template
       );
-    blockContents.push(blockContent);
+    if (blockContent !== undefined) {
+      blockContents.push(<BlockContent>blockContent);
+    }
     return new EditorModel(new Date(), blockContents);
   }
 
@@ -227,14 +224,17 @@ export default class DataManager {
    * @returns {@link BlockContent} object
    */
   private static async getGPT3BlockContent() {
-    const blocks = await this.getGPT3BlockContentParameter(),
-      response = await ApiClient.getGeneratedTitle(blocks);
-    return {
-      title: response.gptTitle,
-      inputType: BlockContentInputType.FreeText,
-      inputValue: "",
-      documentId: "",
-    };
+    const blocks = await this.getGPT3BlockContentParameter();
+    if (blocks.length >= 3) {
+      const response = await ApiClient.getGeneratedTitle(blocks);
+      return {
+        title: response.gptTitle,
+        inputType: BlockContentInputType.FreeText,
+        inputValue: "",
+        documentId: "",
+      };
+    }
+    return undefined;
   }
 
   /**
@@ -427,7 +427,6 @@ export default class DataManager {
     ].join("-");
   }
 
-  // MOCK DATA
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   private static async deleteUserNotes() {
@@ -442,93 +441,5 @@ export default class DataManager {
   // @ts-ignore
   private static async deleteUserSettings() {
     return await ApiClient.updateUserSettingsDocument(this.stringifyArray([]));
-  }
-
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  private static async generateMockDatabaseData() {
-    // eslint-disable-next-line no-magic-numbers
-    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].forEach((month) => {
-      // eslint-disable-next-line no-magic-numbers
-      generateRandomAscendingArray(16, 1).forEach(async (day) => {
-        const date = new Date();
-        // eslint-disable-next-line no-unused-expressions
-        month < date.getMonth()
-          ? // eslint-disable-next-line no-magic-numbers
-            date.setFullYear(2022)
-          : // eslint-disable-next-line no-magic-numbers
-            date.setFullYear(2021);
-        date.setDate(Number(day));
-        date.setMonth(month);
-        // eslint-disable-next-line one-var
-        const editorModel = await this.generateMockEditorModel(date);
-        try {
-          await this.createEditorModel(editorModel);
-        } catch (e) {
-          this.updateEditorModel(editorModel);
-        }
-      });
-    });
-  }
-
-  // Calendar Model
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  private static generateMockCalendarModel(): CalendarModel {
-    const noteDays: Years = {
-      "2022": {},
-    };
-
-    // eslint-disable-next-line no-magic-numbers
-    generateRandomAscendingArray(11, 1).forEach((month) => {
-      // eslint-disable-next-line no-magic-numbers
-      noteDays["2022"][month] = generateRandomAscendingArray(30, 1);
-      if (noteDays["2022"][month].length === 0) {
-        delete noteDays["2022"][month];
-      }
-    });
-
-    return new CalendarModel(new Date(), noteDays);
-  }
-
-  // Editor Model
-  private static async generateMockEditorModel(
-    date: Date
-  ): Promise<EditorModel> {
-    const day = date,
-      blockContents: Array<BlockContent> = [],
-      userSettings = await this.getUserSettingsModel();
-
-    userSettings.settings.template.forEach((block) => {
-      blockContents.push(<BlockContent>{
-        title: block.title,
-        inputType: block.inputType,
-        inputValue: "",
-        documentId: "",
-      });
-    });
-    return new EditorModel(day, blockContents);
-  }
-
-  // User Settings Model
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  private static generateMockUserSettingsModel(): UserSettingsModel {
-    const template: Template = [
-      {
-        title: "Title 1",
-        inputType: BlockContentInputType.FreeText,
-      },
-      {
-        title: "Title 2",
-        inputType: BlockContentInputType.FreeText,
-      },
-      {
-        title: "Title 3",
-        inputType: BlockContentInputType.FreeText,
-      },
-    ];
-
-    return new UserSettingsModel("user1", { template });
   }
 }
