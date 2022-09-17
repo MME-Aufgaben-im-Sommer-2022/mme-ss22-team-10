@@ -15,17 +15,18 @@ import GlobalState from "../../../lib/state/GlobalState";
 import { GlobalStates } from "../../../state/GlobalStates";
 import { log } from "../../../lib/utils/Logger";
 
-// HTML element that serves as the main editor component
-
-// Necessary constructor parameters:
-// - editorModelState:
-//    - a state object that holds the editor model
-
+/**
+ * @class Editor
+ * HTML element that serves as the main editor component
+ */
 export default class Editor extends WebComponent {
   private editorModelState!: State<EditorModel>;
 
   private $editor!: HTMLDivElement;
   private $editorBlocksContainer!: HTMLDivElement;
+  private $editTemplateIcon!: HTMLDivElement;
+
+  public static EDIT_TEMPLATE_CLICKED_EVENT = "edit-template-clicked";
 
   constructor() {
     super(html, css);
@@ -61,6 +62,8 @@ export default class Editor extends WebComponent {
     this.$editor = this.select(".editor")!;
     this.$editorBlocksContainer = this.select(".editor-blocks-container")!;
     this.$appendEditorBlocks();
+
+    this.$editTemplateIcon = this.select("#edit-template-icon")!;
   }
 
   private $toggleLoading(isLoading: boolean): void {
@@ -88,16 +91,25 @@ export default class Editor extends WebComponent {
       EventBus.notifyAll(CLOSE_ALL_EDITOR_INPUTS_EVENT, {});
     });
 
+    this.$editTemplateIcon.addEventListener("click", () =>
+      this.$onEditTemplateClicked()
+    );
+
+    // the editor model changed
     this.editorModelState.addEventListener("change", (event: AppEvent) => {
       const data: StateChangedData = event.data;
       if (data.currentPath === "") {
+        // the whole editor model was replaced (e.g. when changing the date)
+        // -> remove all editor blocks and append new ones
         this.$editorBlocksContainer
           .querySelectorAll("editor-block")
           .forEach((block) => {
             block.remove();
           });
         this.$appendEditorBlocks();
-      } else {
+      } else if (data.property === "inputValue") {
+        // the input value of a block changed
+        // -> update database
         DataManager.updateEditorModel(this.editorModelState.value);
       }
     });
@@ -105,6 +117,7 @@ export default class Editor extends WebComponent {
     EventBus.addEventListener(
       CalendarDay.CALENDAR_DAY_CLICKED_EVENT,
       (event: AppEvent) => {
+        // a calendar day was clicked
         const newDate = event.data;
         this.$toggleLoading(true);
         DataManager.getEditorModel(parseDateFromString(newDate)).then(
@@ -115,4 +128,8 @@ export default class Editor extends WebComponent {
       }
     );
   }
+
+  private $onEditTemplateClicked = () => {
+    EventBus.notifyAll(Editor.EDIT_TEMPLATE_CLICKED_EVENT, {});
+  };
 }

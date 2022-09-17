@@ -1,0 +1,20 @@
+.theme-light {
+  --settings-icon: url(res/light/settings.svg);
+}
+.theme-dark {
+  --settings-icon: url(res/dark/settings.svg);
+}
+
+.icon {
+  width: 24px;
+  height: 24px;
+  opacity: 0.7;
+}
+
+.icon:hover {
+  opacity: 1;
+}
+
+.icon.settings {
+  background-image: var(--settings-icon);
+}

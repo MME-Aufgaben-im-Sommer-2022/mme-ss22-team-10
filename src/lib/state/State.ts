@@ -12,11 +12,19 @@ import ObservableSlim from "observable-slim";
 // Usage guide & examples:
 // https://github.com/MME-Aufgaben-im-Sommer-2022/mme-ss22-team-10/blob/dev/docs/lib/State.md
 
+/**
+ * @class State
+ * Wrapper class to make any object/primitive observable
+ */
 export default class State<T> extends Observable {
-  private val: ProxyConstructor | T;
   private static stateCount = 0;
+  private val: ProxyConstructor | T;
   readonly id: number;
 
+  /**
+   * Creates a new State
+   * @param value The initial value of the State
+   */
   constructor(value: T) {
     super();
     State.stateCount++;
@@ -28,10 +36,17 @@ export default class State<T> extends Observable {
         : value;
   }
 
+  /**
+   * Returns the current value of the State
+   */
   get value(): T {
     return this.val as T;
   }
 
+  /**
+   * Sets the value of the State
+   * @param val The new value of the State
+   */
   set value(val: T) {
     const previousValue = this.val;
     if (typeof val !== "object") {
@@ -54,7 +69,19 @@ export default class State<T> extends Observable {
     ]);
   }
 
-  onValueChange = (changes: ObservableSlimChanges[]) => {
+  /**
+   * Returns the current value of the State without the proxy
+   */
+  get rawValue(): T {
+    // eslint-disable-next-line no-underscore-dangle
+    return (this.val as any).__getTarget as T;
+  }
+
+  /**
+   * Called when the value of the State changes
+   * @param changes The changes that were made to the State
+   */
+  private onValueChange = (changes: ObservableSlimChanges[]) => {
     changes.forEach((change) => {
       this.notifyAll(
         "change",
@@ -63,7 +90,18 @@ export default class State<T> extends Observable {
     });
   };
 
-  createSubState(key: string): State<any> {
+  /**
+   * Creates a new State, which is a subset of this State
+   * @param key The key of the subset, in dot notation
+   *
+   * @example
+   * // the propertyKey parameter is a string of what you would usually type
+   * // to get the property form the state object
+   * // here, we want to get the existingState.value.interestingProp property,
+   * // so we type "value.interestingProp"
+   * newState = existingState.createSubState("value.interestingProp")
+   */
+  public createSubState(key: string): State<any> {
     const subStateKeys = key.split("."),
       subStateValue: any = subStateKeys.reduce((obj: any, key: string) => {
         const val = obj[key];
@@ -83,7 +121,10 @@ export default class State<T> extends Observable {
   }
 }
 
-// custom error type for invalid state keys
+/**
+ * @class InvalidStateKeyError
+ * Error thrown when an invalid key is used to create a substate via {@link State.createSubState}
+ */
 export class InvalidStateKeyError<T> extends Error {
   private static readonly DOCS_LINK =
     "https://github.com/MME-Aufgaben-im-Sommer-2022/mme-ss22-team-10/blob/master/docs/lib.md#state";
@@ -102,6 +143,11 @@ export class InvalidStateKeyError<T> extends Error {
   }
 }
 
+/**
+ * @class ChangedParentStateError
+ * Error thrown when a parameter of a parent state,
+ * of which a substate was created, is replaced with a new object
+ */
 export class ChangedParentStateError extends Error {
   constructor(
     propertyName: string,
@@ -121,6 +167,9 @@ export class ChangedParentStateError extends Error {
   }
 }
 
+/**
+ * A change in a State
+ */
 export interface ObservableSlimChanges {
   type: "add" | "delete" | "update";
   property: string; // equals "value" if the whole state is changed

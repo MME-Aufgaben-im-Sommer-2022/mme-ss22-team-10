@@ -1,42 +1,87 @@
 [
   {
     "name": "Environment",
-    "titles": [
-      "Things I did to help the environment today:",
-      "Today, I am planning to cook:",
-      "Car driving log:"
+    "items": [
+      {
+        "title": "Things I did to help the environment today:",
+        "inputType": "bullet-point-input-field"
+      },
+      {
+        "title": "Today, I am planning to cook:",
+        "inputType": "checkbox-input-field"
+      },
+      {
+        "title": "Car driving log:",
+        "inputType": "bullet-point-input-field"
+      }
     ]
   },
   {
     "name": "Reflection",
-    "titles": [
-      "What did you learn today?",
-      "Last night, after work, I...",
-      "Today, I had the following ideas:"
+    "items": [
+      {
+        "title": "What did you learn today?",
+        "inputType": "bullet-point-input-field"
+      },
+      {
+        "title": "What did you do today?",
+        "inputType": "bullet-point-input-field"
+      },
+      {
+        "title": "Last night, after work, I...",
+        "inputType": "free-text-input-field"
+      }
     ]
   },
   {
     "name": "Planning",
-    "titles": [
-      "TODOs for today:",
-      "Goals for today:",
-      "If today was the ideal day, what would it look like?"
+    "items": [
+      {
+        "title": "TODOs for today:",
+        "inputType": "checkbox-input-field"
+      },
+      {
+        "title": "Goals for today:",
+        "inputType": "checkbox-input-field"
+      },
+      {
+        "title": "If today was the ideal day, what would it look like?",
+        "inputType": "free-text-input-field"
+      }
     ]
   },
   {
     "name": "Creativity",
-    "titles": [
-      "What did you discover today?",
-      "What did you create today?",
-      "Write a little poem:"
+    "items": [
+      {
+        "title": "What did you discover today?",
+        "inputType": "bullet-point-input-field"
+      },
+      {
+        "title": "What did you create today?",
+        "inputType": "bullet-point-input-field"
+      },
+      {
+        "title": "Write a little poem:",
+        "inputType": "free-text-input-field"
+      }
     ]
   },
   {
     "name": "Feelings",
-    "titles": [
-      "Today, I was dreaming about...",
-      "Today, I was feeling...",
-      "Mood log:"
+    "items": [
+      {
+        "title": "Today, I was dreaming about...",
+        "inputType": "free-text-input-field"
+      },
+      {
+        "title": "Today, I was feeling...",
+        "inputType": "free-text-input-field"
+      },
+      {
+        "title": "Mood log:",
+        "inputType": "bullet-point-input-field"
+      }
     ]
   }
 ]
