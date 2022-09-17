@@ -3,6 +3,8 @@ import html from "../Login/Login.html";
 import css from "../Login/Login.css";
 import State from "../../lib/state/State";
 import DataManager from "../../data/DataManager";
+import { ToastFactory } from "../atomics/Toast/ToastFactory";
+import { ToastDuration, ToastType } from "../atomics/Toast/Toast";
 
 export default class Login extends WebComponent {
   $loginForm!: HTMLDivElement;
@@ -48,7 +50,6 @@ export default class Login extends WebComponent {
     this.usernameInputHTML = this.$usernameInput.outerHTML;
     this.verifyPasswordInputHTML = this.$verifyPasswordInput.outerHTML;
     this.$registerToggle = this.select("span")!;
-    this.$connectMessage = this.select(".connect-message")!;
     this.changeRegisterMode();
   }
 
@@ -87,7 +88,6 @@ export default class Login extends WebComponent {
    * toggles registerState and sets HTML elements accordingly
    */
   changeRegisterMode = () => {
-    this.hideConnectMessage();
     if (this.loginState.value) {
       this.$loginButton.innerText = "Login";
       this.$registerToggle.innerText = "Sign Up";
@@ -129,7 +129,7 @@ export default class Login extends WebComponent {
       );
     } catch (error) {
       if (error instanceof Error) {
-        this.showConnectMessage(error.message);
+        this.sendToast(error.message);
       }
       return;
     }
@@ -148,7 +148,7 @@ export default class Login extends WebComponent {
       );
     } catch (error) {
       if (error instanceof Error) {
-        this.showConnectMessage(error.message);
+        this.sendToast(error.message);
       }
       return;
     }
@@ -162,7 +162,7 @@ export default class Login extends WebComponent {
    */
   checkPassword(): boolean {
     if (!(this.$passwordInput.value === this.$verifyPasswordInput.value)) {
-      this.showConnectMessage("The passwords do not match");
+      this.sendToast("The passwords do not match");
       return false;
     }
     return true;
@@ -172,16 +172,11 @@ export default class Login extends WebComponent {
    * show message to notify user when sign in / sign up failed
    * @param message
    */
-  showConnectMessage(message: string): void {
-    this.$connectMessage.innerText = message;
-    this.$connectMessage.style.visibility = "visible";
-  }
-
-  /**
-   * hide message in case there is nothing to notify the user about (anymore)
-   */
-  hideConnectMessage(): void {
-    this.$connectMessage.innerText = "";
-    this.$connectMessage.style.visibility = "hidden";
+  sendToast(message: string): void {
+    new ToastFactory()
+      .setMessage(`⚠️ ${message}!`)
+      .setType(ToastType.Error)
+      .setDuration(ToastDuration.Medium)
+      .show();
   }
 }

@@ -54,9 +54,3 @@ input:focus {
 .span-elements > .register-toggle:hover {
     color: var(--text-accent-hover);
 }
-
-.span-elements > .connect-message {
-    color: red;
-    margin-top: var(--spacing-large);
-    visibility: hidden;
-}
