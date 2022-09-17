@@ -172,9 +172,9 @@ export default class Calendar extends WebComponent {
 
   private showEntries(): void {
     this.calendarMonth = new CalendarMonth(
-      this.entriesForCurrentMonth
-      // this.currentMonthNumber,
-      // this.currentYear
+      this.entriesForCurrentMonth,
+      this.currentMonthNumber,
+      this.currentYear
     );
     this.select(".month")!.append(this.calendarMonth);
   }
