@@ -28,7 +28,25 @@ home-bar .slide-down-in {
   animation: infinite-rotate 5s linear infinite;
 }
 
+.fade-in {
+  animation: fade-in 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+.fade-out {
+  animation: fade-out 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
 /* in */
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
 @keyframes visible-animate {
   from {
     opacity: 0;
@@ -94,6 +112,15 @@ home-bar .slide-down-in {
 }
 
 /* out */
+
+@keyframes fade-out {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
 
 @keyframes scale-animate-out {
   from {

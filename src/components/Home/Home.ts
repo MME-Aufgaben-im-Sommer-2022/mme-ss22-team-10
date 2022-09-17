@@ -59,9 +59,8 @@ export default class Home extends WebComponent {
   };
 
   private toggleTemplateEditor = (): void => {
-    this.$templateEditorContainer.hidden =
-      !this.isShowingTemplateEditorState.value;
     if (this.isShowingTemplateEditorState.value) {
+      this.$templateEditorContainer.hidden = false;
       const userSettings = GlobalState.getStateById<UserSettingsModel>(
           GlobalStates.userSettingsModel
         )?.value,
@@ -76,8 +75,11 @@ export default class Home extends WebComponent {
       this.$templateEditorContainer.appendChild($templateConfigurator);
       this.$bgDimmer.hidden = false;
     } else {
-      this.$templateEditorContainer.innerHTML = "";
-      this.$bgDimmer.hidden = true;
+      this.$templateEditorContainer.classList.remove("slide-up-in");
+      this.$templateEditorContainer.classList.add("slide-down-out");
+      this.$bgDimmer.classList.remove("fade-in");
+      this.$bgDimmer.classList.add("fade-out");
+      setTimeout(() => this.$hideTemplateEditor(), 300);
       new ToastFactory()
         .setMessage("🗑️ Your changes have been discarded")
         .setType(ToastType.Info)
@@ -85,4 +87,14 @@ export default class Home extends WebComponent {
         .show();
     }
   };
+
+  private $hideTemplateEditor(): void {
+    this.$templateEditorContainer.classList.remove("slide-down-out");
+    this.$templateEditorContainer.classList.add("slide-up-in");
+    this.$bgDimmer.classList.remove("fade-out");
+    this.$bgDimmer.classList.add("fade-in");
+    this.$templateEditorContainer.hidden = true;
+    this.$templateEditorContainer.innerHTML = "";
+    this.$bgDimmer.hidden = true;
+  }
 }
