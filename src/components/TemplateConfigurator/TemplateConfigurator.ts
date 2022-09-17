@@ -12,22 +12,35 @@ import DataManager from "../../data/DataManager";
 import GlobalState from "../../lib/state/GlobalState";
 import { GlobalStates } from "../../state/GlobalStates";
 
+/**
+ * @enum TemplateConfigurationProgress
+ * The different states of the template configuration process
+ */
 enum TemplateConfigurationProgress {
+  /**
+   * The user is configuring the topics
+   */
   SELECT_TOPICS,
+  /**
+   * The user is configuring the input types
+   */
   SELECT_INPUT_TYPES,
 }
 
-// Component to configure the note template
-
-// Usage:
-// 1. create and append an instance of this component to the DOM
-//    - templateConfigurationModelState: a state containing the template configuration model
-// 2. listen for the finish event, which contains the configured template
-//    - templateConfigurator.addEventListener(
-//        TemplateConfigurator.FINISH_TEMPLATE_CONFIGURATION_EVENT,
-//        (event: AppEvent) => {...}
-//      );
-
+/**
+ * @class TemplateConfigurator
+ * Component to configure the note template
+ *
+ * @example
+ * Usage:
+ * 1. create and append an instance of this component to the DOM
+ *   - templateConfigurationModelState: a state containing the template configuration model
+ * 2. listen for the finish event, which contains the configured template
+ *  - templateConfigurator.addEventListener(
+ *      TemplateConfigurator.FINISH_TEMPLATE_CONFIGURATION_EVENT,
+ *      (event: AppEvent) => {...}
+ *    );
+ */
 export default class TemplateConfigurator extends WebComponent {
   public static readonly FINISH_TEMPLATE_CONFIGURATION_EVENT =
     "onFinishTemplateConfiguration";
@@ -35,7 +48,7 @@ export default class TemplateConfigurator extends WebComponent {
   private templateConfigurationModelState!: State<TemplateConfigurationModel>;
   private readonly templateToEditState: State<Template> = new State([]);
 
-  private readonly configurationProgressState: State<TemplateConfigurationProgress> =
+  private readonly configurationProgressState =
     new State<TemplateConfigurationProgress>(
       TemplateConfigurationProgress.SELECT_TOPICS
     );
@@ -53,7 +66,7 @@ export default class TemplateConfigurator extends WebComponent {
     }
   }
 
-  get htmlTagName(): string {
+  get htmlTagName() {
     return "template-configurator";
   }
 
@@ -71,12 +84,12 @@ export default class TemplateConfigurator extends WebComponent {
     });
   }
 
-  $initHtml(): void {
+  $initHtml() {
     this.$initTopicConfigurator();
     this.$initInputTypeConfigurator();
   }
 
-  $initTopicConfigurator = (): void => {
+  $initTopicConfigurator = () => {
     this.$topicConfiguratorContainer = this.select(
       "#topic-configurator-container"
     )!;
@@ -87,7 +100,7 @@ export default class TemplateConfigurator extends WebComponent {
     this.$topicConfiguratorContainer.appendChild(this.$topicConfigurator);
   };
 
-  $initInputTypeConfigurator = (): void => {
+  $initInputTypeConfigurator = () => {
     this.$inputTypeConfiguratorContainer = this.select(
       "#input-type-configurator-container"
     )!;
@@ -99,7 +112,7 @@ export default class TemplateConfigurator extends WebComponent {
     );
   };
 
-  private $initHtmlListener(): void {
+  private $initHtmlListener() {
     this.$topicConfigurator.addEventListener(
       TopicConfigurator.NEXT_BUTTON_CLICKED_EVENT,
       this.$onFinishTopicConfiguration
@@ -114,7 +127,7 @@ export default class TemplateConfigurator extends WebComponent {
     );
   }
 
-  private initStateListener(): void {
+  private initStateListener() {
     this.configurationProgressState.addEventListener(
       "change",
       this.$onConfigurationProgressChanged
@@ -136,17 +149,21 @@ export default class TemplateConfigurator extends WebComponent {
   };
 
   private $onFinishTopicConfiguration = () => {
+    // user selected all topics
     this.configurationProgressState.value =
       TemplateConfigurationProgress.SELECT_INPUT_TYPES;
   };
 
   private $onBackToTopicConfiguration = () => {
+    // user wants to go back to topic configuration
     this.configurationProgressState.value =
       TemplateConfigurationProgress.SELECT_TOPICS;
   };
 
   private $onFinishInputTypeConfiguration = async () => {
-    const template: Template = this.templateToEditState.value,
+    // user finished input type configuration
+    // -> configuration is finished
+    const template = this.templateToEditState.value,
       userSettingsModelState = GlobalState.getStateById<UserSettingsModel>(
         GlobalStates.userSettingsModel
       );

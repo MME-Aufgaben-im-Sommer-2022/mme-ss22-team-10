@@ -4,6 +4,10 @@ import State from "../../../lib/state/State";
 import InputTypeConfiguratorItem from "./InputTypeConfiguratorItem/InputTypeConfiguratorItem";
 import { TemplateItem } from "../../../data/models/UserSettingsModel";
 
+/**
+ * @class InputTypeConfigurator
+ * Component to configure the input types of the template
+ */
 export default class InputTypeConfigurator extends WebComponent {
   static readonly NEXT_BUTTON_CLICKED_EVENT = "finishInputTypeConfiguration";
   static readonly BACK_BUTTON_CLICKED_EVENT = "cancelInputTypeConfiguration";
@@ -14,6 +18,10 @@ export default class InputTypeConfigurator extends WebComponent {
   private $backButton!: HTMLButtonElement;
   private $nextButton!: HTMLButtonElement;
 
+  /**
+   * Creates a new InputTypeConfigurator
+   * @param selectedTemplateItems The state of the selected template items
+   */
   constructor(selectedTemplateItems: State<Array<TemplateItem>>) {
     super(html);
     this.selectedTemplateItems = selectedTemplateItems;

@@ -5,6 +5,12 @@ import TopicConfiguratorItem from "./TopicConfiguratorItem/TopicConfiguratorItem
 import State from "../../../lib/state/State";
 import TemplateConfigurationModel from "../../../data/models/TemplateConfigurationModel";
 import { TemplateItem } from "../../../data/models/UserSettingsModel";
+
+/**
+ * @class TopicConfigurator
+ * Component to configure the topics of the template
+ */
+
 export default class TopicConfigurator extends WebComponent {
   static readonly NEXT_BUTTON_CLICKED_EVENT = "onFinishTopicConfiguration";
   // eslint-disable-next-line no-magic-numbers
@@ -18,6 +24,11 @@ export default class TopicConfigurator extends WebComponent {
   private $topicConfigurationItemsContainer!: HTMLDivElement;
   private $nextButton!: HTMLButtonElement;
 
+  /**
+   * Creates a new TopicConfigurator
+   * @param templateConfigurationModelState The state of the template configuration model
+   * @param selectedTemplateItems The state of the selected template items
+   */
   constructor(
     templateConfigurationModelState: State<TemplateConfigurationModel>,
     selectedTemplateItems: State<Array<TemplateItem>>
