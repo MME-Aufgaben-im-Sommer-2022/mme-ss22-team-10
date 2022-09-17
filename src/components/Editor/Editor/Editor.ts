@@ -15,12 +15,10 @@ import GlobalState from "../../../lib/state/GlobalState";
 import { GlobalStates } from "../../../state/GlobalStates";
 import { log } from "../../../lib/utils/Logger";
 
-// HTML element that serves as the main editor component
-
-// Necessary constructor parameters:
-// - editorModelState:
-//    - a state object that holds the editor model
-
+/**
+ * @class Editor
+ * HTML element that serves as the main editor component
+ */
 export default class Editor extends WebComponent {
   private editorModelState!: State<EditorModel>;
 
@@ -97,9 +95,12 @@ export default class Editor extends WebComponent {
       this.$onEditTemplateClicked()
     );
 
+    // the editor model changed
     this.editorModelState.addEventListener("change", (event: AppEvent) => {
       const data: StateChangedData = event.data;
       if (data.currentPath === "") {
+        // the whole editor model was replaced (e.g. when changing the date)
+        // -> remove all editor blocks and append new ones
         this.$editorBlocksContainer
           .querySelectorAll("editor-block")
           .forEach((block) => {
@@ -107,6 +108,8 @@ export default class Editor extends WebComponent {
           });
         this.$appendEditorBlocks();
       } else if (data.property === "inputValue") {
+        // the input value of a block changed
+        // -> update database
         DataManager.updateEditorModel(this.editorModelState.value);
       }
     });
@@ -114,6 +117,7 @@ export default class Editor extends WebComponent {
     EventBus.addEventListener(
       CalendarDay.CALENDAR_DAY_CLICKED_EVENT,
       (event: AppEvent) => {
+        // a calendar day was clicked
         const newDate = event.data;
         this.$toggleLoading(true);
         DataManager.getEditorModel(parseDateFromString(newDate)).then(
