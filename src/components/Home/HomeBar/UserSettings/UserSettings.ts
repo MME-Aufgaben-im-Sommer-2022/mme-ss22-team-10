@@ -68,13 +68,13 @@ export default class UserSettings extends WebComponent implements ModalContent {
   }
 
   private $onCancelClicked = (): void => {
-    this.close();
+    this.close(false);
   };
 
   private $onSaveClicked = (): void => {
     this.validateInput()
       .then(this.saveSettings)
-      .then(this.close)
+      .then(() => this.close(true))
       .catch((error) => {
         log(error);
         this.showErrorToast(error);
@@ -115,8 +115,8 @@ export default class UserSettings extends WebComponent implements ModalContent {
     };
   }
 
-  private close = () => {
-    this.didSave = true;
+  private close = (didSave: boolean) => {
+    this.didSave = didSave;
     this.notifyAll(Modal.DO_CLOSE_EVENT);
   };
 
