@@ -1,4 +1,4 @@
-input, editor-block, calendar-day, .editor-atomic-item {
+#profile-dropdown-menu, input, editor-block, calendar-day, .editor-atomic-item {
     animation: scale-animate-in 0.2s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 

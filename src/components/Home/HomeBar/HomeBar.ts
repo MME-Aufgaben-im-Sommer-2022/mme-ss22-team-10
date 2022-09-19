@@ -17,14 +17,18 @@ import { STATE_CHANGE_EVENT } from "../../../events/StateChanged";
 
 export default class HomeBar extends WebComponent {
   private $greetText!: HTMLSpanElement;
-  private $logoutButton!: HTMLButtonElement;
   private $userSettingsModal!: Modal<UserSettings>;
+  private $profileIcon!: HTMLDivElement;
+  private $profileDropdownMenu!: HTMLDivElement;
+  private $logoutOption!: HTMLSpanElement;
+  private $manageAccOpt!: HTMLSpanElement;
 
   private userSettingsModelState!: State<UserSettingsModel>;
 
   constructor() {
     super(html, css);
   }
+
   get htmlTagName(): string {
     return "home-bar";
   }
@@ -54,7 +58,10 @@ export default class HomeBar extends WebComponent {
   }
   $initHtml(): void {
     this.$greetText = this.select("#greet-text")!;
-    this.$logoutButton = this.select("#logout-button")!;
+    this.$profileIcon = this.select("#profile-icon")!;
+    this.$profileDropdownMenu = this.select("#profile-dropdown-menu")!;
+    this.$logoutOption = this.select("#logout-option")!;
+    this.$manageAccOpt = this.select("#manage-account")!;
     this.$setGreetText();
     this.$userSettingsModal = new ModalFactory<UserSettings>()
       .setContent(new UserSettings())
@@ -62,22 +69,32 @@ export default class HomeBar extends WebComponent {
   }
 
   initListener(): void {
-    this.$logoutButton.addEventListener("click", this.$onLogoutButtonClicked);
-    this.$greetText.addEventListener("click", this.$onGreetTextClicked);
-
+    this.$manageAccOpt.addEventListener("click", this.onManageAccOptionClicked);
+    this.$logoutOption.addEventListener("click", this.$onLogoutOptionClicked);
+    this.$profileIcon.addEventListener("click", this.$onProfileIconClicked);
     this.userSettingsModelState.addEventListener(
       STATE_CHANGE_EVENT,
       this.onUserSettingsChanged
     );
   }
 
-  private $onLogoutButtonClicked = async () => {
+  initListener(): void {
+    this.$manageAccOpt.addEventListener("click", this.onManageAccOptionClicked);
+    this.$logoutOption.addEventListener("click", this.$onLogoutOptionClicked);
+    this.$profileIcon.addEventListener("click", this.$onProfileIconClicked);
+    this.userSettingsModelState.addEventListener(
+      STATE_CHANGE_EVENT,
+      this.onUserSettingsChanged
+    );
+  }
+
+  private $onLogoutOptionClicked = async () => {
     await DataManager.signOut();
     EventBus.notifyAll(LOGOUT_EVENT, {});
     window.location.reload();
   };
 
-  private $onGreetTextClicked = () => {
+  private onManageAccOptionClicked = () => {
     this.$userSettingsModal.toggle();
   };
 
@@ -88,4 +105,8 @@ export default class HomeBar extends WebComponent {
   $setGreetText(): void {
     this.$greetText.innerHTML = `🌱 Hello ${this.userSettingsModelState.value.username}!`;
   }
+
+  private $onProfileIconClicked = () => {
+    return this.$profileDropdownMenu.classList.toggle("show");
+  };
 }

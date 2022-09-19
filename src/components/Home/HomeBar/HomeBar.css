@@ -22,4 +22,45 @@ home-bar {
 #user-settings-container {
   width: 40%;
   height: 90%;
+
+#profile-icon:hover {
+    cursor: pointer;
+}
+
+#profile-dropdown-menu {
+    position: absolute;
+    display: none;
+    margin: 3em 1em 0 0;
+    background-color: var(--background-primary);
+    border-radius: 5px;
+
+}
+
+#profile-dropdown-menu > span {
+    text-decoration: none;
+    display: inherit;
+    padding: 10px;
+}
+
+#manage-account {
+    border-bottom: var(--background-focus) dashed 2px;
+    color: var(--text-accent);
+}
+
+#manage-account:hover {
+    color: var(--text-accent-hover);
+    cursor: pointer;
+}
+
+#logout-option {
+    color: var(--text-faint);
+}
+
+#logout-option:hover {
+    color: var(--error-color);
+    cursor: pointer;
+}
+
+.show {
+    display: flex !important;
 }
