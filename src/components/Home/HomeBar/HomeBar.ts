@@ -8,10 +8,14 @@ import EventBus from "../../../lib/events/EventBus";
 import { LOGOUT_EVENT } from "../../../events/Logout";
 import { GlobalStates } from "../../../state/GlobalStates";
 import GlobalState from "../../../lib/state/GlobalState";
+import UserSettings from "./UserSettings/UserSettings";
+import Modal from "../../atomics/Modal/Modal";
+import ModalFactory from "../../atomics/Modal/ModalFactory";
 
 export default class HomeBar extends WebComponent {
   private $greetText!: HTMLSpanElement;
   private $logoutButton!: HTMLButtonElement;
+  private $userSettingsModal!: Modal<UserSettings>;
 
   private userSettingsModelState!: State<UserSettingsModel>;
 
@@ -48,6 +52,7 @@ export default class HomeBar extends WebComponent {
 
   initListener(): void {
     this.$logoutButton.addEventListener("click", this.$onLogoutButtonClicked);
+    this.$greetText.addEventListener("click", this.$onGreetTextClicked);
   }
 
   private $onLogoutButtonClicked = async () => {
@@ -56,10 +61,17 @@ export default class HomeBar extends WebComponent {
     window.location.reload();
   };
 
+  private $onGreetTextClicked = () => {
+    this.$userSettingsModal.toggle();
+  };
+
   $initHtml(): void {
     this.$greetText = this.select("#greet-text")!;
     this.$logoutButton = this.select("#logout-button")!;
     this.$setGreetText();
+    this.$userSettingsModal = new ModalFactory<UserSettings>()
+      .setContent(new UserSettings())
+      .build();
   }
 
   $setGreetText(): void {

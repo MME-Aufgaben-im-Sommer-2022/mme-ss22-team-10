@@ -18,3 +18,8 @@ home-bar {
   white-space: nowrap;
   text-overflow: ellipsis;
 }
+
+#user-settings-container {
+  width: 40%;
+  height: 90%;
+}

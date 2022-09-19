@@ -1,0 +1,35 @@
+modal-component {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: none !important;
+}
+
+.modal-content-container {
+  width: 60%;
+  height: 90%;
+
+  display: flex;
+  overflow: hidden;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+
+  border: 3px solid var(--border-color);
+  border-radius: 15px;
+}
+
+.modal-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  /*dim bg*/
+  background-color: rgba(0, 0, 0, 0.5);
+}

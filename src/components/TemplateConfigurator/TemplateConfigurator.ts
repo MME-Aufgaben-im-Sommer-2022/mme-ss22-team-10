@@ -11,6 +11,8 @@ import InputTypeConfigurator from "./InputTypeConfigurator/InputTypeConfigurator
 import DataManager from "../../data/DataManager";
 import GlobalState from "../../lib/state/GlobalState";
 import { GlobalStates } from "../../state/GlobalStates";
+import { ModalContent } from "../atomics/Modal/Modal";
+import { log } from "../../lib/utils/Logger";
 
 /**
  * @enum TemplateConfigurationProgress
@@ -41,9 +43,11 @@ enum TemplateConfigurationProgress {
  *      (event: AppEvent) => {...}
  *    );
  */
-export default class TemplateConfigurator extends WebComponent {
-  public static readonly FINISH_TEMPLATE_CONFIGURATION_EVENT =
-    "onFinishTemplateConfiguration";
+export default class TemplateConfigurator
+  extends WebComponent
+  implements ModalContent
+{
+  public static readonly FINISH_TEMPLATE_CONFIGURATION_EVENT = "do-close";
 
   private templateConfigurationModelState!: State<TemplateConfigurationModel>;
   private readonly templateToEditState: State<Template> = new State([]);
@@ -65,6 +69,10 @@ export default class TemplateConfigurator extends WebComponent {
       this.templateToEditState.value = templateToEdit;
     }
   }
+
+  onModalClose = (data: any) => {
+    log("onModalClose");
+  };
 
   get htmlTagName() {
     return "template-configurator";
@@ -174,7 +182,7 @@ export default class TemplateConfigurator extends WebComponent {
       DataManager.updateUserSettingsModel(userSettingsModel).then(() => {
         this.notifyAll(
           TemplateConfigurator.FINISH_TEMPLATE_CONFIGURATION_EVENT,
-          template
+          { didSave: true, template }
         );
       });
     }

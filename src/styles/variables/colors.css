@@ -40,7 +40,7 @@ When the body element has the class "theme-dark", it will use the dark theme.
   --border-color: rgb(150, 150, 150);
 
   --success-color: #656e1f;
-  --error-color: #f6c1bd;
+  --error-color: #761c15;
   --info-color: #165991;
-  --warning-color: #ff9800;
+  --warning-color: #9c4e00;
 }
