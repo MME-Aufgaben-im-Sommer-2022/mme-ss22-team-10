@@ -17,9 +17,11 @@ export default class HomeBar extends WebComponent {
   private $greetText!: HTMLSpanElement;
   private $userSettingsModal!: Modal<UserSettings>;
   private $profileIcon!: HTMLDivElement;
-  private $profileDropdownMenu!: HTMLDivElement;
-  private $logoutOption!: HTMLSpanElement;
+  private $profileDropdown!: HTMLDivElement;
+  private $logoutOpt!: HTMLSpanElement;
   private $manageAccOpt!: HTMLSpanElement;
+  private $username!: HTMLSpanElement;
+  private $email!: HTMLSpanElement;
 
   private userSettingsModelState!: State<UserSettingsModel>;
 
@@ -58,10 +60,13 @@ export default class HomeBar extends WebComponent {
   $initHtml(): void {
     this.$greetText = this.select("#greet-text")!;
     this.$profileIcon = this.select("#profile-icon")!;
-    this.$profileDropdownMenu = this.select("#profile-dropdown-menu")!;
-    this.$logoutOption = this.select("#logout-option")!;
+    this.$profileDropdown = this.select("#profile-dropdown-menu")!;
+    this.$logoutOpt = this.select("#logout-option")!;
     this.$manageAccOpt = this.select("#manage-account")!;
+    this.$username = this.select("#username")!;
+    this.$email = this.select("#email")!;
     this.$setGreetText();
+    this.$setAccInfo();
     this.$userSettingsModal = new ModalFactory<UserSettings>()
       .setContent(new UserSettings())
       .build();
@@ -69,8 +74,9 @@ export default class HomeBar extends WebComponent {
 
   initListener(): void {
     this.$manageAccOpt.addEventListener("click", this.onManageAccOptionClicked);
-    this.$logoutOption.addEventListener("click", this.$onLogoutOptionClicked);
+    this.$logoutOpt.addEventListener("click", this.$onLogoutOptionClicked);
     this.$profileIcon.addEventListener("click", this.$onProfileIconClicked);
+    document.addEventListener("click", this.$onFocusOut);
     this.userSettingsModelState.addEventListener(
       STATE_CHANGE_EVENT,
       this.onUserSettingsChanged
@@ -95,7 +101,23 @@ export default class HomeBar extends WebComponent {
     this.$greetText.innerHTML = `🌱 Hello ${this.userSettingsModelState.value.username}!`;
   }
 
+  private $setAccInfo = async () => {
+    const accountData = await DataManager.getAccountData();
+    this.$email.innerHTML = accountData.email;
+    this.$username.innerHTML = `🌱${accountData.name}`;
+  };
+
   private $onProfileIconClicked = () => {
-    return this.$profileDropdownMenu.classList.toggle("show");
+    this.$profileDropdown.classList.toggle("show");
+  };
+
+  private $onFocusOut = () => {
+    if (
+      event!.target !== this.$profileIcon &&
+      (event!.target === this.$manageAccOpt ||
+        !this.$profileDropdown.contains(event.target))
+    ) {
+      this.$profileDropdown.classList.remove("show");
+    }
   };
 }

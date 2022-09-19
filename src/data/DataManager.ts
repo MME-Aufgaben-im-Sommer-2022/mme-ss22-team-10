@@ -87,6 +87,20 @@ export default class DataManager {
   }
 
   /**
+   * get data of logged in user
+   */
+  static async getAccountData() {
+    const accountData = await ApiClient.getAccountData();
+    return {
+      name: accountData.name,
+      email: accountData.email,
+      emailVerification: accountData.emailVerification,
+      registrationDate: this.convertNumberToDate(accountData.registration),
+      lastUpdate: this.convertNumberToDate(accountData.$updatedAt),
+    };
+  }
+
+  /**
    * removes current sessions
    */
   static async signOut() {
