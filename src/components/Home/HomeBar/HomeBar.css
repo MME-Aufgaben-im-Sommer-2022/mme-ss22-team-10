@@ -1,27 +1,28 @@
 home-bar {
-  height: 3.5em;
+    height: 3.5em;
 }
 
 #home-bar-container {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  height: 100%;
-  justify-content: flex-end;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100%;
+    justify-content: flex-end;
 }
 
 #home-bar-container > #greet-text {
-  align-self: center;
-  text-align: center;
-  font-size: var(--font-size-large);
-  border-bottom: var(--text-accent) solid 2px;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+    align-self: center;
+    text-align: center;
+    font-size: var(--font-size-large);
+    border-bottom: var(--text-accent) solid 2px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 #user-settings-container {
-  width: 40%;
-  height: 90%;
+    width: 40%;
+    height: 90%;
+}
 
 #profile-icon:hover {
     cursor: pointer;
