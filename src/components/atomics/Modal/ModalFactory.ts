@@ -22,7 +22,7 @@ export default class ModalFactory<T extends ModalContent> {
   }
 
   public build(): Modal<T> {
-    const modal = new Modal(this.$content!);
+    const modal: Modal<any> = new Modal(this.$content!);
     if (this.onCloseCallback) {
       modal.addEventListener(Modal.ON_CLOSE_EVENT, this.onCloseCallback);
     }

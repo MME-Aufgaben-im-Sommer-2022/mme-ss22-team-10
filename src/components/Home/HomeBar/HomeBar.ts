@@ -112,10 +112,11 @@ export default class HomeBar extends WebComponent {
   };
 
   private $onFocusOut = () => {
+    const target = event!.target;
     if (
-      event!.target !== this.$profileIcon &&
-      (event!.target === this.$manageAccOpt ||
-        !this.$profileDropdown.contains(event.target))
+      target !== this.$profileIcon &&
+      (target === this.$manageAccOpt ||
+        !this.$profileDropdown.contains(target as HTMLElement))
     ) {
       this.$profileDropdown.classList.remove("show");
     }
