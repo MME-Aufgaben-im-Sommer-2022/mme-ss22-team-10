@@ -5,7 +5,7 @@ import css from "./Modal.css";
 import html from "./Modal.html";
 
 export interface ModalContentActions {
-  onModalClose: (data: any) => void;
+  onModalClose: () => void;
 }
 
 export type ModalContent = WebComponent & ModalContentActions;
@@ -41,7 +41,7 @@ export default class Modal<T extends ModalContent> extends WebComponent {
 
   private initListener(): void {
     this.$bg.addEventListener("click", () => this.close());
-    this.$content.addEventListener(Modal.DO_CLOSE_EVENT, () => this.close());
+    this.$content.addEventListener(Modal.DO_CLOSE_EVENT, this.close);
     this.isOpenState.addEventListener(
       STATE_CHANGE_EVENT,
       this.onOpenStateChanged
@@ -67,16 +67,17 @@ export default class Modal<T extends ModalContent> extends WebComponent {
     this.notifyAll(Modal.ON_OPEN_EVENT);
   }
 
-  public close(): void {
+  public close = () => {
     this.isOpenState.value = false;
-  }
+  };
 
-  private onClose(data?: any): void {
+  private onClose = () => {
     this.hidden = true;
     this.$contentContainer.hidden = true;
     this.$bg.hidden = true;
-    this.notifyAll(Modal.ON_CLOSE_EVENT, data);
-  }
+    this.notifyAll(Modal.ON_CLOSE_EVENT);
+    this.$content.onModalClose();
+  };
 
   onDestroy(): void {
     this.$content.remove();
@@ -89,9 +90,7 @@ export default class Modal<T extends ModalContent> extends WebComponent {
   public setContent = ($newContent: T): void => {
     this.$content.remove();
     this.$content = $newContent;
-    this.$content.addEventListener(Modal.DO_CLOSE_EVENT, (data) =>
-      this.onClose(Object.assign({ wasTriggeredByContent: true }, data))
-    );
+    this.$content.addEventListener(Modal.DO_CLOSE_EVENT, this.close);
     this.append($newContent);
   };
 

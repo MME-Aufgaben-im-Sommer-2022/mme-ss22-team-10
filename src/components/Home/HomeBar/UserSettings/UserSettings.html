@@ -1,8 +1,8 @@
-<span class="title-m">Edit your profile</span>
+<span class="title-m" id="user-settings-title">✏️ Edit your profile</span>
 
 <!--Change username-->
 
-<span for="new-username-input">Change username</span>
+<span for="new-username-input">Username:</span>
 <input
   id="new-username-input"
   type="text"
@@ -11,7 +11,7 @@
 />
 
 <!--Change email-->
-<label for="new-email-input">Email</label>
+<label for="new-email-input">Email:</label>
 <input
   type="email"
   class="form-control"
@@ -20,32 +20,31 @@
 />
 
 <!--Change password-->
-<span for="new-password-input">New password</span>
-<input
-  id="new-password-input"
-  type="password"
-  class="input"
-  placeholder="New password"
-/>
-<span for="confirm-new-password-input">Confirm password</span>
-<input
-  id="confirm-new-password-input"
-  type="password"
-  class="input"
-  placeholder="Confirm password"
-/>
+<div id="new-passwords-input-container" class="container">
+  <div class="container">
+    <span for="new-password-input">New password:</span>
+    <input
+      id="new-password-input"
+      type="password"
+      class="input"
+      placeholder="New password"
+    />
+  </div>
+  <div class="container">
+    <span for="confirm-new-password-input">Confirm password:</span>
+    <input
+      id="confirm-new-password-input"
+      type="password"
+      class="input"
+      placeholder="Confirm password"
+    />
+  </div>
+</div>
 
-<!-- Current password-->
-<span for="current-password-input">Current password</span>
-<input
-  id="current-password-input"
-  type="password"
-  class="input"
-  placeholder="Current password"
-/>
-
+<div class="spacer"></div>
 <!--Buttons-->
 <div id="settings-buttons">
   <button id="cancel-button" class="button">Cancel</button>
+  <div class="spacer"></div>
   <button id="save-button" class="button">Save</button>
 </div>

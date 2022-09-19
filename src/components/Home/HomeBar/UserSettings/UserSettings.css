@@ -1,3 +1,13 @@
+user-settings {
+  overflow-y: auto;
+  padding-left: var(--spacing-large);
+  padding-right: var(--spacing-large);
+}
+
+#user-settings-title {
+  text-align: center;
+}
+
 #settings-buttons {
   display: flex;
   flex-direction: row;
@@ -7,4 +17,13 @@
   height: 100%;
   padding: 0;
   margin: 0;
+}
+
+#new-passwords-input-container {
+  flex-direction: row;
+}
+
+#new-passwords-input-container > div {
+  flex-direction: column;
+  margin-top: var(--spacing-small);
 }

@@ -13,6 +13,8 @@ import GlobalState from "../../lib/state/GlobalState";
 import { GlobalStates } from "../../state/GlobalStates";
 import { ModalContent } from "../atomics/Modal/Modal";
 import { log } from "../../lib/utils/Logger";
+import { ToastFactory } from "../atomics/Toast/ToastFactory";
+import { ToastType, ToastDuration } from "../atomics/Toast/Toast";
 
 /**
  * @enum TemplateConfigurationProgress
@@ -59,9 +61,10 @@ export default class TemplateConfigurator
 
   private $topicConfiguratorContainer!: HTMLDivElement;
   private $topicConfigurator!: TopicConfigurator;
-
   private $inputTypeConfiguratorContainer!: HTMLDivElement;
   private $inputTypeConfigurator!: InputTypeConfigurator;
+
+  private didSave = false;
 
   constructor(templateToEdit?: Template) {
     super(html, css);
@@ -70,8 +73,29 @@ export default class TemplateConfigurator
     }
   }
 
-  onModalClose = (data: any) => {
-    log("onModalClose");
+  onModalClose = () => {
+    if (this.didSave) {
+      this.onSavedAndClose();
+    } else {
+      this.onCancelAndClose();
+    }
+    this.didSave = false;
+  };
+
+  private onSavedAndClose = () => {
+    new ToastFactory()
+      .setMessage("Your template has been saved")
+      .setType(ToastType.Success)
+      .setDuration(ToastDuration.Short)
+      .show();
+  };
+
+  private onCancelAndClose = () => {
+    new ToastFactory()
+      .setMessage("Your template has not been saved")
+      .setType(ToastType.Warning)
+      .setDuration(ToastDuration.Short)
+      .show();
   };
 
   get htmlTagName() {
@@ -180,9 +204,10 @@ export default class TemplateConfigurator
       const userSettingsModel = userSettingsModelState.value;
       userSettingsModel.settings.template = template;
       DataManager.updateUserSettingsModel(userSettingsModel).then(() => {
+        this.didSave = true;
         this.notifyAll(
           TemplateConfigurator.FINISH_TEMPLATE_CONFIGURATION_EVENT,
-          { didSave: true, template }
+          { template }
         );
       });
     }

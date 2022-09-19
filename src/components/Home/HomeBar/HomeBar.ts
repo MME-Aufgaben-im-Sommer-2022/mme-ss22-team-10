@@ -11,6 +11,9 @@ import GlobalState from "../../../lib/state/GlobalState";
 import UserSettings from "./UserSettings/UserSettings";
 import Modal from "../../atomics/Modal/Modal";
 import ModalFactory from "../../atomics/Modal/ModalFactory";
+import { ToastFactory } from "../../atomics/Toast/ToastFactory";
+import { ToastType } from "../../atomics/Toast/Toast";
+import { STATE_CHANGE_EVENT } from "../../../events/StateChanged";
 
 export default class HomeBar extends WebComponent {
   private $greetText!: HTMLSpanElement;
@@ -49,10 +52,23 @@ export default class HomeBar extends WebComponent {
       GlobalStates.userSettingsModel
     )!;
   }
+  $initHtml(): void {
+    this.$greetText = this.select("#greet-text")!;
+    this.$logoutButton = this.select("#logout-button")!;
+    this.$setGreetText();
+    this.$userSettingsModal = new ModalFactory<UserSettings>()
+      .setContent(new UserSettings())
+      .build();
+  }
 
   initListener(): void {
     this.$logoutButton.addEventListener("click", this.$onLogoutButtonClicked);
     this.$greetText.addEventListener("click", this.$onGreetTextClicked);
+
+    this.userSettingsModelState.addEventListener(
+      STATE_CHANGE_EVENT,
+      this.onUserSettingsChanged
+    );
   }
 
   private $onLogoutButtonClicked = async () => {
@@ -65,14 +81,9 @@ export default class HomeBar extends WebComponent {
     this.$userSettingsModal.toggle();
   };
 
-  $initHtml(): void {
-    this.$greetText = this.select("#greet-text")!;
-    this.$logoutButton = this.select("#logout-button")!;
+  private onUserSettingsChanged = () => {
     this.$setGreetText();
-    this.$userSettingsModal = new ModalFactory<UserSettings>()
-      .setContent(new UserSettings())
-      .build();
-  }
+  };
 
   $setGreetText(): void {
     this.$greetText.innerHTML = `🌱 Hello ${this.userSettingsModelState.value.username}!`;
