@@ -86,7 +86,8 @@ export default class UserSettings extends WebComponent implements ModalContent {
   ): Promise<void> {
     log("saving settings:", settings);
 
-    // TODO: save input to server
+    // TODO: save input to server and return the promise
+    // (if it fails an error will be shown, if it succeeds, the modal closes)
     return Promise.resolve();
   }
 
