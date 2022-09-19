@@ -1,29 +1,46 @@
 user-settings {
-  overflow-y: auto;
-  padding-left: var(--spacing-large);
-  padding-right: var(--spacing-large);
+    overflow-y: auto;
+    padding-left: var(--spacing-large);
+    padding-right: var(--spacing-large);
+}
+
+span, label, input {
+    margin-top: var(--spacing-small);
+    margin-bottom: var(--spacing-small);
 }
 
 #user-settings-title {
-  text-align: center;
+    text-align: center;
 }
 
 #settings-buttons {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  padding: 0;
-  margin: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+.outer-container {
+    margin-top: 1em;
+    border-top: dashed var(--background-focus);
 }
 
 #new-passwords-input-container {
-  flex-direction: row;
+    flex-direction: row;
 }
 
 #new-passwords-input-container > div {
-  flex-direction: column;
-  margin-top: var(--spacing-small);
+    flex-direction: column;
+}
+
+#confirm-new-password-input, #new-password-input {
+    width: 100%;
+}
+
+#current-password-input {
+    width: 50%;
 }
