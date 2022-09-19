@@ -14,6 +14,7 @@ import InputValidationResult, {
   validateNewPasswords,
   validateUsername,
 } from "../../../../lib/utils/InputValidation";
+import DataManager from "../../../../data/DataManager";
 
 interface ValidatedUserSettingsInput {
   username: string;
@@ -23,7 +24,6 @@ interface ValidatedUserSettingsInput {
 
 export default class UserSettings extends WebComponent implements ModalContent {
   private userSettingsModelState: State<UserSettingsModel>;
-
   private $newUsernameInput!: HTMLInputElement;
   private $newEmailInput!: HTMLInputElement;
   private $newPasswordInput!: HTMLInputElement;
@@ -39,6 +39,7 @@ export default class UserSettings extends WebComponent implements ModalContent {
       GlobalStates.userSettingsModel
     )!;
   }
+
   onCreate(): void | Promise<void> {
     this.$initHtml();
     this.initListener();
@@ -50,17 +51,21 @@ export default class UserSettings extends WebComponent implements ModalContent {
     );
 
     this.$newUsernameInput = this.select("#new-username-input")!;
-    this.$newUsernameInput.value = this.userSettingsModelState.value.username;
     this.$newEmailInput = this.select("#new-email-input")!;
-    // TODO; SET EMAIL HERE
     this.$newPasswordInput = this.select("#new-password-input")!;
-    this.$newPasswordInput.value = "";
     this.$confirmNewPasswordInput = this.select("#confirm-new-password-input")!;
-    this.$confirmNewPasswordInput.value = "";
-
     this.$cancelButton = this.select("#cancel-button")!;
     this.$saveButton = this.select("#save-button")!;
+    this.$setUserSettingsFormula();
   }
+
+  private $setUserSettingsFormula = async () => {
+    const accountData = await DataManager.getAccountData();
+    this.$newEmailInput.value = accountData.email;
+    this.$newUsernameInput.value = accountData.name;
+    this.$newPasswordInput.value = "";
+    this.$confirmNewPasswordInput.value = "";
+  };
 
   private initListener(): void {
     this.$cancelButton.addEventListener("click", this.$onCancelClicked);
@@ -146,6 +151,7 @@ export default class UserSettings extends WebComponent implements ModalContent {
       .setMessage("🗑️ Your changes have been discarded")
       .show();
   };
+
   private showErrorToast(message: string): void {
     new ToastFactory()
       .setMessage(message)
