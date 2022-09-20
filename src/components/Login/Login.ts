@@ -13,7 +13,8 @@ export default class Login extends WebComponent {
   $usernameInput!: HTMLInputElement;
   $passwordInput!: HTMLInputElement;
   $verifyPasswordInput!: HTMLInputElement;
-  $registerToggle!: HTMLLinkElement;
+  $registerToggle!: HTMLSpanElement;
+  $forgotPassword!: HTMLSpanElement;
   loginState: State<boolean> = new State(true);
   usernameInputHTML!: string;
   verifyPasswordInputHTML!: string;
@@ -42,13 +43,14 @@ export default class Login extends WebComponent {
   private $initHtml(): void {
     this.$loginForm = this.select(".login-form")!;
     this.$loginButton = this.select("button")!;
-    this.$emailInput = this.select('input[name="email"]')!;
-    this.$passwordInput = this.select('input[name="password"]')!;
+    this.$emailInput = this.select(".email")!;
+    this.$passwordInput = this.select(".password")!;
     this.$verifyPasswordInput = this.select(".retype-password")!;
-    this.$usernameInput = this.select('input[name="username"]')!;
+    this.$usernameInput = this.select(".username")!;
+    this.$registerToggle = this.select(".register-toggle")!;
+    this.$forgotPassword = this.select(".forgot-password")!;
     this.usernameInputHTML = this.$usernameInput.outerHTML;
     this.verifyPasswordInputHTML = this.$verifyPasswordInput.outerHTML;
-    this.$registerToggle = this.select("span")!;
     this.changeRegisterMode();
   }
 
@@ -58,6 +60,7 @@ export default class Login extends WebComponent {
    */
   private initListeners(): void {
     this.$registerToggle.addEventListener("click", this.changeRegisterMode);
+    this.$forgotPassword.addEventListener("click", this.onPasswordForgot);
     this.$loginButton.addEventListener("click", this.readInput);
   }
 
@@ -77,7 +80,7 @@ export default class Login extends WebComponent {
       this.$loginForm.children[3]
     );
     this.$verifyPasswordInput = this.select(".retype-password")!;
-    this.$usernameInput = this.select('input[name="username"]')!;
+    this.$usernameInput = this.select(".username")!;
     this.$verifyPasswordInput.style.visibility = "visible";
     this.$usernameInput.style.visibility = "visible";
   }
@@ -92,6 +95,7 @@ export default class Login extends WebComponent {
       this.$registerToggle.innerText = "Sign Up";
       this.$verifyPasswordInput.classList.add("remove");
       this.$usernameInput.classList.add("remove");
+      this.$forgotPassword.style.visibility = "visible";
       setTimeout(() => {
         this.$verifyPasswordInput.remove();
         this.$usernameInput.remove();
@@ -100,9 +104,14 @@ export default class Login extends WebComponent {
     } else {
       this.$loginButton.innerText = "Register";
       this.$registerToggle.innerText = "Sign In";
+      this.$forgotPassword.style.visibility = "hidden";
       this.createRegisterInputEl();
       this.loginState.value = true;
     }
+  };
+
+  onPasswordForgot = () => {
+    console.log("forgot password");
   };
 
   /**
