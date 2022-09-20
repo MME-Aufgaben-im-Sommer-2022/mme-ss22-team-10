@@ -108,6 +108,7 @@ export default class HomeBar extends WebComponent {
   };
 
   private $onProfileIconClicked = () => {
+    this.$setAccInfo();
     this.$profileDropdown.classList.toggle("show");
   };
 

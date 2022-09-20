@@ -87,10 +87,17 @@ export default class DataManager {
   }
 
   /**
+   * removes current sessions
+   */
+  static async signOut() {
+    await ApiClient.disconnectCurrentSession();
+  }
+
+  /**
    * get data of logged in user
    */
   static async getAccountData() {
-    const accountData = await ApiClient.getAccountData();
+    const accountData = await ApiClient.getUserData();
     return {
       name: accountData.name,
       email: accountData.email,
@@ -101,10 +108,33 @@ export default class DataManager {
   }
 
   /**
-   * removes current sessions
+   * update name of currently logged-in user
+   * @param username Max length: 128 chars
+   * @returns {@link https://appwrite.io/docs/models/account Account Object}
    */
-  static async signOut() {
-    await ApiClient.disconnectCurrentSession();
+  static async updateUsername(username: string) {
+    return ApiClient.updateUsername(username);
+  }
+
+  /**
+   * update email currently logged-in user email address.
+   * @param email
+   * @param currentPassword Must be at least 8 chars.
+   * @returns {@link https://appwrite.io/docs/models/account Account Object}
+   */
+  static async updateEmail(email: string, currentPassword: string) {
+    return ApiClient.updateUserEmail(email, currentPassword);
+  }
+
+  /**
+   * update currently logged-in user password. For validation,
+   * user is required to pass in the new password, and the old password.
+   * @param newPassword Must be at least 8 chars.
+   * @param currentPassword Must be at least 8 chars.
+   * @returns {@link https://appwrite.io/docs/models/account Account Object}
+   */
+  static async updatePassword(newPassword: string, currentPassword: string) {
+    return ApiClient.updateUserPassword(newPassword, currentPassword);
   }
 
   /**
@@ -310,7 +340,7 @@ export default class DataManager {
    * @returns {@link UserSettingsModel} object
    */
   static async getUserSettingsModel(): Promise<UserSettingsModel> {
-    const account = await ApiClient.getAccountData(),
+    const account = await ApiClient.getUserData(),
       userSettings = await ApiClient.getUserSettingsDocument(),
       templateData = userSettings.template,
       template = this.jsonParseArray(templateData);
@@ -324,7 +354,7 @@ export default class DataManager {
   static async updateUserSettingsModel(
     userSettingsModel: UserSettingsModel
   ): Promise<void> {
-    await ApiClient.updateAccountName(userSettingsModel.username);
+    await ApiClient.updateUsername(userSettingsModel.username);
     return await ApiClient.updateUserSettingsDocument(
       this.stringifyArray(userSettingsModel.settings.template)
     );

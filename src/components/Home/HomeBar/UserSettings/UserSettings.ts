@@ -28,8 +28,10 @@ export default class UserSettings extends WebComponent implements ModalContent {
   private $newEmailInput!: HTMLInputElement;
   private $newPasswordInput!: HTMLInputElement;
   private $confirmNewPasswordInput!: HTMLInputElement;
+  private $currentPasswordInput!: HTMLInputElement;
   private $cancelButton!: HTMLButtonElement;
   private $saveButton!: HTMLButtonElement;
+  private accountData!: { email: string; username: string };
 
   private didSave = false;
 
@@ -49,20 +51,31 @@ export default class UserSettings extends WebComponent implements ModalContent {
     ["slide-down-in", "floating-container"].forEach((c) =>
       this.classList.add(c)
     );
-
     this.$newUsernameInput = this.select("#new-username-input")!;
     this.$newEmailInput = this.select("#new-email-input")!;
     this.$newPasswordInput = this.select("#new-password-input")!;
     this.$confirmNewPasswordInput = this.select("#confirm-new-password-input")!;
+    this.$currentPasswordInput = this.select("#current-password-input")!;
     this.$cancelButton = this.select("#cancel-button")!;
     this.$saveButton = this.select("#save-button")!;
     this.$setUserSettingsFormula();
   }
 
+  private setAccountData = async () => {
+    this.accountData = {
+      email: "",
+      username: "",
+    };
+    const data = await DataManager.getAccountData();
+    this.accountData.email = data.email;
+    this.accountData.username = data.name;
+  };
+
   private $setUserSettingsFormula = async () => {
-    const accountData = await DataManager.getAccountData();
-    this.$newEmailInput.value = accountData.email;
-    this.$newUsernameInput.value = accountData.name;
+    await this.setAccountData();
+    this.$newEmailInput.value = this.accountData.email;
+    this.$newUsernameInput.value = this.accountData.username;
+    this.$currentPasswordInput.value = "";
     this.$newPasswordInput.value = "";
     this.$confirmNewPasswordInput.value = "";
   };
@@ -76,14 +89,40 @@ export default class UserSettings extends WebComponent implements ModalContent {
     this.close(false);
   };
 
-  private $onSaveClicked = (): void => {
-    this.validateInput()
-      .then(this.saveSettings)
-      .then(() => this.close(true))
-      .catch((error) => {
-        log(error);
-        this.showErrorToast(error);
-      });
+  private $onSaveClicked = async (): Promise<void> => {
+    const newUsername = this.$newUsernameInput.value,
+      newEmail = this.$newEmailInput.value,
+      newPassword = this.$newPasswordInput.value,
+      confirmNewPassword = this.$confirmNewPasswordInput.value,
+      currentPassword = this.$currentPasswordInput.value;
+
+    try {
+      if (newUsername !== this.accountData.username) {
+        await DataManager.updateUsername(newUsername);
+        this.userSettingsModelState.value.username = newUsername;
+        this.accountData.username = newUsername;
+      }
+      if (newEmail !== this.accountData.email) {
+        await DataManager.updateEmail(newEmail, currentPassword);
+        this.accountData.email = newEmail;
+      }
+      if (newPassword !== "") {
+        if (newPassword === confirmNewPassword) {
+          await DataManager.updatePassword(newPassword, currentPassword);
+          await DataManager.signOut();
+        } else {
+          this.showErrorToast("passwords not matching");
+          return;
+        }
+      }
+      this.close(true);
+      this.$setUserSettingsFormula();
+    } catch (error) {
+      if (error instanceof Error) {
+        this.showErrorToast(error.message);
+      }
+      return;
+    }
   };
 
   private async saveSettings(
@@ -130,6 +169,7 @@ export default class UserSettings extends WebComponent implements ModalContent {
   }
 
   onModalClose = () => {
+    this.$setUserSettingsFormula();
     if (this.didSave) {
       this.onSavedUserSettings();
     } else {
