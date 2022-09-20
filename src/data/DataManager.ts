@@ -14,8 +14,8 @@ import { Models } from "appwrite";
 const NUM_OF_DEFAULT_BLOCK_CONTENTS = 3;
 
 /**
+ * @class DataManager
  * Class that contains functions to fetch/save/delete Models.
- * @see {@link https://github.com/MME-Aufgaben-im-Sommer-2022/mme-ss22-team-10/blob/dev/docs/lib/DataManager.md DataManager}
  */
 export default class DataManager {
   static async init() {

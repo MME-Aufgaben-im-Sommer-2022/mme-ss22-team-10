@@ -7,11 +7,6 @@ import ObservableSlim from "observable-slim";
 // ====================== State ====================== //
 // ====================================================== //
 
-// Wrapper class to make any object/primitive observable
-
-// Usage guide & examples:
-// https://github.com/MME-Aufgaben-im-Sommer-2022/mme-ss22-team-10/blob/dev/docs/lib/State.md
-
 /**
  * @class State
  * Wrapper class to make any object/primitive observable
