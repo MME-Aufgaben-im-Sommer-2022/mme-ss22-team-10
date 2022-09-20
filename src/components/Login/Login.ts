@@ -7,18 +7,18 @@ import { ToastFactory } from "../atomics/Toast/ToastFactory";
 import { ToastDuration, ToastType } from "../atomics/Toast/Toast";
 
 export default class Login extends WebComponent {
-  $loginForm!: HTMLDivElement;
-  $loginButton!: HTMLButtonElement;
-  $emailInput!: HTMLInputElement;
-  $usernameInput!: HTMLInputElement;
-  $passwordInput!: HTMLInputElement;
-  $verifyPasswordInput!: HTMLInputElement;
-  $registerToggle!: HTMLSpanElement;
-  $forgotPassword!: HTMLSpanElement;
-  loginState: State<boolean> = new State(true);
-  usernameInputHTML!: string;
-  passwordInputHTML!: string;
-  verifyPasswordInputHTML!: string;
+  private $loginForm!: HTMLDivElement;
+  private $loginButton!: HTMLButtonElement;
+  private $emailInput!: HTMLInputElement;
+  private $usernameInput!: HTMLInputElement;
+  private $passwordInput!: HTMLInputElement;
+  private $verifyPasswordInput!: HTMLInputElement;
+  private $registerToggle!: HTMLSpanElement;
+  private $forgotPassword!: HTMLSpanElement;
+  private loginState: State<boolean> = new State(true);
+  private usernameInputHTML!: string;
+  private passwordInputHTML!: string;
+  private verifyPasswordInputHTML!: string;
 
   constructor() {
     super(html, css);
@@ -91,7 +91,7 @@ export default class Login extends WebComponent {
    * called when registerToggle is clicked
    * toggles registerState and sets HTML elements accordingly
    */
-  changeRegisterMode = () => {
+  private changeRegisterMode = () => {
     if (this.loginState.value) {
       this.$loginButton.innerText = "Login";
       this.$registerToggle.innerText = "Sign Up";
@@ -112,7 +112,7 @@ export default class Login extends WebComponent {
     }
   };
 
-  togglePasswordForgot = () => {
+  private togglePasswordForgot = () => {
     if (this.$forgotPassword.innerText === "go back") {
       this.$forgotPassword.innerText = "Forgot Password?";
       this.loginState.value = true;
@@ -127,7 +127,7 @@ export default class Login extends WebComponent {
     }
   };
 
-  addPasswordInputField = () => {
+  private addPasswordInputField = () => {
     const inputElements = document.createElement("div");
     inputElements.innerHTML = this.passwordInputHTML;
     this.$loginForm.insertBefore(
@@ -141,7 +141,7 @@ export default class Login extends WebComponent {
   /**
    * called when login Button is clicked. will sign in or sign up user depending on registerState
    */
-  readInput = async () => {
+  private readInput = async () => {
     if (!this.loginState.value) {
       this.signIn();
     } else if (this.checkPassword()) {
@@ -152,7 +152,7 @@ export default class Login extends WebComponent {
   /**
    * sign in user. show message when sign in failed
    */
-  signUp = async () => {
+  private signUp = async () => {
     try {
       await DataManager.signUp(
         this.$emailInput.value,
@@ -171,7 +171,7 @@ export default class Login extends WebComponent {
   /**
    * sign up user. show message when sign up failed
    */
-  signIn = async () => {
+  private signIn = async () => {
     let connected = false;
     try {
       connected = await DataManager.signInViaMail(
@@ -192,7 +192,7 @@ export default class Login extends WebComponent {
   /**
    * check if user typed in the right password
    */
-  checkPassword(): boolean {
+  private checkPassword(): boolean {
     if (!(this.$passwordInput.value === this.$verifyPasswordInput.value)) {
       this.sendToast("The passwords do not match");
       return false;
@@ -204,7 +204,7 @@ export default class Login extends WebComponent {
    * show message to notify user when sign in / sign up failed
    * @param message
    */
-  sendToast(message: string): void {
+  private sendToast(message: string): void {
     new ToastFactory()
       .setMessage(`⚠️ ${message}!`)
       .setType(ToastType.Error)
