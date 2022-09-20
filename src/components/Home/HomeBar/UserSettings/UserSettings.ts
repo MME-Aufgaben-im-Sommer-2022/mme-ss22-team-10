@@ -3,24 +3,12 @@ import html from "./UserSettings.html";
 import css from "./UserSettings.css";
 import { ToastFactory } from "../../../atomics/Toast/ToastFactory";
 import { ToastDuration, ToastType } from "../../../atomics/Toast/Toast";
-import { log } from "../../../../lib/utils/Logger";
 import UserSettingsModel from "../../../../data/models/UserSettingsModel";
 import GlobalState from "../../../../lib/state/GlobalState";
 import { GlobalStates } from "../../../../state/GlobalStates";
 import State from "../../../../lib/state/State";
 import Modal, { ModalContent } from "../../../atomics/Modal/Modal";
-import InputValidationResult, {
-  validateEmail,
-  validateNewPasswords,
-  validateUsername,
-} from "../../../../lib/utils/InputValidation";
 import DataManager from "../../../../data/DataManager";
-
-interface ValidatedUserSettingsInput {
-  username: string;
-  email: string;
-  newPassword: string;
-}
 
 export default class UserSettings extends WebComponent implements ModalContent {
   private userSettingsModelState: State<UserSettingsModel>;
@@ -125,40 +113,6 @@ export default class UserSettings extends WebComponent implements ModalContent {
       return;
     }
   };
-
-  private async saveSettings(
-    settings: ValidatedUserSettingsInput
-  ): Promise<void> {
-    log("saving settings:", settings);
-
-    // TODO: save input to server and return the promise
-    // (if it fails an error will be shown, if it succeeds, the modal closes)
-    return Promise.resolve();
-  }
-
-  private async validateInput(): Promise<ValidatedUserSettingsInput> {
-    const newUsername = this.$newUsernameInput.value,
-      newEmail = this.$newEmailInput.value,
-      newPassword = this.$newPasswordInput.value,
-      confirmNewPassword = this.$confirmNewPasswordInput.value,
-      inputValidationResults: Array<InputValidationResult> = [
-        validateUsername(newUsername),
-        validateEmail(newEmail),
-        validateNewPasswords(newPassword, confirmNewPassword),
-      ];
-
-    if (inputValidationResults.some((r) => !r.isValid)) {
-      const firstInvalidResult = inputValidationResults.find(
-        (r) => !r.isValid
-      )!;
-      return Promise.reject(firstInvalidResult.message);
-    }
-    return {
-      username: newUsername,
-      email: newEmail,
-      newPassword: newPassword,
-    };
-  }
 
   private close = (didSave: boolean) => {
     this.didSave = didSave;
