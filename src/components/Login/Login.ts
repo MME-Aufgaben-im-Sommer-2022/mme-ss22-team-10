@@ -17,6 +17,7 @@ export default class Login extends WebComponent {
   $forgotPassword!: HTMLSpanElement;
   loginState: State<boolean> = new State(true);
   usernameInputHTML!: string;
+  passwordInputHTML!: string;
   verifyPasswordInputHTML!: string;
 
   constructor() {
@@ -50,6 +51,7 @@ export default class Login extends WebComponent {
     this.$registerToggle = this.select(".register-toggle")!;
     this.$forgotPassword = this.select(".forgot-password")!;
     this.usernameInputHTML = this.$usernameInput.outerHTML;
+    this.passwordInputHTML = this.$passwordInput.outerHTML;
     this.verifyPasswordInputHTML = this.$verifyPasswordInput.outerHTML;
     this.changeRegisterMode();
   }
@@ -60,7 +62,7 @@ export default class Login extends WebComponent {
    */
   private initListeners(): void {
     this.$registerToggle.addEventListener("click", this.changeRegisterMode);
-    this.$forgotPassword.addEventListener("click", this.onPasswordForgot);
+    this.$forgotPassword.addEventListener("click", this.togglePasswordForgot);
     this.$loginButton.addEventListener("click", this.readInput);
   }
 
@@ -110,8 +112,30 @@ export default class Login extends WebComponent {
     }
   };
 
-  onPasswordForgot = () => {
-    console.log("forgot password");
+  togglePasswordForgot = () => {
+    if (this.$forgotPassword.innerText === "go back") {
+      this.$forgotPassword.innerText = "Forgot Password?";
+      this.loginState.value = true;
+      this.$registerToggle.style.visibility = "visible";
+      this.addPasswordInputField();
+      this.changeRegisterMode();
+    } else {
+      this.$loginButton.innerText = "reset password";
+      this.$passwordInput.remove();
+      this.$registerToggle.style.visibility = "hidden";
+      this.$forgotPassword.innerText = "go back";
+    }
+  };
+
+  addPasswordInputField = () => {
+    const inputElements = document.createElement("div");
+    inputElements.innerHTML = this.passwordInputHTML;
+    this.$loginForm.insertBefore(
+      inputElements.childNodes[0],
+      this.$loginForm.children[1]
+    );
+    this.$passwordInput = this.select(".password")!;
+    this.$passwordInput.style.visibility = "visible";
   };
 
   /**

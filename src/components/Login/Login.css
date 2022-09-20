@@ -20,6 +20,7 @@ div {
 }
 
 .login-form button, input {
+    border-radius: 10px;
     margin-top: var(--spacing-small);
     background-color: var(--background-focus);
 }
