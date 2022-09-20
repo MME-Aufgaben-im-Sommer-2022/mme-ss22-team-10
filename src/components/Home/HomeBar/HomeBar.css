@@ -1,20 +1,94 @@
 home-bar {
-  height: 3.5em;
+    height: 3.5em;
 }
 
 #home-bar-container {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  height: 100%;
-  justify-content: flex-end;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100%;
+    justify-content: flex-end;
 }
 
 #home-bar-container > #greet-text {
-  align-self: center;
-  text-align: center;
-  font-size: var(--font-size-large);
-  border-bottom: var(--text-accent) solid 2px;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+    align-self: center;
+    text-align: center;
+    font-size: var(--font-size-large);
+    border-bottom: var(--text-accent) solid 2px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+#user-settings-container {
+    width: 40%;
+    height: 90%;
+}
+
+#profile-icon:hover {
+    cursor: pointer;
+}
+
+#profile-dropdown-menu {
+    position: absolute;
+    display: none;
+    margin: 3em 1em 0 0;
+    background-color: var(--background-primary);
+    border-radius: 5px;
+}
+
+#profile-dropdown-menu > span {
+    text-decoration: none;
+    display: inherit;
+    padding: 10px;
+}
+
+#profile-dropdown-menu > #account-information {
+    align-items: center;
+    padding: 10px;
+}
+
+#account-information > svg {
+    margin: 10px;
+    padding: 10px;
+    width: 100px;
+    height: 100px;
+    border-radius: 100px;
+    background-color: var(--background-focus);
+}
+
+image {
+    width: 100%;
+    height: 100%;
+}
+
+#username {
+    text-autospace: ideograph-alpha;
+    font-size: large;
+}
+
+#email {
+    font-size: small;
+}
+
+#manage-account {
+    border-bottom: var(--background-focus) dashed 2px;
+    color: var(--text-accent);
+}
+
+#manage-account:hover {
+    color: var(--text-accent-hover);
+    cursor: pointer;
+}
+
+#logout-option {
+    color: var(--text-faint);
+}
+
+#logout-option:hover {
+    color: var(--error-color);
+    cursor: pointer;
+}
+
+.show {
+    display: flex !important;
 }

@@ -11,6 +11,10 @@ import InputTypeConfigurator from "./InputTypeConfigurator/InputTypeConfigurator
 import DataManager from "../../data/DataManager";
 import GlobalState from "../../lib/state/GlobalState";
 import { GlobalStates } from "../../state/GlobalStates";
+import { ModalContent } from "../atomics/Modal/Modal";
+import { log } from "../../lib/utils/Logger";
+import { ToastFactory } from "../atomics/Toast/ToastFactory";
+import { ToastType, ToastDuration } from "../atomics/Toast/Toast";
 
 /**
  * @enum TemplateConfigurationProgress
@@ -41,9 +45,11 @@ enum TemplateConfigurationProgress {
  *      (event: AppEvent) => {...}
  *    );
  */
-export default class TemplateConfigurator extends WebComponent {
-  public static readonly FINISH_TEMPLATE_CONFIGURATION_EVENT =
-    "onFinishTemplateConfiguration";
+export default class TemplateConfigurator
+  extends WebComponent
+  implements ModalContent
+{
+  public static readonly FINISH_TEMPLATE_CONFIGURATION_EVENT = "do-close";
 
   private templateConfigurationModelState!: State<TemplateConfigurationModel>;
   private readonly templateToEditState: State<Template> = new State([]);
@@ -55,9 +61,10 @@ export default class TemplateConfigurator extends WebComponent {
 
   private $topicConfiguratorContainer!: HTMLDivElement;
   private $topicConfigurator!: TopicConfigurator;
-
   private $inputTypeConfiguratorContainer!: HTMLDivElement;
   private $inputTypeConfigurator!: InputTypeConfigurator;
+
+  private didSave = false;
 
   constructor(templateToEdit?: Template) {
     super(html, css);
@@ -65,6 +72,31 @@ export default class TemplateConfigurator extends WebComponent {
       this.templateToEditState.value = templateToEdit;
     }
   }
+
+  onModalClose = () => {
+    if (this.didSave) {
+      this.onSavedAndClose();
+    } else {
+      this.onCancelAndClose();
+    }
+    this.didSave = false;
+  };
+
+  private onSavedAndClose = () => {
+    new ToastFactory()
+      .setMessage("Your template has been saved")
+      .setType(ToastType.Success)
+      .setDuration(ToastDuration.Short)
+      .show();
+  };
+
+  private onCancelAndClose = () => {
+    new ToastFactory()
+      .setMessage("Your template has not been saved")
+      .setType(ToastType.Warning)
+      .setDuration(ToastDuration.Short)
+      .show();
+  };
 
   get htmlTagName() {
     return "template-configurator";
@@ -172,9 +204,10 @@ export default class TemplateConfigurator extends WebComponent {
       const userSettingsModel = userSettingsModelState.value;
       userSettingsModel.settings.template = template;
       DataManager.updateUserSettingsModel(userSettingsModel).then(() => {
+        this.didSave = true;
         this.notifyAll(
           TemplateConfigurator.FINISH_TEMPLATE_CONFIGURATION_EVENT,
-          template
+          { template }
         );
       });
     }

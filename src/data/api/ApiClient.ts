@@ -83,18 +83,44 @@ export default class ApiClient {
    * get currently logged-in user data
    * @returns {@link https://appwrite.io/docs/models/user User Object}
    */
-  static async getAccountData(): Promise<Models.User<Models.Preferences>> {
+  static async getUserData(): Promise<Models.User<Models.Preferences>> {
     return this.accountManager.getAccountData();
   }
 
   /**
-   * Update currently logged-in user account name.
-   * @param username
+   * update name of currently logged-in user
+   * @param username Max length: 128 chars
+   * @returns {@link https://appwrite.io/docs/models/account Account Object}
    */
-  static async updateAccountName(
-    username: string
-  ): Promise<Models.User<Models.Preferences>> {
-    return this.accountManager.account.updateName(username);
+  static async updateUsername(username: string) {
+    return this.accountManager.updateAccountName(username);
+  }
+
+  /**
+   * update currently logged-in user password. For validation,
+   * user is required to pass in the new password, and the old password.
+   * @param newPassword Must be at least 8 chars.
+   * @param currentPassword Must be at least 8 chars.
+   * @returns {@link https://appwrite.io/docs/models/account Account Object}
+   */
+  static async updateUserPassword(
+    newPassword: string,
+    currentPassword: string
+  ) {
+    return this.accountManager.updateAccountPassword(
+      newPassword,
+      currentPassword
+    );
+  }
+
+  /**
+   * update email currently logged-in user email address.
+   * @param email
+   * @param currentPassword Must be at least 8 chars.
+   * @returns {@link https://appwrite.io/docs/models/account Account Object}
+   */
+  static async updateUserEmail(email: string, currentPassword: string) {
+    return this.accountManager.updateAccountEmail(email, currentPassword);
   }
 
   /**

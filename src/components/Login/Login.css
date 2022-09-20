@@ -23,14 +23,6 @@ div {
     margin-top: var(--spacing-small);
 }
 
-input {
-    cursor: text;
-}
-
-input:focus {
-    outline: none;
-}
-
 .login-form .retype-password, input[name="username"] {
     visibility: hidden;
 }
