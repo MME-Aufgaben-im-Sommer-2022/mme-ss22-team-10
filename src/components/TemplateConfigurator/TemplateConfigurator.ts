@@ -12,7 +12,6 @@ import DataManager from "../../data/DataManager";
 import GlobalState from "../../lib/state/GlobalState";
 import { GlobalStates } from "../../state/GlobalStates";
 import { ModalContent } from "../atomics/Modal/Modal";
-import { log } from "../../lib/utils/Logger";
 import { ToastFactory } from "../atomics/Toast/ToastFactory";
 import { ToastType, ToastDuration } from "../atomics/Toast/Toast";
 
@@ -84,7 +83,7 @@ export default class TemplateConfigurator
 
   private onSavedAndClose = () => {
     new ToastFactory()
-      .setMessage("Your template has been saved")
+      .setMessage("💾 Your template has been saved")
       .setType(ToastType.Success)
       .setDuration(ToastDuration.Short)
       .show();
@@ -92,7 +91,7 @@ export default class TemplateConfigurator
 
   private onCancelAndClose = () => {
     new ToastFactory()
-      .setMessage("Your template has not been saved")
+      .setMessage("🗑️ Your template has not been saved")
       .setType(ToastType.Warning)
       .setDuration(ToastDuration.Short)
       .show();
