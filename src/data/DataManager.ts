@@ -138,6 +138,31 @@ export default class DataManager {
   }
 
   /**
+   * send an email with a password reset URL to currently logged-in user
+   * @remarks limited to 10 requests in every 60 minutes per email address
+   * @param email
+   * @returns {@link https://appwrite.io/docs/models/token Token Object}
+   */
+  static async sendPasswordRecoveryLink(email: string) {
+    return ApiClient.createPasswordRecovery(email);
+  }
+
+  /**
+   * endpoint to complete the user account password reset
+   * @remarks limited to 10 requests in every 60 minutes per email address
+   * @param userId
+   * @param secret Valid reset token.
+   * @param password New user password. Must be at least 8 chars.
+   */
+  static async recoverPassword(
+    userId: string,
+    secret: string,
+    password: string
+  ) {
+    return ApiClient.confirmPasswordRecovery(userId, secret, password);
+  }
+
+  /**
    * fetches all note documents from the user and prepares data for a CalendarModel object
    * @returns {@link CalendarModel} object
    */

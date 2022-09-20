@@ -114,6 +114,35 @@ export default class ApiClient {
   }
 
   /**
+   * send an email with a password reset URL to currently logged-in user
+   * @remarks limited to 10 requests in every 60 minutes per email address
+   * @param email
+   * @returns {@link https://appwrite.io/docs/models/token Token Object}
+   */
+  static async createPasswordRecovery(email: string) {
+    return this.accountManager.createPasswordRecovery(email);
+  }
+
+  /**
+   * endpoint to complete the user account password reset
+   * @remarks limited to 10 requests in every 60 minutes per email address
+   * @param userId
+   * @param secret Valid reset token.
+   * @param password New user password. Must be at least 8 chars.
+   */
+  static async confirmPasswordRecovery(
+    userId: string,
+    secret: string,
+    password: string
+  ) {
+    return this.accountManager.confirmPasswordRecovery(
+      userId,
+      secret,
+      password
+    );
+  }
+
+  /**
    * update email currently logged-in user email address.
    * @param email
    * @param currentPassword Must be at least 8 chars.

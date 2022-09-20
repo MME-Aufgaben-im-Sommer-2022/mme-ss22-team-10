@@ -82,6 +82,28 @@ export default class AccountManager {
   }
 
   /**
+   * send an email with a password reset URL to currently logged-in user
+   * @remarks limited to 10 requests in every 60 minutes per email address
+   * @param email
+   * @returns {@link https://appwrite.io/docs/models/token Token Object}
+   */
+  createPasswordRecovery(email: string) {
+    const redirectURL = "https://econotes.software-engineering.education/";
+    return this.account.createRecovery(email, redirectURL);
+  }
+
+  /**
+   * endpoint to complete the user account password reset
+   * @remarks limited to 10 requests in every 60 minutes per email address
+   * @param userId
+   * @param secret Valid reset token.
+   * @param password New user password. Must be at least 8 chars.
+   */
+  confirmPasswordRecovery(userId: string, secret: string, password: string) {
+    return this.account.updateRecovery(userId, secret, password, password);
+  }
+
+  /**
    * update email currently logged-in user email address.
    * @param email
    * @param currentPassword Must be at least 8 chars.
