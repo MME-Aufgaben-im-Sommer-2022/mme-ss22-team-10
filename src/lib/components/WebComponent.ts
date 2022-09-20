@@ -2,11 +2,6 @@
 // ==================== WebComponent ==================== //
 // ====================================================== //
 
-// This class is used to create your custom web components.
-
-// Usage guide & examples:
-// https://github.com/MME-Aufgaben-im-Sommer-2022/mme-ss22-team-10/blob/dev/docs/lib/WebComponent.md
-
 /**
  * This class is used to create your custom web components.
  *

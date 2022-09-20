@@ -8,4 +8,7 @@
 ## Code
 
 - [FAQ](faq.md): frequently asked questions
-- [Lib](lib.md): documentation for the core library (= starter template)
+
+### Architecture overview
+
+![architecture](./res/web-component-architecture.svg)
