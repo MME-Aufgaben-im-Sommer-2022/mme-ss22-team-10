@@ -10,7 +10,6 @@ import CalendarDay from "../../Calendar/CalendarDay/CalendarDay";
 import { AppEvent } from "../../../lib/events/AppEvent";
 import DataManager from "../../../data/DataManager";
 import { StateChangedData } from "../../../events/StateChanged";
-import { parseDateFromString } from "../../../lib/utils";
 import GlobalState from "../../../lib/state/GlobalState";
 import { GlobalStates } from "../../../state/GlobalStates";
 import { log } from "../../../lib/utils/Logger";
@@ -120,11 +119,9 @@ export default class Editor extends WebComponent {
         // a calendar day was clicked
         const newDate = event.data;
         this.$toggleLoading(true);
-        DataManager.getEditorModel(parseDateFromString(newDate)).then(
-          (editorModel) => {
-            this.editorModelState.value = editorModel;
-          }
-        );
+        DataManager.getEditorModel(newDate).then((editorModel) => {
+          this.editorModelState.value = editorModel;
+        });
       }
     );
   }

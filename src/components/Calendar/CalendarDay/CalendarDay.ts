@@ -9,12 +9,14 @@ export default class CalendarDay extends WebComponent {
   public static CALENDAR_DAY_CLICKED_EVENT = "calendarDayClicked";
 
   private entryDate;
+  private currentDate;
   private isSelected = new State(false);
   $entryTitle!: HTMLHeadElement;
 
-  constructor(entryDate: string) {
+  constructor(entryDate: string, currentDate: Date) {
     super(html, css);
     this.entryDate = entryDate;
+    this.currentDate = currentDate;
   }
 
   get htmlTagName(): string {
@@ -41,7 +43,10 @@ export default class CalendarDay extends WebComponent {
    * sets isSelected to true and informs the listeners.
    */
   onDayItemClicked = () => {
-    EventBus.notifyAll(CalendarDay.CALENDAR_DAY_CLICKED_EVENT, this.entryDate);
+    EventBus.notifyAll(
+      CalendarDay.CALENDAR_DAY_CLICKED_EVENT,
+      this.currentDate
+    );
     this.isSelected.value = true;
     EventBus.notifyAll("setColor", this.entryDate);
   };

@@ -44,12 +44,10 @@ main-calendar {
 }
 
 .calendar-navigation .previous {
-  background-color: var(--text-faint);
   color: var(--text-header);
 }
 
 .calendar-navigation .next {
-  background-color: var(--text-faint);
   color: var(--text-header);
 }
 
