@@ -110,6 +110,7 @@ export default class UserSettings extends WebComponent implements ModalContent {
         if (newPassword === confirmNewPassword) {
           await DataManager.updatePassword(newPassword, currentPassword);
           await DataManager.signOut();
+          window.location.reload();
         } else {
           this.showErrorToast("passwords not matching");
           return;
