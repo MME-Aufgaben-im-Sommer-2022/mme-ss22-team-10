@@ -11,7 +11,7 @@ import TemplateConfigurationModel, {
 import templateConfigurationModel from "./models/templateConfigurationModel.json";
 import { Models } from "appwrite";
 
-const NUMBER_OF_BLOCK_CONTENTS_WITHOUT_GPT3 = 3;
+const NUM_OF_DEFAULT_BLOCK_CONTENTS = 3;
 
 /**
  * Class that contains functions to fetch/save/delete Models.
@@ -137,15 +137,12 @@ export default class DataManager {
         );
       if (
         this.dayIsToday(day) &&
-        blockContents.length === NUMBER_OF_BLOCK_CONTENTS_WITHOUT_GPT3
+        blockContents.length === NUM_OF_DEFAULT_BLOCK_CONTENTS
       ) {
-        const newBlockContent = await this.getGPT3BlockContent();
-        if (newBlockContent !== undefined) {
-          const apiBlockContent = await ApiClient.createNewBlockContentDocument(
-            noteDocument.$id,
-            newBlockContent
-          );
-          newBlockContent.documentId = apiBlockContent.$id;
+        const newBlockContent = await this.getGPT3BlockContentDocument(
+          noteDocument.$id
+        );
+        if (newBlockContent !== null) {
           blockContents.push(newBlockContent);
         }
       }
@@ -219,9 +216,26 @@ export default class DataManager {
   }
 
   /**
+   * create a new GPT3BlockContent to an existing note
+   * @param noteId
+   * @private
+   * @returns {@link BlockContent} object
+   */
+  private static async getGPT3BlockContentDocument(noteId: string) {
+    const blockContent = await this.getGPT3BlockContent();
+    if (blockContent !== null) {
+      const blockContentDocument =
+        await ApiClient.createNewBlockContentDocument(noteId, blockContent);
+      blockContent.documentId = blockContentDocument.$id;
+    }
+    return blockContent;
+  }
+
+  /**
    * get a gpt3 generated title and create a new BlockContent
    * @private
    * @returns {@link BlockContent} object
+   * @remarks no database document created, documentId is empty
    */
   private static async getGPT3BlockContent() {
     const blocks = await this.getGPT3BlockContentParameter();
@@ -234,7 +248,7 @@ export default class DataManager {
         documentId: "",
       };
     }
-    return undefined;
+    return null;
   }
 
   /**
@@ -273,7 +287,7 @@ export default class DataManager {
         .sort((note1, note2) =>
           new Date(note1.day) < new Date(note2.day) ? 1 : -1
         )
-        .slice(0, NUMBER_OF_BLOCK_CONTENTS_WITHOUT_GPT3);
+        .slice(0, NUM_OF_DEFAULT_BLOCK_CONTENTS);
     return sortedNotes;
   }
 
@@ -322,7 +336,9 @@ export default class DataManager {
     return configModel;
   }
 
-  // Dark mode
+  /**
+   * get dark mode preferences and adjust the UI style
+   */
   static getDarkMode(): boolean {
     const savedPreference = localStorage.getItem("darkMode");
     if (savedPreference === null) {
@@ -336,11 +352,14 @@ export default class DataManager {
     return savedPreference === "true";
   }
 
+  /**
+   * sets darkMode in localStorage
+   * @param darkMode
+   */
   static setDarkMode(darkMode: boolean): void {
     localStorage.setItem("darkMode", darkMode.toString());
   }
 
-  // HELPER FUNCTIONS
   /**
    * @param day
    * @private
