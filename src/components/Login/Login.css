@@ -20,29 +20,54 @@ div {
 }
 
 .login-form button, input {
+    border-radius: 10px;
     margin-top: var(--spacing-small);
+    background-color: var(--background-focus);
 }
 
-.login-form .retype-password, input[name="username"] {
+button:hover {
+    background-color: var(--text-accent);
+}
+
+.login-form .retype-password, .username {
     visibility: hidden;
 }
 
 .span-elements {
+    flex-direction: row;
     margin-bottom: auto;
+    cursor: pointer;
 }
 
-.span-elements > span {
-    text-align: right;
-    font-size: 90%;
-    padding-right: 5%;
+.span-elements > div {
+    font-size: 80%;
     margin-top: var(--spacing-small);
+    flex-grow: 1;
 }
 
-.span-elements > .register-toggle {
+.left-block {
+    text-align: left;
+    flex-direction: column;
+}
+
+.right-block {
+    flex-direction: column;
+}
+
+.forgot-password {
     color: var(--text-accent);
     cursor: pointer;
 }
 
-.span-elements > .register-toggle:hover {
+.forgot-password:hover {
     color: var(--text-accent-hover);
+}
+
+.register-toggle {
+    text-align: right;
+    border-radius: 10px;
+}
+
+.register-toggle:hover {
+    color: var(--text-accent);
 }

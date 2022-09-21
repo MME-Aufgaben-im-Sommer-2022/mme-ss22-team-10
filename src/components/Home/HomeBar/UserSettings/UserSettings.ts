@@ -10,6 +10,13 @@ import State from "../../../../lib/state/State";
 import Modal, { ModalContent } from "../../../atomics/Modal/Modal";
 import DataManager from "../../../../data/DataManager";
 
+/**
+ * @class UserSettings
+ * Component to configure the user settings, such as
+ * - password
+ * - email
+ * - username
+ */
 export default class UserSettings extends WebComponent implements ModalContent {
   private userSettingsModelState: State<UserSettingsModel>;
   private $newUsernameInput!: HTMLInputElement;

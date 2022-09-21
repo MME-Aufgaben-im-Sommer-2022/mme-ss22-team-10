@@ -8,11 +8,15 @@ import EventBus from "../../../lib/events/EventBus";
 import { LOGOUT_EVENT } from "../../../events/Logout";
 import { GlobalStates } from "../../../state/GlobalStates";
 import GlobalState from "../../../lib/state/GlobalState";
-import UserSettings from "./UserSettings/UserSettings";
 import Modal from "../../atomics/Modal/Modal";
 import ModalFactory from "../../atomics/Modal/ModalFactory";
 import { STATE_CHANGE_EVENT } from "../../../events/StateChanged";
+import UserSettings from "./UserSettings/UserSettings";
 
+/**
+ * @class HomeBar
+ * The top (nav) bar of the home page
+ */
 export default class HomeBar extends WebComponent {
   private $greetText!: HTMLSpanElement;
   private $userSettingsModal!: Modal<UserSettings>;

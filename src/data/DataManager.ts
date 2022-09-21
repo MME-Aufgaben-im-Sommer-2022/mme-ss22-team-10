@@ -14,8 +14,8 @@ import { Models } from "appwrite";
 const NUM_OF_DEFAULT_BLOCK_CONTENTS = 3;
 
 /**
+ * @class DataManager
  * Class that contains functions to fetch/save/delete Models.
- * @see {@link https://github.com/MME-Aufgaben-im-Sommer-2022/mme-ss22-team-10/blob/dev/docs/lib/DataManager.md DataManager}
  */
 export default class DataManager {
   static async init() {
@@ -135,6 +135,31 @@ export default class DataManager {
    */
   static async updatePassword(newPassword: string, currentPassword: string) {
     return ApiClient.updateUserPassword(newPassword, currentPassword);
+  }
+
+  /**
+   * send an email with a password reset URL to currently logged-in user
+   * @remarks limited to 10 requests in every 60 minutes per email address
+   * @param email
+   * @returns {@link https://appwrite.io/docs/models/token Token Object}
+   */
+  static async sendPasswordRecoveryLink(email: string) {
+    return ApiClient.createPasswordRecovery(email);
+  }
+
+  /**
+   * endpoint to complete the user account password reset
+   * @remarks limited to 10 requests in every 60 minutes per email address
+   * @param userId
+   * @param secret Valid reset token.
+   * @param password New user password. Must be at least 8 chars.
+   */
+  static async recoverPassword(
+    userId: string,
+    secret: string,
+    password: string
+  ) {
+    return ApiClient.confirmPasswordRecovery(userId, secret, password);
   }
 
   /**
@@ -304,16 +329,17 @@ export default class DataManager {
   private static async getGPT3BlockContentParameter(): Promise<
     Array<Models.Document>
   > {
-    const notes = await this.getLastNotes(),
-      blockContents: Models.Document[] = [];
-    notes.forEach(async (note) => {
+    const blockContents: Models.Document[] = [],
+      notes = await this.getLastNotes();
+
+    for (let i = 0; i < notes.length; i++) {
       const blockContentsList = await ApiClient.getBlockContentDocumentList(
-        note.$id
+        notes[i].$id
       );
       blockContentsList.documents.forEach((blockContent) =>
         blockContents.push(blockContent)
       );
-    });
+    }
     return blockContents;
   }
 

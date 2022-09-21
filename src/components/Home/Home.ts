@@ -11,9 +11,12 @@ import GlobalState from "../../lib/state/GlobalState";
 import { GlobalStates } from "../../state/GlobalStates";
 import State from "../../lib/state/State";
 
+/**
+ * @class Home
+ * The home (main) page of the app.
+ */
 export default class Home extends WebComponent {
   private $templateConfiguratorModal!: Modal<TemplateConfigurator>;
-
   private userSettings?: State<UserSettingsModel>;
 
   constructor() {

@@ -88,6 +88,10 @@ export default class LiveTextInput extends WebComponent {
     );
   }
 
+  /**
+   * Called, when all other inputs should be closed
+   * @param data The data of the event, containing the id of the WebComponent that should not be closed
+   */
   private $onCloseAllEditorInputFields = (data: CloseAllEditorInputsData) => {
     if (data.triggerWebComponentId !== this.getWebComponentId()) {
       if (this.$textPreview.hidden) {

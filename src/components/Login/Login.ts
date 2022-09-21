@@ -7,16 +7,18 @@ import { ToastFactory } from "../atomics/Toast/ToastFactory";
 import { ToastDuration, ToastType } from "../atomics/Toast/Toast";
 
 export default class Login extends WebComponent {
-  $loginForm!: HTMLDivElement;
-  $loginButton!: HTMLButtonElement;
-  $emailInput!: HTMLInputElement;
-  $usernameInput!: HTMLInputElement;
-  $passwordInput!: HTMLInputElement;
-  $verifyPasswordInput!: HTMLInputElement;
-  $registerToggle!: HTMLLinkElement;
-  loginState: State<boolean> = new State(true);
-  usernameInputHTML!: string;
-  verifyPasswordInputHTML!: string;
+  private $loginForm!: HTMLDivElement;
+  private $loginButton!: HTMLButtonElement;
+  private $emailInput!: HTMLInputElement;
+  private $usernameInput!: HTMLInputElement;
+  private $passwordInput!: HTMLInputElement;
+  private $verifyPasswordInput!: HTMLInputElement;
+  private $registerToggle!: HTMLSpanElement;
+  private $forgotPassword!: HTMLSpanElement;
+  private loginState: State<boolean> = new State(true);
+  private usernameInputHTML!: string;
+  private passwordInputHTML!: string;
+  private verifyPasswordInputHTML!: string;
 
   constructor() {
     super(html, css);
@@ -42,13 +44,15 @@ export default class Login extends WebComponent {
   private $initHtml(): void {
     this.$loginForm = this.select(".login-form")!;
     this.$loginButton = this.select("button")!;
-    this.$emailInput = this.select('input[name="email"]')!;
-    this.$passwordInput = this.select('input[name="password"]')!;
+    this.$emailInput = this.select(".email")!;
+    this.$passwordInput = this.select(".password")!;
     this.$verifyPasswordInput = this.select(".retype-password")!;
-    this.$usernameInput = this.select('input[name="username"]')!;
+    this.$usernameInput = this.select(".username")!;
+    this.$registerToggle = this.select(".register-toggle")!;
+    this.$forgotPassword = this.select(".forgot-password")!;
     this.usernameInputHTML = this.$usernameInput.outerHTML;
+    this.passwordInputHTML = this.$passwordInput.outerHTML;
     this.verifyPasswordInputHTML = this.$verifyPasswordInput.outerHTML;
-    this.$registerToggle = this.select("span")!;
     this.changeRegisterMode();
   }
 
@@ -58,6 +62,7 @@ export default class Login extends WebComponent {
    */
   private initListeners(): void {
     this.$registerToggle.addEventListener("click", this.changeRegisterMode);
+    this.$forgotPassword.addEventListener("click", this.togglePasswordForgot);
     this.$loginButton.addEventListener("click", this.readInput);
   }
 
@@ -77,7 +82,7 @@ export default class Login extends WebComponent {
       this.$loginForm.children[3]
     );
     this.$verifyPasswordInput = this.select(".retype-password")!;
-    this.$usernameInput = this.select('input[name="username"]')!;
+    this.$usernameInput = this.select(".username")!;
     this.$verifyPasswordInput.style.visibility = "visible";
     this.$usernameInput.style.visibility = "visible";
   }
@@ -86,12 +91,23 @@ export default class Login extends WebComponent {
    * called when registerToggle is clicked
    * toggles registerState and sets HTML elements accordingly
    */
-  changeRegisterMode = () => {
-    if (this.loginState.value) {
+  private changeRegisterMode = () => {
+    const urlParams = new URLSearchParams(window.location.search),
+      userId = urlParams.get("userId");
+    if (userId !== null) {
+      this.$loginButton.innerText = "set new password";
+      this.$registerToggle.classList.add("remove");
+      this.$usernameInput.remove();
+      this.$emailInput.remove();
+      this.$registerToggle.style.visibility = "hidden";
+      this.$forgotPassword.style.visibility = "hidden";
+      this.$verifyPasswordInput.style.visibility = "visible";
+    } else if (this.loginState.value) {
       this.$loginButton.innerText = "Login";
       this.$registerToggle.innerText = "Sign Up";
       this.$verifyPasswordInput.classList.add("remove");
       this.$usernameInput.classList.add("remove");
+      this.$forgotPassword.style.visibility = "visible";
       setTimeout(() => {
         this.$verifyPasswordInput.remove();
         this.$usernameInput.remove();
@@ -100,16 +116,56 @@ export default class Login extends WebComponent {
     } else {
       this.$loginButton.innerText = "Register";
       this.$registerToggle.innerText = "Sign In";
+      this.$forgotPassword.style.visibility = "hidden";
       this.createRegisterInputEl();
       this.loginState.value = true;
     }
   };
 
   /**
+   * function for toggling the view between the views for the user's password
+   * recovery
+   */
+  private togglePasswordForgot = () => {
+    if (this.$forgotPassword.innerText === "go back") {
+      this.$forgotPassword.innerText = "Forgot Password?";
+      this.loginState.value = true;
+      this.$registerToggle.style.visibility = "visible";
+      this.addPasswordInputField();
+      this.changeRegisterMode();
+    } else {
+      this.$loginButton.innerText = "reset password";
+      this.$passwordInput.remove();
+      this.$registerToggle.style.visibility = "hidden";
+      this.$forgotPassword.innerText = "go back";
+    }
+  };
+
+  /**
+   * adds html input element for the password
+   */
+  private addPasswordInputField = () => {
+    const inputElements = document.createElement("div");
+    inputElements.innerHTML = this.passwordInputHTML;
+    this.$loginForm.insertBefore(
+      inputElements.childNodes[0],
+      this.$loginForm.children[1]
+    );
+    this.$passwordInput = this.select(".password")!;
+    this.$passwordInput.style.visibility = "visible";
+  };
+
+  /**
    * called when login Button is clicked. will sign in or sign up user depending on registerState
    */
-  readInput = async () => {
-    if (!this.loginState.value) {
+  private readInput = async () => {
+    if (this.$loginButton.innerText === "set new password") {
+      if (this.checkPassword()) {
+        this.recoverPassword();
+      }
+    } else if (this.$loginButton.innerText === "reset password") {
+      this.sendPasswordRecoveryLink();
+    } else if (!this.loginState.value) {
       this.signIn();
     } else if (this.checkPassword()) {
       this.signUp();
@@ -117,9 +173,47 @@ export default class Login extends WebComponent {
   };
 
   /**
+   * uses the parameters from the recovery link to reset a user's password
+   */
+  private recoverPassword = async () => {
+    const urlParams = new URLSearchParams(window.location.search),
+      userId = urlParams.get("userId")!,
+      secret = urlParams.get("secret")!;
+    try {
+      await DataManager.recoverPassword(
+        userId,
+        secret,
+        this.$passwordInput.value
+      );
+    } catch (error) {
+      if (error instanceof Error) {
+        this.sendToast(error.message, ToastType.Error);
+        return;
+      }
+      window.location.href = window.location.origin;
+    }
+  };
+
+  /**
+   * create a password recovery link and send it to the user via mail
+   */
+  private sendPasswordRecoveryLink = async () => {
+    try {
+      await DataManager.sendPasswordRecoveryLink(this.$emailInput.value);
+      this.sendToast("An Email has been send!", ToastType.Info);
+      return;
+    } catch (error) {
+      if (error instanceof Error) {
+        this.sendToast(error.message, ToastType.Error);
+      }
+      return;
+    }
+  };
+
+  /**
    * sign in user. show message when sign in failed
    */
-  signUp = async () => {
+  private signUp = async () => {
     try {
       await DataManager.signUp(
         this.$emailInput.value,
@@ -128,7 +222,7 @@ export default class Login extends WebComponent {
       );
     } catch (error) {
       if (error instanceof Error) {
-        this.sendToast(error.message);
+        this.sendToast(error.message, ToastType.Error);
       }
       return;
     }
@@ -138,7 +232,7 @@ export default class Login extends WebComponent {
   /**
    * sign up user. show message when sign up failed
    */
-  signIn = async () => {
+  private signIn = async () => {
     let connected = false;
     try {
       connected = await DataManager.signInViaMail(
@@ -147,7 +241,7 @@ export default class Login extends WebComponent {
       );
     } catch (error) {
       if (error instanceof Error) {
-        this.sendToast(error.message);
+        this.sendToast(error.message, ToastType.Error);
       }
       return;
     }
@@ -159,9 +253,9 @@ export default class Login extends WebComponent {
   /**
    * check if user typed in the right password
    */
-  checkPassword(): boolean {
+  private checkPassword(): boolean {
     if (!(this.$passwordInput.value === this.$verifyPasswordInput.value)) {
-      this.sendToast("The passwords do not match");
+      this.sendToast("The passwords do not match", ToastType.Error);
       return false;
     }
     return true;
@@ -171,10 +265,10 @@ export default class Login extends WebComponent {
    * show message to notify user when sign in / sign up failed
    * @param message
    */
-  sendToast(message: string): void {
+  private sendToast(message: string, toastType: ToastType): void {
     new ToastFactory()
-      .setMessage(`⚠️ ${message}!`)
-      .setType(ToastType.Error)
+      .setMessage(message)
+      .setType(toastType)
       .setDuration(ToastDuration.Medium)
       .show();
   }
