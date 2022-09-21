@@ -1,5 +1,11 @@
-.web-component, .container {
-    display: flex;
-    flex-grow: 1;
-    flex-direction: column;
+/*
+Styles for the base web component class
+*/
+
+.web-component,
+.container {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  background: var(--background-primary);
 }

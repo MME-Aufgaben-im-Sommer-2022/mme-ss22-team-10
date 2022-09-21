@@ -13,3 +13,18 @@ home-component {
     height: 100%;
     overflow: hidden;
 }
+
+home-component #template-editor-container {
+    width: 40%;
+    height: 90%;
+}
+
+#template-configurator-background-dimmer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    /*dim bg*/
+    background-color: rgba(0, 0, 0, 0.5);
+}

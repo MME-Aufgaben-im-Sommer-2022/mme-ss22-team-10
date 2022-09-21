@@ -11,10 +11,4 @@
 @import url(lib/web-component.css);
 @import url(lib/interactions.css);
 @import url(lib/animations.css);
-
-html, body, #app {
-    height: 100%;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-}
+@import url(lib/icons/icons.css);

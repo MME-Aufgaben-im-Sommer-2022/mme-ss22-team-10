@@ -9,15 +9,10 @@ import {
 import State from "../../../lib/state/State";
 import css from "./LiveTextInput.css";
 
-// HTML element that serves as the main text input field
-
-// Necessary constructor parameters:
-// - isSingleLine:
-//    - true: for list items etc.
-//    - false: for free text
-// - textValueState:
-//    - a state of type string, changes when user finishes editing
-
+/**
+ * @class LiveTextInput
+ * A text element that can be edited
+ */
 export default class LiveTextInput extends WebComponent {
   private $textPreview!: HTMLSpanElement;
   private $textInput!: HTMLInputElement;
@@ -25,6 +20,11 @@ export default class LiveTextInput extends WebComponent {
   private readonly isSingleLine: boolean;
   private readonly textValueState: State<string>;
 
+  /**
+   * Creates a new LiveTextInput
+   * @param textValueState The state of the text value
+   * @param isSingleLine Whether the text input should be single line or not
+   */
   constructor(textValueState: State<string>, isSingleLine: boolean) {
     super(html, css);
     this.textValueState = textValueState;
@@ -88,6 +88,10 @@ export default class LiveTextInput extends WebComponent {
     );
   }
 
+  /**
+   * Called, when all other inputs should be closed
+   * @param data The data of the event, containing the id of the WebComponent that should not be closed
+   */
   private $onCloseAllEditorInputFields = (data: CloseAllEditorInputsData) => {
     if (data.triggerWebComponentId !== this.getWebComponentId()) {
       if (this.$textPreview.hidden) {

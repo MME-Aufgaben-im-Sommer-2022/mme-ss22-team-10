@@ -4,6 +4,13 @@ import css from "./TopicConfigurator.css";
 import TopicConfiguratorItem from "./TopicConfiguratorItem/TopicConfiguratorItem";
 import State from "../../../lib/state/State";
 import TemplateConfigurationModel from "../../../data/models/TemplateConfigurationModel";
+import { TemplateItem } from "../../../data/models/UserSettingsModel";
+
+/**
+ * @class TopicConfigurator
+ * Component to configure the topics of the template
+ */
+
 export default class TopicConfigurator extends WebComponent {
   static readonly NEXT_BUTTON_CLICKED_EVENT = "onFinishTopicConfiguration";
   // eslint-disable-next-line no-magic-numbers
@@ -12,18 +19,23 @@ export default class TopicConfigurator extends WebComponent {
   static readonly MIN_TOPICS = 3;
 
   private readonly templateConfigurationModelState: State<TemplateConfigurationModel>;
-  private readonly selectedTitlesState: State<Array<string>>;
+  private readonly selectedTemplateItems: State<Array<TemplateItem>>;
 
   private $topicConfigurationItemsContainer!: HTMLDivElement;
   private $nextButton!: HTMLButtonElement;
 
+  /**
+   * Creates a new TopicConfigurator
+   * @param templateConfigurationModelState The state of the template configuration model
+   * @param selectedTemplateItems The state of the selected template items
+   */
   constructor(
     templateConfigurationModelState: State<TemplateConfigurationModel>,
-    selectedTitlesState: State<Array<string>>
+    selectedTemplateItems: State<Array<TemplateItem>>
   ) {
     super(html, css);
     this.templateConfigurationModelState = templateConfigurationModelState;
-    this.selectedTitlesState = selectedTitlesState;
+    this.selectedTemplateItems = selectedTemplateItems;
   }
 
   get htmlTagName(): string {
@@ -46,18 +58,20 @@ export default class TopicConfigurator extends WebComponent {
 
   private initListener(): void {
     this.$nextButton.addEventListener("click", this.$onNextButtonClicked);
-    this.selectedTitlesState.addEventListener(
+    this.selectedTemplateItems.addEventListener(
       "change",
       this.onSelectedTitlesChanged
     );
   }
 
   private onSelectedTitlesChanged = () => {
-    if (this.selectedTitlesState.value.length > TopicConfigurator.MAX_TOPICS) {
+    if (
+      this.selectedTemplateItems.value.length > TopicConfigurator.MAX_TOPICS
+    ) {
       this.$nextButton.disabled = true;
       this.$nextButton.textContent = `Select at max ${TopicConfigurator.MAX_TOPICS} topics`;
     } else if (
-      this.selectedTitlesState.value.length < TopicConfigurator.MIN_TOPICS
+      this.selectedTemplateItems.value.length < TopicConfigurator.MIN_TOPICS
     ) {
       this.$nextButton.disabled = true;
       this.$nextButton.textContent = `Select at least ${TopicConfigurator.MIN_TOPICS} topics`;
@@ -75,7 +89,7 @@ export default class TopicConfigurator extends WebComponent {
     this.templateConfigurationModelState.value.topics.forEach((topic) => {
       const topicConfiguration = new TopicConfiguratorItem(
         topic,
-        this.selectedTitlesState
+        this.selectedTemplateItems
       );
       this.$topicConfigurationItemsContainer.appendChild(topicConfiguration);
     });

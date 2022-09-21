@@ -5,9 +5,10 @@ import CalendarDay from "../CalendarDay/CalendarDay";
 
 export default class CalendarMonth extends WebComponent {
   entriesForCurrentMonth: Array<string>;
-  currentMonthNumber: number;
+  currentWeekDay!: string;
   currentMonthNumberText!: string;
   currentYear!: string;
+  currentDate!: Date;
   $entryContainer!: HTMLHeadElement;
 
   constructor(
@@ -17,7 +18,7 @@ export default class CalendarMonth extends WebComponent {
   ) {
     super(html, css);
     this.entriesForCurrentMonth = entriesForCurrentMonth;
-    this.currentMonthNumber = currentMonthNumber;
+    this.currentMonthNumberText = currentMonthNumber.toString();
     this.currentYear = currentYear;
   }
 
@@ -27,7 +28,6 @@ export default class CalendarMonth extends WebComponent {
 
   onCreate(): Promise<void> | void {
     this.$initHtml();
-    this.formatMonth();
     this.appendCalenderEntry();
   }
 
@@ -35,35 +35,40 @@ export default class CalendarMonth extends WebComponent {
     this.$entryContainer = this.select(".entry-container")!;
   }
 
-  private formatMonth(): void {
-    if (this.currentMonthNumber < 10) {
-      this.currentMonthNumberText = "0" + this.currentMonthNumber;
-    } else {
-      this.currentMonthNumberText = this.currentMonthNumber.toString();
-    }
+  /**
+   * gets the currentWeekDay to show in the CalendarDayItem.
+   * @param currentDay
+   */
+  private getWeekDay(currentDay: string) {
+    this.currentDate = new Date(
+      parseInt(this.currentYear),
+      parseInt(this.currentMonthNumberText) - 1,
+      parseInt(currentDay)
+    );
+    this.currentWeekDay = this.currentDate.toLocaleDateString("default", {
+      weekday: "short",
+    });
   }
 
+  /**
+   *adds a CalendarDay-Object to the DOM depending on the retrieved data.
+   *adds a "0" to the DayNumber if the DayNumber is smaller than 10.
+   */
   private appendCalenderEntry() {
     for (let i = 0; i < this.entriesForCurrentMonth.length; i++) {
+      this.getWeekDay(this.entriesForCurrentMonth[i]);
       if (parseInt(this.entriesForCurrentMonth[i]) < 10) {
         this.$entryContainer.append(
           new CalendarDay(
-            "0" +
-              this.entriesForCurrentMonth[i] +
-              "." +
-              this.currentMonthNumberText +
-              "." +
-              this.currentYear
+            "0" + this.entriesForCurrentMonth[i] + ", " + this.currentWeekDay,
+            this.currentDate
           )
         );
       } else {
         this.$entryContainer.append(
           new CalendarDay(
-            this.entriesForCurrentMonth[i] +
-              "." +
-              this.currentMonthNumberText +
-              "." +
-              this.currentYear
+            this.entriesForCurrentMonth[i] + ", " + this.currentWeekDay,
+            this.currentDate
           )
         );
       }

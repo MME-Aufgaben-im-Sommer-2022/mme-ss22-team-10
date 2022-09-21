@@ -13,6 +13,12 @@ import BulletPointInputField from "../InputFields/BulletPointInputField/BulletPo
 import { StateChangedData } from "../../../events/StateChanged";
 import CheckListInputField from "../InputFields/CheckListInputField/CheckListInputField";
 
+/**
+ * @class EditorBlock
+ * A single block in the editor, consisting of:
+ * - A title
+ * - An input field, depending on the type of the block
+ */
 export default class EditorBlock extends WebComponent {
   blockContentState: State<BlockContent>;
   inputValueState: State<string>;
@@ -24,6 +30,10 @@ export default class EditorBlock extends WebComponent {
     | BulletPointInputField
     | CheckListInputField;
 
+  /**
+   * Creates a new EditorBlock instance
+   * @param blockContentState The state of the block content
+   */
   constructor(blockContentState: State<BlockContent>) {
     super(html, css);
     this.blockContentState = blockContentState;

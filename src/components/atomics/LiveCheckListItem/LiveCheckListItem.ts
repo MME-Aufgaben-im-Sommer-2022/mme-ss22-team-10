@@ -4,16 +4,10 @@ import State from "../../../lib/state/State";
 import html from "./LiveCheckListItem.html";
 import css from "./LiveCheckListItem.css";
 
-// HTML element that serves as single check list item.
-
-// Consists of a checkbox and a LiveTextInput (single line).
-
-// Necessary constructor parameters:
-// - textValueState:
-//    - a state of type string, changes when user finishes editing
-// - isCheckedState:
-//    - a state of type boolean, changes when user toggles checkbox
-
+/**
+ * @class LiveCheckListItem
+ * A checklist item that can be edited
+ */
 export default class LiveCheckListItem extends WebComponent {
   private $checkListItemContainer!: HTMLDivElement;
   private $checkbox!: HTMLInputElement;
@@ -22,6 +16,11 @@ export default class LiveCheckListItem extends WebComponent {
   private readonly textValueState: State<string>;
   private readonly isCheckedState: State<boolean>;
 
+  /**
+   * Creates a new LiveCheckListItem
+   * @param textValueState The state of the text value
+   * @param isChecked The state of the checkbox
+   */
   constructor(textValueState: State<string>, isChecked: State<boolean>) {
     super(html, css);
     this.textValueState = textValueState;

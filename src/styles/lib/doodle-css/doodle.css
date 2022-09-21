@@ -4,6 +4,26 @@
  * This file has been modified to fit our MME project
  */
 
+.theme-light {
+  --doodle-button: url(res/light/button.svg);
+  --doodle-border: url(res/light/border.svg);
+  --doodle-hr: url(res/light/hr.svg);
+  --doodle-bq: url(res/light/bq.svg);
+  --doodle-caret: url(res/light/caret.svg);
+  --doodle-checkbox: url(res/light/checkbox.svg);
+  --doodle-radio: url(res/light/radio.svg);
+}
+
+.theme-dark {
+  --doodle-button: url(res/dark/button.svg);
+  --doodle-border: url(res/dark/border.svg);
+  --doodle-hr: url(res/dark/hr.svg);
+  --doodle-bq: url(res/dark/bq.svg);
+  --doodle-caret: url(res/dark/caret.svg);
+  --doodle-checkbox: url(res/dark/checkbox.svg);
+  --doodle-radio: url(res/dark/radio.svg);
+}
+
 .doodle * {
   box-sizing: border-box;
 }
@@ -13,7 +33,10 @@
   color: var(--text-normal);
 }
 
-.doodle input, .doodle textarea, .doodle table, .doodle img {
+.doodle input,
+.doodle textarea,
+.doodle table,
+.doodle img {
   max-width: 100%;
 }
 
@@ -34,7 +57,8 @@
   padding-left: 20px;
 }
 
-.doodle ul li, .list-item {
+.doodle ul li,
+.list-item {
   display: list-item !important;
   list-style-type: "* ";
 }
@@ -44,22 +68,35 @@
   display: inline-block;
 }
 
-.doodle fieldset, .doodle textarea {
+.doodle fieldset,
+.doodle textarea {
   border-style: solid;
   border-width: 10px 10px 10px 10px;
-  border-image: url(res/border.svg) 10 10 10 10 stretch stretch;
+  border-image: var(--doodle-border) 10 10 10 10 stretch stretch;
 }
 
-.doodle .border, .doodle-border {
+.doodle .border,
+.doodle-border {
   border-style: solid;
   border-width: 10px 10px 10px 10px;
-  border-image: url(res/button.svg) 10 10 10 10 stretch stretch;
+  border-image: var(--doodle-button) 10 10 10 10 stretch stretch;
 }
 
-.doodle button, .doodle input, .doodle select {
+.doodle-round {
+  border-style: solid;
+  border-width: 2px;
+  border-image-repeat: var(--doodle-radio) 5 5 5 5 stretch stretch;
+
+}
+
+
+
+.doodle button,
+.doodle input,
+.doodle select {
   border-style: solid;
   border-width: 10px 10px 10px 10px;
-  border-image: url(res/button.svg) 10 10 10 10 stretch stretch;
+  border-image: var(--doodle-button) 10 10 10 10 stretch stretch;
 }
 
 .doodle button {
@@ -67,19 +104,19 @@
 }
 
 .doodle input[type="color"] {
-  min-height: 1.5em;    
+  min-height: 1.5em;
 }
 
 .doodle hr {
   border-style: solid;
   border-width: 0px 3px 6px 3px;
-  border-image: url(res/hr.svg) 0 3 6 3 stretch stretch;
+  border-image: var(--doodle-hr) 0 3 6 3 stretch stretch;
 }
 
 .doodle blockquote {
   border-left-style: solid;
   border-width: 0px 6px 3px 6px;
-  border-image: url(res/bq.svg) 0 6 3 6 stretch stretch;
+  border-image: var(--doodle-bq) 0 6 3 6 stretch stretch;
   padding-left: 0.5em;
   border-right-width: 0px;
 }
@@ -101,7 +138,7 @@
 .doodle table caption {
   border-bottom-style: solid;
   border-width: 0px 3px 6px 3px;
-  border-image: url(res/hr.svg) 0 3 6 3 stretch stretch;
+  border-image: var(--doodle-hr) 0 3 6 3 stretch stretch;
 }
 
 .doodle table td {
@@ -112,14 +149,14 @@
   border-radius: 3px;
   border-style: solid;
   border-width: 3px 3px 3px 3px;
-  border-image: url(res/button.svg) 3 3 3 3 stretch stretch;
+  border-image: var(--doodle-button) 3 3 3 3 stretch stretch;
 }
 
 .doodle select {
   -webkit-appearance: none;
   appearance: none;
   padding-right: 1.5em;
-  background: url(res/caret.svg) no-repeat right transparent;
+  background: var(--doodle-caret) no-repeat right transparent;
   background-position-x: calc(100% - 10px);
 }
 
@@ -128,24 +165,28 @@
   padding: 0px;
 }
 
-.doodle button, .doodle textarea, .doodle input, .doodle select {
+.doodle button,
+.doodle textarea,
+.doodle input,
+.doodle select {
   background-color: unset;
-  font-family: 'Short Stack', cursive;
+  font-family: "Short Stack", cursive;
   font-size: 1em;
   color: var(--text-normal);
 }
 
 .doodle input[type="checkbox"] {
   border-width: 6px 6px 6px 6px;
-  border-image: url(res/checkbox.svg) 6 6 6 6 stretch stretch;
+  border-image: var(--doodle-checkbox) 6 6 6 6 stretch stretch;
 }
 
 .doodle input[type="radio"] {
   border-width: 16px 16px 16px 16px;
-  border-image: url(res/radio.svg) 16 16 16 16 stretch stretch;
+  border-image: var(--doodle-radio) 16 16 16 16 stretch stretch;
 }
 
-.doodle input[type="checkbox"], .doodle input[type="radio"] {
+.doodle input[type="checkbox"],
+.doodle input[type="radio"] {
   -webkit-appearance: none;
   appearance: none;
   outline: 0;
@@ -157,21 +198,23 @@
   align-items: center;
 }
 
-.doodle input[type="checkbox"]:after, .doodle input[type="radio"]:after {
+.doodle input[type="checkbox"]:after,
+.doodle input[type="radio"]:after {
   font-size: 1.25em;
   content: " ";
   margin-bottom: -0.25em;
 }
 
-.doodle input[type="checkbox"]:disabled:after, .doodle input[type="radio"]:disabled:after {
+.doodle input[type="checkbox"]:disabled:after,
+.doodle input[type="radio"]:disabled:after {
   content: "-";
   color: grey;
 }
 
-.doodle input[type="checkbox"]:checked:after, .doodle input[type="radio"]:checked:after {
+.doodle input[type="checkbox"]:checked:after,
+.doodle input[type="radio"]:checked:after {
   content: "*";
 }
-
 
 /*
 * Additional, custom styles for our project:

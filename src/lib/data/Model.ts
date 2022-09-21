@@ -4,14 +4,19 @@ import State from "../state/State";
 // ======================== Model ======================= //
 // ====================================================== //
 
-// A model is a basic data structure that can be used to store data.
-
-// Usage guide & examples:
-// https://github.com/MME-Aufgaben-im-Sommer-2022/mme-ss22-team-10/blob/dev/docs/lib/Model.md
-
+/**
+ * A model is a basic data structure that can be used to store data.
+ * **NOTE**: Use State to make observe/manipulate Models. Don't use Models directly.
+ *
+ * @example
+ * For an example, see {@link ExampleModel}
+ */
 export default abstract class Model {
   private state: State<this> | undefined;
 
+  /**
+   * Get the Model as a {@link State} Object
+   */
   toState(): State<this> {
     if (!this.state) {
       this.state = new State(this);

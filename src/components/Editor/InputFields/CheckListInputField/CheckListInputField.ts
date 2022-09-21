@@ -3,15 +3,10 @@ import html from "./CheckListInputField.html";
 import State from "../../../../lib/state/State";
 import LiveCheckListItem from "../../../atomics/LiveCheckListItem/LiveCheckListItem";
 
-// Input field for check list items
-
-// Necessary constructor parameters:
-// - inputValueState:
-//   - a string, that contains all checklist items, separated by newlines (\n)
-//     - checked items are prefixed with a "1___"
-//     - unchecked items are prefixed with a "0___"
-//   - the state is updated the user finishes editing an item
-
+/**
+ * @class CheckListInputField
+ * Input field for check list items
+ */
 export default class CheckListInputField extends WebComponent {
   private $checkListContainer!: HTMLUListElement;
   private $newCheckListItemInputContainer!: HTMLLIElement;
@@ -26,6 +21,10 @@ export default class CheckListInputField extends WebComponent {
   static readonly CHECK_LIST_IS_CHECKED_MARK = "[X]";
   static readonly CHECK_LIST_IS_UNCHECKED_MARK = "[-]";
 
+  /**
+   * Creates a new checklist input field
+   * @param inputValueState The state of the checklist input field
+   */
   constructor(inputValueState: State<string>) {
     super(html);
     this.inputValueState = inputValueState;
@@ -66,6 +65,10 @@ export default class CheckListInputField extends WebComponent {
     });
   };
 
+  /**
+   * Creates a single check list item
+   * @param checkListIndex The index of the check list item
+   */
   private $createCheckListItem = (
     checkListIndex: number
   ): LiveCheckListItem => {
@@ -171,6 +174,10 @@ export default class CheckListInputField extends WebComponent {
   };
 }
 
+/**
+ * @class InvalidCheckListItemError
+ * An error that is thrown when a checklist item is of invalid format
+ */
 export class InvalidCheckListItemError extends Error {
   constructor(
     checkListItem: string,

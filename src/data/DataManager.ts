@@ -1,36 +1,33 @@
-import ExampleModel from "./models/ExampleModel";
 import CalendarModel, { Years } from "./models/CalendarModel";
 import EditorModel, {
   BlockContent,
   BlockContentInputType,
 } from "./models/EditorModel";
-import UserSettingsModel, { Template } from "./models/UserSettingsModel";
-import { generateRandomAscendingArray } from "../lib/utils";
+import UserSettingsModel from "./models/UserSettingsModel";
 import ApiClient from "./api/ApiClient";
 import TemplateConfigurationModel, {
   Topic,
 } from "./models/TemplateConfigurationModel";
 import templateConfigurationModel from "./models/templateConfigurationModel.json";
-import { log } from "../lib/utils/Logger";
 import { Models } from "appwrite";
 
-// `DataManager` is a singleton, in which you define functions to fetch/save/delete Models.
-const NUMBER_OF_BLOCK_CONTENTS_WITHOUT_GPT3 = 3;
-// Usage guide & examples:
-// https://github.com/MME-Aufgaben-im-Sommer-2022/mme-ss22-team-10/blob/dev/docs/lib/DataManager.md
+const NUM_OF_DEFAULT_BLOCK_CONTENTS = 3;
+
+/**
+ * @class DataManager
+ * Class that contains functions to fetch/save/delete Models.
+ */
 export default class DataManager {
   static async init() {
     await ApiClient.init();
   }
 
-  // Write methods to fetch or save data to Database etc. here
-
-  // Returns the example model
-  static async getExampleModel(): Promise<ExampleModel> {
-    // would query database here or other networking stuff
-    return new ExampleModel("John", 0);
-  }
-
+  /**
+   * sign in by creating a new session
+   * @param email
+   * @param password
+   * @returns true if the session was created successfully
+   */
   static async signInViaMail(
     email: string,
     password: string
@@ -46,14 +43,27 @@ export default class DataManager {
     return true;
   }
 
-  static async signUp(email: string, password: string, name: string) {
-    await ApiClient.createAccount(email, password, name);
+  /**
+   * creates a new account and empty document for the user settings
+   * signs user in automatically
+   * @param email
+   * @param password
+   * @param username
+   */
+  static async signUp(email: string, password: string, username: string) {
+    await ApiClient.createAccount(email, password, username);
     const connected = await this.signInViaMail(email, password);
     if (connected) {
       await ApiClient.createNewSettingsDocument([]);
     }
   }
 
+  /**
+   * check if the session is still valid and connect to it
+   * @param sessionId
+   * @private
+   * @returns true if connected successfully
+   */
   private static async connectToSession(sessionId: string): Promise<boolean> {
     const session = await ApiClient.getSession(sessionId);
     if (this.convertNumberToDate(session.expire) > new Date()) {
@@ -63,6 +73,10 @@ export default class DataManager {
     return false;
   }
 
+  /**
+   * will check if there is a session in the local storage and will try to connect to it
+   * @returns true if connected successfully
+   */
   static async checkIfUserLoggedIn(): Promise<boolean> {
     const localSessionId = localStorage.getItem("sessionId");
     let connected = false;
@@ -72,11 +86,86 @@ export default class DataManager {
     return connected;
   }
 
+  /**
+   * removes current sessions
+   */
   static async signOut() {
     await ApiClient.disconnectCurrentSession();
   }
 
-  // Calendar Model
+  /**
+   * get data of logged in user
+   */
+  static async getAccountData() {
+    const accountData = await ApiClient.getUserData();
+    return {
+      name: accountData.name,
+      email: accountData.email,
+      emailVerification: accountData.emailVerification,
+      registrationDate: this.convertNumberToDate(accountData.registration),
+      lastUpdate: this.convertNumberToDate(accountData.$updatedAt),
+    };
+  }
+
+  /**
+   * update name of currently logged-in user
+   * @param username Max length: 128 chars
+   * @returns {@link https://appwrite.io/docs/models/account Account Object}
+   */
+  static async updateUsername(username: string) {
+    return ApiClient.updateUsername(username);
+  }
+
+  /**
+   * update email currently logged-in user email address.
+   * @param email
+   * @param currentPassword Must be at least 8 chars.
+   * @returns {@link https://appwrite.io/docs/models/account Account Object}
+   */
+  static async updateEmail(email: string, currentPassword: string) {
+    return ApiClient.updateUserEmail(email, currentPassword);
+  }
+
+  /**
+   * update currently logged-in user password. For validation,
+   * user is required to pass in the new password, and the old password.
+   * @param newPassword Must be at least 8 chars.
+   * @param currentPassword Must be at least 8 chars.
+   * @returns {@link https://appwrite.io/docs/models/account Account Object}
+   */
+  static async updatePassword(newPassword: string, currentPassword: string) {
+    return ApiClient.updateUserPassword(newPassword, currentPassword);
+  }
+
+  /**
+   * send an email with a password reset URL to currently logged-in user
+   * @remarks limited to 10 requests in every 60 minutes per email address
+   * @param email
+   * @returns {@link https://appwrite.io/docs/models/token Token Object}
+   */
+  static async sendPasswordRecoveryLink(email: string) {
+    return ApiClient.createPasswordRecovery(email);
+  }
+
+  /**
+   * endpoint to complete the user account password reset
+   * @remarks limited to 10 requests in every 60 minutes per email address
+   * @param userId
+   * @param secret Valid reset token.
+   * @param password New user password. Must be at least 8 chars.
+   */
+  static async recoverPassword(
+    userId: string,
+    secret: string,
+    password: string
+  ) {
+    return ApiClient.confirmPasswordRecovery(userId, secret, password);
+  }
+
+  /**
+   * fetches all note documents from the user and prepares data for a CalendarModel object
+   * @returns {@link CalendarModel} object
+   */
   static async getCalendarModel(): Promise<CalendarModel> {
     const noteDays: Years = {},
       noteDaysArray = await ApiClient.getNoteDocumentList();
@@ -98,6 +187,12 @@ export default class DataManager {
   }
 
   // Editor Model
+  /**
+   * fetch Note and BlockContent documents from user to create an EditorModel object
+   * if there are no documents for given day, new ones will be created
+   * @param day
+   * @returns {@link EditorModel} object
+   */
   static async getEditorModel(day: Date): Promise<EditorModel> {
     try {
       const noteDocument = await ApiClient.getNoteDocument(
@@ -111,35 +206,46 @@ export default class DataManager {
         );
       if (
         this.dayIsToday(day) &&
-        blockContents.length === NUMBER_OF_BLOCK_CONTENTS_WITHOUT_GPT3
+        blockContents.length === NUM_OF_DEFAULT_BLOCK_CONTENTS
       ) {
-        const newBlockContent = await this.getGPT3BlockContent(),
-          apiBlockContent = await ApiClient.createNewBlockContentDocument(
-            noteDocument.$id,
-            newBlockContent
-          );
-        newBlockContent.documentId = apiBlockContent.$id;
-        blockContents.push(newBlockContent);
+        const newBlockContent = await this.getGPT3BlockContentDocument(
+          noteDocument.$id
+        );
+        if (newBlockContent !== null) {
+          blockContents.push(newBlockContent);
+        }
       }
       return new EditorModel(day, blockContents);
     } catch (e) {
       const editorModel = await this.createEditorModelFromTemplate();
-      await this.createEditorModel(editorModel);
-      return editorModel;
+      return await this.createEditorModel(editorModel);
     }
   }
 
+  /**
+   * create new Note and BlockContent documents by given object
+   * @param editorModel
+   */
   static async createEditorModel(editorModel: EditorModel) {
     const noteDocument = await ApiClient.createNewNoteDocument(
       this.convertDateToString(editorModel.day)
     );
     editorModel.blockContents.forEach(async (blockContent) => {
-      ApiClient.createNewBlockContentDocument(noteDocument.$id, blockContent);
+      const blockContentDocument =
+        await ApiClient.createNewBlockContentDocument(
+          noteDocument.$id,
+          blockContent
+        );
+      blockContent.documentId = blockContentDocument.$id;
     });
+    return editorModel;
   }
 
+  /**
+   * update Note and BlockContent documents
+   * @param editorModel
+   */
   static async updateEditorModel(editorModel: EditorModel): Promise<void> {
-    log(this.convertDateToString(editorModel.day));
     editorModel.blockContents.forEach((blockContent) => {
       ApiClient.updateBlockContentDocument(blockContent.documentId, {
         title: blockContent.title,
@@ -149,16 +255,27 @@ export default class DataManager {
     });
   }
 
+  /**
+   * fetch user settings and get GPT3-BlockContent to create a new EditorModel
+   * @private
+   * @returns {@link EditorModel} object
+   */
   private static async createEditorModelFromTemplate(): Promise<EditorModel> {
     const promise = await DataManager.getUserSettingsModel(),
       blockContent = await this.getGPT3BlockContent(),
       blockContents = this.convertArrayToBlockContent(
         promise.settings.template
       );
-    blockContents.push(blockContent);
+    if (blockContent !== undefined) {
+      blockContents.push(<BlockContent>blockContent);
+    }
     return new EditorModel(new Date(), blockContents);
   }
 
+  /**
+   * delete Note and BlockContent documents
+   * @param editorModel
+   */
   static async deleteEditorModel(editorModel: EditorModel): Promise<void> {
     const noteDocument = await ApiClient.getNoteDocument(
       this.convertDateToString(editorModel.day)
@@ -167,33 +284,70 @@ export default class DataManager {
     return await ApiClient.deleteBlockContents(noteDocument.$id);
   }
 
-  private static async getGPT3BlockContent() {
-    const blocks = await this.getGPT3BlockContentParameter(),
-      response = await ApiClient.getGeneratedTitle(blocks);
-    return {
-      title: response.gptTitle,
-      inputType: BlockContentInputType.FreeText,
-      inputValue: "",
-      documentId: "",
-    };
+  /**
+   * create a new GPT3BlockContent to an existing note
+   * @param noteId
+   * @private
+   * @returns {@link BlockContent} object
+   */
+  private static async getGPT3BlockContentDocument(noteId: string) {
+    const blockContent = await this.getGPT3BlockContent();
+    if (blockContent !== null) {
+      const blockContentDocument =
+        await ApiClient.createNewBlockContentDocument(noteId, blockContent);
+      blockContent.documentId = blockContentDocument.$id;
+    }
+    return blockContent;
   }
 
+  /**
+   * get a gpt3 generated title and create a new BlockContent
+   * @private
+   * @returns {@link BlockContent} object
+   * @remarks no database document created, documentId is empty
+   */
+  private static async getGPT3BlockContent() {
+    const blocks = await this.getGPT3BlockContentParameter();
+    if (blocks.length >= 3) {
+      const response = await ApiClient.getGeneratedTitle(blocks);
+      return {
+        title: response.gptTitle,
+        inputType: BlockContentInputType.FreeText,
+        inputValue: "",
+        documentId: "",
+      };
+    }
+    return null;
+  }
+
+  /**
+   * put the BlockContents of the user's last notes into an array
+   * @remarks currently fetches last 3 notes
+   * @private
+   * @returns array of {@link BlockContent} objects
+   */
   private static async getGPT3BlockContentParameter(): Promise<
     Array<Models.Document>
   > {
-    const notes = await this.getLastNotes(),
-      blockContents: Models.Document[] = [];
-    notes.forEach(async (note) => {
+    const blockContents: Models.Document[] = [],
+      notes = await this.getLastNotes();
+
+    for (let i = 0; i < notes.length; i++) {
       const blockContentsList = await ApiClient.getBlockContentDocumentList(
-        note.$id
+        notes[i].$id
       );
       blockContentsList.documents.forEach((blockContent) =>
         blockContents.push(blockContent)
       );
-    });
+    }
     return blockContents;
   }
 
+  /**
+   * get the last 3 notes documents from user
+   * @private
+   * @returns array of {@link https://appwrite.io/docs/models/document Document Objects}
+   */
   private static async getLastNotes(): Promise<Array<Models.Document>> {
     const notes = await ApiClient.getNoteDocumentList(),
       noteWithoutToday = notes.filter((note) => {
@@ -203,35 +357,48 @@ export default class DataManager {
         .sort((note1, note2) =>
           new Date(note1.day) < new Date(note2.day) ? 1 : -1
         )
-        .slice(0, NUMBER_OF_BLOCK_CONTENTS_WITHOUT_GPT3);
+        .slice(0, NUM_OF_DEFAULT_BLOCK_CONTENTS);
     return sortedNotes;
   }
 
-  // User Settings Model
+  /**
+   * get current user settings
+   * @returns {@link UserSettingsModel} object
+   */
   static async getUserSettingsModel(): Promise<UserSettingsModel> {
-    const account = await ApiClient.getAccountData(),
+    const account = await ApiClient.getUserData(),
       userSettings = await ApiClient.getUserSettingsDocument(),
       templateData = userSettings.template,
       template = this.jsonParseArray(templateData);
     return new UserSettingsModel(account.name, { template });
   }
 
+  /**
+   * update current user settings
+   * @param userSettingsModel
+   */
   static async updateUserSettingsModel(
     userSettingsModel: UserSettingsModel
   ): Promise<void> {
-    await ApiClient.updateAccountName(userSettingsModel.username);
+    await ApiClient.updateUsername(userSettingsModel.username);
     return await ApiClient.updateUserSettingsDocument(
       this.stringifyArray(userSettingsModel.settings.template)
     );
   }
 
+  /**
+   * create a new document for user settings
+   * @param userSettingsModel
+   */
   static async createUserSettingsModel(userSettingsModel: UserSettingsModel) {
     return await ApiClient.createNewSettingsDocument(
       userSettingsModel.settings.template
     );
   }
 
-  // Template config screen
+  /**
+   * @returns {@link templateConfigurationModel}
+   */
   static async getTemplateConfigurationModel(): Promise<TemplateConfigurationModel> {
     const configModel = new TemplateConfigurationModel(
       templateConfigurationModel.map((topic: Topic) => topic)
@@ -239,7 +406,35 @@ export default class DataManager {
     return configModel;
   }
 
-  // HELPER FUNCTIONS
+  /**
+   * get dark mode preferences and adjust the UI style
+   */
+  static getDarkMode(): boolean {
+    const savedPreference = localStorage.getItem("darkMode");
+    if (savedPreference === null) {
+      // get from browser preference
+      const isDarkMode = window.matchMedia(
+        "(prefers-color-scheme: dark)"
+      ).matches;
+      localStorage.setItem("darkMode", isDarkMode.toString());
+      return isDarkMode;
+    }
+    return savedPreference === "true";
+  }
+
+  /**
+   * sets darkMode in localStorage
+   * @param darkMode
+   */
+  static setDarkMode(darkMode: boolean): void {
+    localStorage.setItem("darkMode", darkMode.toString());
+  }
+
+  /**
+   * @param day
+   * @private
+   * @returns true if given day is today
+   */
   private static dayIsToday(day: Date) {
     const today = new Date();
     return (
@@ -249,6 +444,13 @@ export default class DataManager {
     );
   }
 
+  /**
+   * convert Array<any> to Array<BlockContent>
+   * @remarks fetched BlockContent documents from the API don't fit the {@link BlockContent} Interface and have to be converted
+   * @param array
+   * @private
+   * @returns array of {@link BlockContent}s
+   */
   private static convertArrayToBlockContent(array: Array<any>) {
     const blockContents: Array<BlockContent> = [];
     array.forEach((entry) => {
@@ -262,22 +464,48 @@ export default class DataManager {
     return blockContents;
   }
 
+  /**
+   * convert timestamp to Date
+   * @param timestamp primitive value of a Date object.
+   * @private
+   * @returns {@link Date} object
+   */
   private static convertNumberToDate(timestamp: number): Date {
     return new Date(timestamp * 1000);
   }
 
+  /**
+   * convert Array<string> to Array<any>
+   * @remarks user setting documents are saved as Array<string> and need to be converted to create an {@link UserSettingsModel} object
+   * @param array
+   * @private
+   * @returns array of {@link any objects}
+   */
   private static jsonParseArray(array: Array<string>): Array<any> {
     const objArray: Array<any> = [];
     array.forEach((entry) => objArray.push(JSON.parse(entry)));
     return objArray;
   }
 
+  /**
+   * convert Array<any> to Array<string>
+   * @remarks user setting documents are saved as Array<string> so {@link BlockContent} arrays have to be converted
+   * @param array
+   * @private
+   * @returns array of Strings
+   */
   private static stringifyArray(array: Array<any>): Array<string> {
     const stringArray: Array<string> = [];
     array.forEach((entry) => stringArray.push(JSON.stringify(entry)));
     return stringArray;
   }
 
+  /**
+   * convert {@link Date} object to String object
+   * @param date
+   * @private
+   * @returns date as String (format 'yyyy-mm-dd')
+   */
   private static convertDateToString(date: Date): string {
     return [
       date.getFullYear(),
@@ -288,7 +516,6 @@ export default class DataManager {
     ].join("-");
   }
 
-  // MOCK DATA
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   private static async deleteUserNotes() {
@@ -303,93 +530,5 @@ export default class DataManager {
   // @ts-ignore
   private static async deleteUserSettings() {
     return await ApiClient.updateUserSettingsDocument(this.stringifyArray([]));
-  }
-
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  private static async generateMockDatabaseData() {
-    // eslint-disable-next-line no-magic-numbers
-    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].forEach((month) => {
-      // eslint-disable-next-line no-magic-numbers
-      generateRandomAscendingArray(16, 1).forEach(async (day) => {
-        const date = new Date();
-        // eslint-disable-next-line no-unused-expressions
-        month < date.getMonth()
-          ? // eslint-disable-next-line no-magic-numbers
-            date.setFullYear(2022)
-          : // eslint-disable-next-line no-magic-numbers
-            date.setFullYear(2021);
-        date.setDate(Number(day));
-        date.setMonth(month);
-        // eslint-disable-next-line one-var
-        const editorModel = await this.generateMockEditorModel(date);
-        try {
-          await this.createEditorModel(editorModel);
-        } catch (e) {
-          this.updateEditorModel(editorModel);
-        }
-      });
-    });
-  }
-
-  // Calendar Model
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  private static generateMockCalendarModel(): CalendarModel {
-    const noteDays: Years = {
-      "2022": {},
-    };
-
-    // eslint-disable-next-line no-magic-numbers
-    generateRandomAscendingArray(11, 1).forEach((month) => {
-      // eslint-disable-next-line no-magic-numbers
-      noteDays["2022"][month] = generateRandomAscendingArray(30, 1);
-      if (noteDays["2022"][month].length === 0) {
-        delete noteDays["2022"][month];
-      }
-    });
-
-    return new CalendarModel(new Date(), noteDays);
-  }
-
-  // Editor Model
-  private static async generateMockEditorModel(
-    date: Date
-  ): Promise<EditorModel> {
-    const day = date,
-      blockContents: Array<BlockContent> = [],
-      userSettings = await this.getUserSettingsModel();
-
-    userSettings.settings.template.forEach((block) => {
-      blockContents.push(<BlockContent>{
-        title: block.title,
-        inputType: block.inputType,
-        inputValue: "",
-        documentId: "",
-      });
-    });
-    return new EditorModel(day, blockContents);
-  }
-
-  // User Settings Model
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  private static generateMockUserSettingsModel(): UserSettingsModel {
-    const template: Template = [
-      {
-        title: "Title 1",
-        inputType: BlockContentInputType.FreeText,
-      },
-      {
-        title: "Title 2",
-        inputType: BlockContentInputType.FreeText,
-      },
-      {
-        title: "Title 3",
-        inputType: BlockContentInputType.FreeText,
-      },
-    ];
-
-    return new UserSettingsModel("user1", { template });
   }
 }

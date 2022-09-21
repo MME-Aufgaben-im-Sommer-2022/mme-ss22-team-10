@@ -9,16 +9,16 @@ export default class CalendarDay extends WebComponent {
   public static CALENDAR_DAY_CLICKED_EVENT = "calendarDayClicked";
 
   private entryDate;
+  private currentDate;
   private isSelected = new State(false);
   $entryTitle!: HTMLHeadElement;
 
-  constructor(entryDate: string) {
+  constructor(entryDate: string, currentDate: Date) {
     super(html, css);
     this.entryDate = entryDate;
+    this.currentDate = currentDate;
   }
 
-  // override htmlTagName to return the tag name our component
-  // -> <example-component /> can be used in the html to create a new instance of this component
   get htmlTagName(): string {
     return "calendar-day";
   }
@@ -26,34 +26,48 @@ export default class CalendarDay extends WebComponent {
   onCreate(): Promise<void> | void {
     this.$initHtml();
     this.$entryTitle.innerText = this.entryDate;
-    this.addEventListener("click", () => {
-      EventBus.notifyAll(
-        CalendarDay.CALENDAR_DAY_CLICKED_EVENT,
-        this.entryDate
-      );
-    });
-
-    this.addEventListener("click", () => {
-      this.isSelected.value = true;
-      EventBus.notifyAll("colorTest", this.entryDate);
-    });
-
-    EventBus.addEventListener("colorTest", (event: AppEvent) => {
-      if (event.data !== this.entryDate) {
-        this.isSelected.value = false;
-      }
-    });
-
-    this.isSelected.addEventListener("change", () => {
-      if (this.isSelected.value) {
-        this.style.background = "var(--text-accent)";
-      } else {
-        this.style.background = "var(--background-primary)";
-      }
-    });
+    this.initListeners();
   }
 
   private $initHtml(): void {
     this.$entryTitle = this.select(".date")!;
   }
+
+  private initListeners(): void {
+    this.addEventListener("click", this.onDayItemClicked);
+    EventBus.addEventListener("setColor", this.checkClickedItem);
+    this.isSelected.addEventListener("change", this.setColor);
+  }
+
+  /**
+   * sets isSelected to true and informs the listeners.
+   */
+  onDayItemClicked = () => {
+    EventBus.notifyAll(
+      CalendarDay.CALENDAR_DAY_CLICKED_EVENT,
+      this.currentDate
+    );
+    this.isSelected.value = true;
+    EventBus.notifyAll("setColor", this.entryDate);
+  };
+
+  /**
+   * sets isSelected to false if the clicked DayItem isn't the currentDayItem
+   */
+  checkClickedItem = (event: AppEvent) => {
+    if (event.data !== this.entryDate) {
+      this.isSelected.value = false;
+    }
+  };
+
+  /**
+   * sets the color of the dayItem depending on whether it was clicked or not.
+   */
+  setColor = () => {
+    if (this.isSelected.value) {
+      this.style.background = "var(--text-accent)";
+    } else {
+      this.style.background = "var(--background-primary)";
+    }
+  };
 }

@@ -1,55 +1,73 @@
-login-register{
+login-register {
     display: flex;
     flex-grow: 1;
-
-
+    margin-right: auto;
+    margin-left: auto;
 }
 
-.login-form{
+div {
     display: flex;
     flex-direction: column;
-    margin: auto;
-
 }
 
-.login-form button{
-    margin: var(--spacing-medium);
+.logo {
+    margin-top: auto;
 }
 
-.login-form svg {
+.logo > svg > image {
     width: 100%;
     height: 100%;
 }
 
-.login-form image {
-    width: 100%;
-    height: 100%;
-
-}
-.login-form input{
-    margin-top: var(--spacing-medium);
+.login-form button, input {
+    border-radius: 10px;
+    margin-top: var(--spacing-small);
+    background-color: var(--background-focus);
 }
 
-
-.login-form > span{
-    text-align: center;
-    margin-top: var(--spacing-large);
+button:hover {
+    background-color: var(--text-accent);
 }
 
-.login-form .connect-message{
-    color: red;
-    margin-top: var(--spacing-large);
-    visibility: hidden ;
+.login-form .retype-password, .username {
+    visibility: hidden;
 }
 
-.login-form .register-toggle{
+.span-elements {
+    flex-direction: row;
+    margin-bottom: auto;
+    cursor: pointer;
+}
+
+.span-elements > div {
+    font-size: 80%;
+    margin-top: var(--spacing-small);
+    flex-grow: 1;
+}
+
+.left-block {
+    text-align: left;
+    flex-direction: column;
+}
+
+.right-block {
+    flex-direction: column;
+}
+
+.forgot-password {
     color: var(--text-accent);
     cursor: pointer;
 }
-.login-form .retype-password{
-    visibility: hidden ;
+
+.forgot-password:hover {
+    color: var(--text-accent-hover);
 }
 
-.login-form input[name="username"]{
-    visibility: hidden ;
+.register-toggle {
+    text-align: right;
+    border-radius: 10px;
+}
+
+.register-toggle:hover {
+    color: var(--text-accent);
 }

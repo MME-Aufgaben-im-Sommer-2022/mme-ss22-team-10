@@ -2,6 +2,10 @@
 
 const DO_LOG = import.meta.env.VITE_LOGGER_IS_ENABLED === "true";
 
+/**
+ * Logs a message to the console.
+ * @param args The arguments to log
+ */
 // eslint-disable-next-line one-var
 export const log = (...args: any[]): void => {
     if (DO_LOG) {
