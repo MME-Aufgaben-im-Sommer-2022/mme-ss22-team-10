@@ -1,32 +1,45 @@
 import Model from "../../lib/data/Model";
 
-// Example instance of this model:
-
-//new CalendarModel(new Date(),
-// {
-//  "2022": {
-//    "1": ["1","3"],
-//    "2": ["8","19"],
-//    },
-//  }
-//)
-// -> notes were taken on 1.1.2022, 3.1.2022, 8.2.2022, 19.2.2022
-
-// A guide on how to iterate over Object properties can be found here:
-// Dev Docs FAQ: https://github.com/MME-Aufgaben-im-Sommer-2022/mme-ss22-team-10/blob/dev/docs/faq/iterating-over-properties.md
-
+/**
+ * An array of days (only the number of the day within a month)
+ * @example
+ * ["1", "3", "8", "19"]
+ */
 type Days = Array<string>;
 
+/**
+ * An array of months, consisting of {@link Days}
+ * @example
+ * "1": ["1","3"],
+ */
 export interface Months {
   [key: string]: Days;
 }
 
+/**
+ * An array of years, consisting of {@link Months}
+ * @example
+ * "2022": {
+ *   "1": ["1","3"],
+ *  "2": ["8","19"],
+ * },
+ */
 export interface Years {
   [key: string]: Months;
 }
 
+/**
+ * @class CalendarModel
+ * A model to store the dates of notes taken
+ */
 export default class CalendarModel extends Model {
+  /**
+   * Today's date
+   */
   today: Date;
+  /**
+   * Dates, on which notes were taken
+   */
   noteDays: Years;
 
   constructor(today: Date, years: Years) {

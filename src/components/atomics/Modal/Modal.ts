@@ -5,15 +5,36 @@ import css from "./Modal.css";
 import html from "./Modal.html";
 
 export interface ModalContentActions {
+  /**
+   * Called when the parent modal is closed.
+   */
   onModalClose: () => void;
 }
 
+/**
+ * @class ModalContent
+ * Type that has to be implemented by any {@WebComponent} that is
+ * displayed in a {@Modal}.
+ */
 export type ModalContent = WebComponent & ModalContentActions;
 
+/**
+ * @class Modal
+ * A modal is a component that can be used to display content in a floating container.
+ * NOTE: Use {@link ModalFactory} to create a modal.
+ */
 export default class Modal<T extends ModalContent> extends WebComponent {
+  /**
+   * Event that is fired when the modal is closed.
+   */
   public static ON_CLOSE_EVENT = "on-close";
+  /**
+   * Event sent when the modal is opened.
+   */
   public static ON_OPEN_EVENT = "on-open";
-
+  /**
+   * Event sent out by the modal content when it wants to close the modal.
+   */
   public static DO_CLOSE_EVENT = "do-close";
 
   private $contentContainer!: HTMLDivElement;
@@ -22,6 +43,10 @@ export default class Modal<T extends ModalContent> extends WebComponent {
 
   private isOpenState = new State(false);
 
+  /**
+   * Creates a new modal element.
+   * @param $content The content to display in the modal.
+   */
   constructor($content: T) {
     super(html, css);
     this.$content = $content;
@@ -98,6 +123,9 @@ export default class Modal<T extends ModalContent> extends WebComponent {
     return this.isOpenState.value;
   }
 
+  /**
+   * Toggles the modal open state.
+   */
   toggle(): void {
     this.isOpenState.value = !this.isOpenState.value;
   }

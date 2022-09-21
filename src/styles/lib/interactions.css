@@ -1,7 +1,11 @@
+/*
+ Styles for various interactions
+*/
+
 button:hover {
-    background-color: var(--background-focus);
+  background-color: var(--background-focus);
 }
 
 .text-input:focus {
-    background-color: var(--background-focus)
+  background-color: var(--background-focus);
 }

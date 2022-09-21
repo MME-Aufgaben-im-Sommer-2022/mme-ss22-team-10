@@ -83,7 +83,7 @@ export default class TemplateConfigurator
 
   private onSavedAndClose = () => {
     new ToastFactory()
-      .setMessage("Your template has been saved")
+      .setMessage("💾 Your template has been saved")
       .setType(ToastType.Success)
       .setDuration(ToastDuration.Short)
       .show();
@@ -91,7 +91,7 @@ export default class TemplateConfigurator
 
   private onCancelAndClose = () => {
     new ToastFactory()
-      .setMessage("Your template has not been saved")
+      .setMessage("🗑️ Your template has not been saved")
       .setType(ToastType.Warning)
       .setDuration(ToastDuration.Short)
       .show();

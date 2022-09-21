@@ -1,5 +1,9 @@
 import Model from "../../lib/data/Model";
 
+/**
+ * @class ExampleModel
+ * Example model, used for learning purposes at the beginning of the project
+ */
 export default class ExampleModel extends Model {
   name: string;
   count: number;

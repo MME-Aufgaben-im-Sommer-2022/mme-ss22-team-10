@@ -3,19 +3,39 @@
 */
 
 *:disabled {
-    opacity: 0.5;
+  opacity: 0.5;
 }
 
 [hidden] {
-    display: none !important;
+  display: none !important;
 }
 
 .no-list-style {
-    list-style-type: none !important;
+  list-style-type: none !important;
 }
 
 .spacer {
-    flex-grow: 100;
-    height: 100%;
-    width: 100%;
+  flex-grow: 100;
+  height: 100%;
+  width: 100%;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+input {
+  cursor: text;
+}
+
+input:focus,
+textarea:focus {
+  border-radius: 15px;
+  outline: none;
 }
