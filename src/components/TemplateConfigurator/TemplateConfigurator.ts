@@ -12,7 +12,6 @@ import DataManager from "../../data/DataManager";
 import GlobalState from "../../lib/state/GlobalState";
 import { GlobalStates } from "../../state/GlobalStates";
 import { ModalContent } from "../atomics/Modal/Modal";
-import { log } from "../../lib/utils/Logger";
 import { ToastFactory } from "../atomics/Toast/ToastFactory";
 import { ToastType, ToastDuration } from "../atomics/Toast/Toast";
 

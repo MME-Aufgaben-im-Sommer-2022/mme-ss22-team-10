@@ -92,7 +92,17 @@ export default class Login extends WebComponent {
    * toggles registerState and sets HTML elements accordingly
    */
   private changeRegisterMode = () => {
-    if (this.loginState.value) {
+    const urlParams = new URLSearchParams(window.location.search),
+      userId = urlParams.get("userId");
+    if (userId !== null) {
+      this.$loginButton.innerText = "set new password";
+      this.$registerToggle.classList.add("remove");
+      this.$usernameInput.remove();
+      this.$emailInput.remove();
+      this.$registerToggle.style.visibility = "hidden";
+      this.$forgotPassword.style.visibility = "hidden";
+      this.$verifyPasswordInput.style.visibility = "visible";
+    } else if (this.loginState.value) {
       this.$loginButton.innerText = "Login";
       this.$registerToggle.innerText = "Sign Up";
       this.$verifyPasswordInput.classList.add("remove");
@@ -112,6 +122,10 @@ export default class Login extends WebComponent {
     }
   };
 
+  /**
+   * function for toggling the view between the views for the user's password
+   * recovery
+   */
   private togglePasswordForgot = () => {
     if (this.$forgotPassword.innerText === "go back") {
       this.$forgotPassword.innerText = "Forgot Password?";
@@ -127,6 +141,9 @@ export default class Login extends WebComponent {
     }
   };
 
+  /**
+   * adds html input element for the password
+   */
   private addPasswordInputField = () => {
     const inputElements = document.createElement("div");
     inputElements.innerHTML = this.passwordInputHTML;
@@ -142,10 +159,54 @@ export default class Login extends WebComponent {
    * called when login Button is clicked. will sign in or sign up user depending on registerState
    */
   private readInput = async () => {
-    if (!this.loginState.value) {
+    if (this.$loginButton.innerText === "set new password") {
+      if (this.checkPassword()) {
+        this.recoverPassword();
+      }
+    } else if (this.$loginButton.innerText === "reset password") {
+      this.sendPasswordRecoveryLink();
+    } else if (!this.loginState.value) {
       this.signIn();
     } else if (this.checkPassword()) {
       this.signUp();
+    }
+  };
+
+  /**
+   * uses the parameters from the recovery link to reset a user's password
+   */
+  private recoverPassword = async () => {
+    const urlParams = new URLSearchParams(window.location.search),
+      userId = urlParams.get("userId")!,
+      secret = urlParams.get("secret")!;
+    try {
+      await DataManager.recoverPassword(
+        userId,
+        secret,
+        this.$passwordInput.value
+      );
+    } catch (error) {
+      if (error instanceof Error) {
+        this.sendToast(error.message, ToastType.Error);
+        return;
+      }
+      window.location.href = window.location.origin;
+    }
+  };
+
+  /**
+   * create a password recovery link and send it to the user via mail
+   */
+  private sendPasswordRecoveryLink = async () => {
+    try {
+      await DataManager.sendPasswordRecoveryLink(this.$emailInput.value);
+      this.sendToast("An Email has been send!", ToastType.Info);
+      return;
+    } catch (error) {
+      if (error instanceof Error) {
+        this.sendToast(error.message, ToastType.Error);
+      }
+      return;
     }
   };
 
@@ -161,7 +222,7 @@ export default class Login extends WebComponent {
       );
     } catch (error) {
       if (error instanceof Error) {
-        this.sendToast(error.message);
+        this.sendToast(error.message, ToastType.Error);
       }
       return;
     }
@@ -180,7 +241,7 @@ export default class Login extends WebComponent {
       );
     } catch (error) {
       if (error instanceof Error) {
-        this.sendToast(error.message);
+        this.sendToast(error.message, ToastType.Error);
       }
       return;
     }
@@ -194,7 +255,7 @@ export default class Login extends WebComponent {
    */
   private checkPassword(): boolean {
     if (!(this.$passwordInput.value === this.$verifyPasswordInput.value)) {
-      this.sendToast("The passwords do not match");
+      this.sendToast("The passwords do not match", ToastType.Error);
       return false;
     }
     return true;
@@ -204,10 +265,10 @@ export default class Login extends WebComponent {
    * show message to notify user when sign in / sign up failed
    * @param message
    */
-  private sendToast(message: string): void {
+  private sendToast(message: string, toastType: ToastType): void {
     new ToastFactory()
-      .setMessage(`⚠️ ${message}!`)
-      .setType(ToastType.Error)
+      .setMessage(message)
+      .setType(toastType)
       .setDuration(ToastDuration.Medium)
       .show();
   }
