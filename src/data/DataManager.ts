@@ -329,16 +329,17 @@ export default class DataManager {
   private static async getGPT3BlockContentParameter(): Promise<
     Array<Models.Document>
   > {
-    const notes = await this.getLastNotes(),
-      blockContents: Models.Document[] = [];
-    notes.forEach(async (note) => {
+    const blockContents: Models.Document[] = [],
+      notes = await this.getLastNotes();
+
+    for (let i = 0; i < notes.length; i++) {
       const blockContentsList = await ApiClient.getBlockContentDocumentList(
-        note.$id
+        notes[i].$id
       );
       blockContentsList.documents.forEach((blockContent) =>
         blockContents.push(blockContent)
       );
-    });
+    }
     return blockContents;
   }
 
