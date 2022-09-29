@@ -53,7 +53,7 @@ export default class Login extends WebComponent {
     this.usernameInputHTML = this.$usernameInput.outerHTML;
     this.passwordInputHTML = this.$passwordInput.outerHTML;
     this.verifyPasswordInputHTML = this.$verifyPasswordInput.outerHTML;
-    this.changeRegisterMode();
+    this.toggleRegisterMode();
   }
 
   /**
@@ -61,12 +61,108 @@ export default class Login extends WebComponent {
    * @private
    */
   private initListeners(): void {
-    this.$registerToggle.addEventListener("click", this.changeRegisterMode);
-    this.$forgotPassword.addEventListener("click", this.togglePasswordForgot);
+    this.$registerToggle.addEventListener("click", this.toggleRegisterMode);
+    this.$forgotPassword.addEventListener(
+      "click",
+      this.toggleForgotPasswordMode
+    );
     this.$loginButton.addEventListener("click", this.readInput);
   }
 
-  private createRegisterInputEl(): void {
+  /**
+   * called when registerToggle is clicked
+   * toggles registerState and sets HTML elements accordingly
+   * @private
+   */
+  private toggleRegisterMode = () => {
+    // check if the site is being called through a recovery link
+    const urlParams = new URLSearchParams(window.location.search),
+      userId = urlParams.get("userId");
+    if (userId !== null) {
+      this.setUpPasswordRecoveryView();
+    } else if (this.loginState.value) {
+      this.setUpLogInView();
+    } else {
+      this.setUpRegisterView();
+    }
+    this.resetAllInputFields();
+  };
+
+  /**
+   * function for toggling the view for password reset and login
+   * @private
+   */
+  private toggleForgotPasswordMode = () => {
+    if (this.$forgotPassword.innerText === "go back") {
+      this.addPasswordInputField();
+      this.setUpLogInView();
+    } else {
+      this.setUpPasswordForgottenView();
+    }
+    this.resetAllInputFields();
+  };
+
+  /**
+   * empties all input fields
+   * @private
+   */
+  private resetAllInputFields() {
+    this.$emailInput.value = "";
+    this.$usernameInput.value = "";
+    this.$passwordInput.value = "";
+    this.$verifyPasswordInput.value = "";
+  }
+
+  /**
+   * sets the html for password recovery
+   * @private
+   */
+  private setUpPasswordRecoveryView() {
+    this.$loginButton.innerText = "set new password";
+    this.$registerToggle.classList.add("remove");
+    this.$usernameInput.remove();
+    this.$emailInput.remove();
+    this.$registerToggle.style.visibility = "hidden";
+    this.$forgotPassword.style.visibility = "hidden";
+    this.$verifyPasswordInput.style.visibility = "visible";
+  }
+
+  /**
+   * sets the html for a login
+   * @private
+   */
+  private setUpLogInView() {
+    this.$loginButton.innerText = "Login";
+    this.$registerToggle.innerText = "Sign Up";
+    this.$forgotPassword.innerText = "Forgot Password?";
+    this.$verifyPasswordInput.classList.add("remove");
+    this.$usernameInput.classList.add("remove");
+    this.$forgotPassword.style.visibility = "visible";
+    this.$registerToggle.style.visibility = "visible";
+    setTimeout(() => {
+      this.$verifyPasswordInput.remove();
+      this.$usernameInput.remove();
+    }, 63);
+    this.loginState.value = false;
+  }
+
+  /**
+   * sets up the html for account registration
+   * @private
+   */
+  private setUpRegisterView() {
+    this.$loginButton.innerText = "Register";
+    this.$registerToggle.innerText = "Sign In";
+    this.$forgotPassword.style.visibility = "hidden";
+    this.insertRegisterInputEl();
+    this.loginState.value = true;
+  }
+
+  /**
+   * inserts the input field at the right position
+   * @private
+   */
+  private insertRegisterInputEl(): void {
     const inputElements = document.createElement("div");
     inputElements.innerHTML = (
       this.usernameInputHTML +
@@ -88,61 +184,22 @@ export default class Login extends WebComponent {
   }
 
   /**
-   * called when registerToggle is clicked
-   * toggles registerState and sets HTML elements accordingly
+   *
+   * @private
    */
-  private changeRegisterMode = () => {
-    const urlParams = new URLSearchParams(window.location.search),
-      userId = urlParams.get("userId");
-    if (userId !== null) {
-      this.$loginButton.innerText = "set new password";
-      this.$registerToggle.classList.add("remove");
-      this.$usernameInput.remove();
-      this.$emailInput.remove();
-      this.$registerToggle.style.visibility = "hidden";
-      this.$forgotPassword.style.visibility = "hidden";
-      this.$verifyPasswordInput.style.visibility = "visible";
-    } else if (this.loginState.value) {
-      this.$loginButton.innerText = "Login";
-      this.$registerToggle.innerText = "Sign Up";
-      this.$verifyPasswordInput.classList.add("remove");
-      this.$usernameInput.classList.add("remove");
-      this.$forgotPassword.style.visibility = "visible";
-      setTimeout(() => {
-        this.$verifyPasswordInput.remove();
-        this.$usernameInput.remove();
-      }, 63);
-      this.loginState.value = false;
-    } else {
-      this.$loginButton.innerText = "Register";
-      this.$registerToggle.innerText = "Sign In";
-      this.$forgotPassword.style.visibility = "hidden";
-      this.createRegisterInputEl();
-      this.loginState.value = true;
-    }
-  };
-
-  /**
-   * function for toggling the view between the views for the user's password
-   * recovery
-   */
-  private togglePasswordForgot = () => {
-    if (this.$forgotPassword.innerText === "go back") {
-      this.$forgotPassword.innerText = "Forgot Password?";
-      this.loginState.value = true;
-      this.$registerToggle.style.visibility = "visible";
-      this.addPasswordInputField();
-      this.changeRegisterMode();
-    } else {
-      this.$loginButton.innerText = "reset password";
+  private setUpPasswordForgottenView() {
+    this.$loginButton.innerText = "reset password";
+    this.$registerToggle.style.visibility = "hidden";
+    this.$passwordInput.classList.add("remove");
+    setTimeout(() => {
       this.$passwordInput.remove();
-      this.$registerToggle.style.visibility = "hidden";
-      this.$forgotPassword.innerText = "go back";
-    }
-  };
+    }, 63);
+    this.$forgotPassword.innerText = "go back";
+  }
 
   /**
    * adds html input element for the password
+   * @private
    */
   private addPasswordInputField = () => {
     const inputElements = document.createElement("div");
@@ -157,6 +214,7 @@ export default class Login extends WebComponent {
 
   /**
    * called when login Button is clicked. will sign in or sign up user depending on registerState
+   * @private
    */
   private readInput = async () => {
     if (this.$loginButton.innerText === "set new password") {
@@ -174,6 +232,7 @@ export default class Login extends WebComponent {
 
   /**
    * uses the parameters from the recovery link to reset a user's password
+   * @private
    */
   private recoverPassword = async () => {
     const urlParams = new URLSearchParams(window.location.search),
@@ -202,6 +261,7 @@ export default class Login extends WebComponent {
 
   /**
    * create a password recovery link and send it to the user via mail
+   * @private
    */
   private sendPasswordRecoveryLink = async () => {
     try {
@@ -218,6 +278,7 @@ export default class Login extends WebComponent {
 
   /**
    * sign in user. show message when sign in failed
+   * @private
    */
   private signUp = async () => {
     try {
@@ -237,6 +298,7 @@ export default class Login extends WebComponent {
 
   /**
    * sign up user. show message when sign up failed
+   * @private
    */
   private signIn = async () => {
     let connected = false;
@@ -258,6 +320,7 @@ export default class Login extends WebComponent {
 
   /**
    * check if user typed in the right password
+   * @private
    */
   private checkPassword(): boolean {
     if (!(this.$passwordInput.value === this.$verifyPasswordInput.value)) {
@@ -270,6 +333,7 @@ export default class Login extends WebComponent {
   /**
    * show message to notify user when sign in / sign up failed
    * @param message
+   * @private
    */
   private sendToast(message: string, toastType: ToastType): void {
     const toastMessage =
