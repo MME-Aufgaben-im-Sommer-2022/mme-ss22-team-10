@@ -33,13 +33,9 @@ export interface Years {
  * A model to store the dates of notes taken
  */
 export default class CalendarModel extends Model {
-  /**
-   * Today's date
-   */
+  // Today's date
   today: Date;
-  /**
-   * Dates, on which notes were taken
-   */
+  // Dates, on which notes were taken
   noteDays: Years;
 
   constructor(today: Date, years: Years) {
@@ -48,8 +44,12 @@ export default class CalendarModel extends Model {
     this.noteDays = years;
   }
 
-  // returns a date object of the specified date,
-  // if it exists in the noteDays property
+  /**
+   * returns a date object of the specified date f it exists in the noteDays property
+   * @param year
+   * @param month
+   * @param day
+   */
   getAsDate(year: string, month: string, day: string): Date | null {
     if (
       this.noteDays[year] &&

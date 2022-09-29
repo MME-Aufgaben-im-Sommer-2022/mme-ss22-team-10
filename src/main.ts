@@ -25,12 +25,6 @@ const app = () => {
    * This function is called when the application is ready to start
    */
   async function onApplicationStart() {
-    const IS_IN_DEV_MODE = import.meta.env.DEV;
-    if (IS_IN_DEV_MODE) {
-      // called when the app is in development mode
-      // appendDevPlayground();
-    }
-
     await onProductionStart();
   }
 
