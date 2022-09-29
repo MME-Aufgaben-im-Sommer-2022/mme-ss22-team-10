@@ -21,6 +21,11 @@ Sie bietet zu verschiedenen Nachhaltigkeitsbereichen Templates mit To-dos/Aufgab
 Dort kann er täglich seine Gedanken/Gefühle/To-dos etc., in ein Dokument eintragen. Unsere Anwendung bietet digitales und personalisiertes 
 Daily Note taking. Zusätzlich wird basierend auf vorherigen Notizen des Nutzers mithilfe von GPT-3 (OpenAI) ein personalisierter Eingabeblock erzeugt. 
 Dieser enthält Vorschläge und Anregungen für den Nutzer, wie er sein aktuelles Leben nachhaltiger gestalten kann.
+<br/>
+<a href = "https://www.youtube.com/watch?v=ZYBlBfL7dQI">
+<img src="./docs/screenshots/Youtube Video Image.png" width= "600"/>
+</a>
+<br/>
 
 Beim Aufruf der Seite, kann sich der Nutzer über seine E-Mail-Adresse einloggen, oder sich registrieren, falls er noch keinen Account besitzt.
 <br/>
