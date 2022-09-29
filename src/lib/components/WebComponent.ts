@@ -1,21 +1,15 @@
-// ====================================================== //
-// ==================== WebComponent ==================== //
-// ====================================================== //
-
 /**
  * This class is used to create your custom web components.
- *
+ * For code examples, see the {@link ExampleWebComponent}
  * @example
  * 1. Create a html (and css) file for your component in a new folder
  * 2. Create a new ts class that extends `WebComponent`
  * 3. Use the component either in HTML or in TypeScript:
  *     - in HTML: `<my-component></my-component>`
  *     - in TypeScript: `const myComponent = new MyComponent()`
- * 4. (don't forget to call `WebComponentLoader.loadAll().then(() => {...})` at the start of your application)
+ * 4. (do not forget to call `WebComponentLoader.loadAll().then(() => {...})` at the start of your application)
  *
- * For code examples, see the [ExampleWebComponent](../../src/components/ExampleComponent/)
  */
-
 export default abstract class WebComponent extends HTMLElement {
   /**
    * Total number of WebComponents created

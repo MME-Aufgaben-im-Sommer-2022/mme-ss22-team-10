@@ -12,6 +12,8 @@ import Modal from "../../atomics/Modal/Modal";
 import ModalFactory from "../../atomics/Modal/ModalFactory";
 import { STATE_CHANGE_EVENT } from "../../../events/StateChanged";
 import UserSettings from "./UserSettings/UserSettings";
+import { ToastFactory } from "../../atomics/Toast/ToastFactory";
+import { ToastDuration, ToastType } from "../../atomics/Toast/Toast";
 
 /**
  * @class HomeBar
@@ -44,6 +46,10 @@ export default class HomeBar extends WebComponent {
     });
   }
 
+  /**
+   * set the {@link GlobalState} for the {@link UserSettingsModel user settings} if needed
+   * @private
+   */
   private async initData() {
     if (!GlobalState.hasState(GlobalStates.userSettingsModel)) {
       const userSettingsModel = await DataManager.getUserSettingsModel();
@@ -61,6 +67,9 @@ export default class HomeBar extends WebComponent {
     )!;
   }
 
+  /**
+   * initialize html elements
+   */
   $initHtml(): void {
     this.$greetText = this.select("#greet-text")!;
     this.$profileIcon = this.select("#profile-icon")!;
@@ -76,6 +85,9 @@ export default class HomeBar extends WebComponent {
       .build();
   }
 
+  /**
+   * initialize listeners for user related events
+   */
   initListener(): void {
     this.$manageAccOpt.addEventListener("click", this.onManageAccOptionClicked);
     this.$logoutOpt.addEventListener("click", this.$onLogoutOptionClicked);
@@ -87,10 +99,18 @@ export default class HomeBar extends WebComponent {
     );
   }
 
+  /**
+   * sign out the user and show a goodbye message
+   */
   private $onLogoutOptionClicked = async () => {
     await DataManager.signOut();
+    new ToastFactory()
+      .setMessage("👋 Bye bye - see you soon!")
+      .setType(ToastType.Info)
+      .setDuration(ToastDuration.Short)
+      .show();
     EventBus.notifyAll(LOGOUT_EVENT, {});
-    window.location.reload();
+    setTimeout(() => window.location.reload(), 2000);
   };
 
   private onManageAccOptionClicked = () => {
@@ -101,21 +121,33 @@ export default class HomeBar extends WebComponent {
     this.$setGreetText();
   };
 
+  /**
+   * set banner title
+   */
   $setGreetText(): void {
     this.$greetText.innerHTML = `🌱 Hello ${this.userSettingsModelState.value.username}!`;
   }
 
+  /**
+   * retrieve and set account information in the info box
+   */
   private $setAccInfo = async () => {
     const accountData = await DataManager.getAccountData();
     this.$email.innerHTML = accountData.email;
     this.$username.innerHTML = `🌱${accountData.name}`;
   };
 
+  /**
+   * toggle whether the account info box will be shown or hidden
+   */
   private $onProfileIconClicked = () => {
     this.$setAccInfo();
     this.$profileDropdown.classList.toggle("show");
   };
 
+  /**
+   * hide the account info box when clicked outside
+   */
   private $onFocusOut = () => {
     const target = event!.target;
     if (

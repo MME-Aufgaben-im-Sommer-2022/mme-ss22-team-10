@@ -25,12 +25,6 @@ const app = () => {
    * This function is called when the application is ready to start
    */
   async function onApplicationStart() {
-    const IS_IN_DEV_MODE = import.meta.env.DEV;
-    if (IS_IN_DEV_MODE) {
-      // called when the app is in development mode
-      // appendDevPlayground();
-    }
-
     await onProductionStart();
   }
 
@@ -121,11 +115,6 @@ const app = () => {
    */
   async function onLoggedOut() {
     log("user is logged out");
-    new ToastFactory()
-      .setMessage("👋 Bye bye - see you soon!")
-      .setType(ToastType.Info)
-      .setDuration(ToastDuration.Short)
-      .show();
     $showLogin();
   }
 
