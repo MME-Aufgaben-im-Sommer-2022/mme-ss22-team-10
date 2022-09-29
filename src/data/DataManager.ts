@@ -515,20 +515,4 @@ export default class DataManager {
       date.getDate() < 10 ? "0" + date.getDate() : date.getDate(),
     ].join("-");
   }
-
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  private static async deleteUserNotes() {
-    const userNotes: Array<any> = await ApiClient.getNoteDocumentList();
-    userNotes.forEach(async (note) => {
-      await ApiClient.deleteBlockContents(note.$id);
-      await ApiClient.deleteNoteDocument(note.$id);
-    });
-  }
-
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  private static async deleteUserSettings() {
-    return await ApiClient.updateUserSettingsDocument(this.stringifyArray([]));
-  }
 }
