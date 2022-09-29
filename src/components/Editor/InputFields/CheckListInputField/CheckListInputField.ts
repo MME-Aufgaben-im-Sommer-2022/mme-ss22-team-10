@@ -129,6 +129,14 @@ export default class CheckListInputField extends WebComponent {
         this.addNewCheckListItem();
       }
     });
+
+    this.$newCheckListItemInput.addEventListener("focusin", () => {
+      this.select(".extra-point-container")!.classList.add("active");
+    });
+
+    this.$newCheckListItemInput.addEventListener("focusout", () => {
+      this.select(".extra-point-container")!.classList.remove("active");
+    });
   }
 
   private addNewCheckListItem(): void {

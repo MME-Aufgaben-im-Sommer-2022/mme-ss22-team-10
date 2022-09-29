@@ -5,11 +5,13 @@ Styles for various icons
 .theme-light {
   --settings-icon: url(res/light/settings.svg);
   --profile-icon: url(res/light/profile.svg);
+  --enter-icon: url(res/light/enter.svg);
 }
 
 .theme-dark {
   --settings-icon: url(res/dark/settings.svg);
   --profile-icon: url(res/dark/profile.svg);
+  --enter-icon: url(res/dark/enter.svg);
 }
 
 .icon {
@@ -32,4 +34,10 @@ Styles for various icons
   margin: auto;
   height: 30px;
   width: 110px;
+}
+
+.icon.enter {
+  background-image: var(--enter-icon);
+  width: 24px;
+  height: 24px;
 }

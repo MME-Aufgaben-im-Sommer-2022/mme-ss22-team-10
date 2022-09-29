@@ -100,6 +100,14 @@ export default class BulletPointInputField extends WebComponent {
       }
     });
 
+    this.$newBulletPointInput.addEventListener("focusin", () => {
+      this.select(".extra-point-container")!.classList.add("active");
+    });
+
+    this.$newBulletPointInput.addEventListener("focusout", () => {
+      this.select(".extra-point-container")!.classList.remove("active");
+    });
+
     this.bulletPointsState.addEventListener(
       "change",
       this.onBulletPointsStateChanged
