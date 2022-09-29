@@ -7,40 +7,39 @@ When the body element has the class "theme-dark", it will use the dark theme.
 */
 
 .theme-light {
-  --background-primary: #fdf7f1;
-  --background-focus: #e3ded9;
+    --background-primary: #fdf7f1;
+    --background-focus: #e3ded9;
 
-  --text-normal: #3c3c3c;
-  --text-header: rgb(44, 44, 44);
-  --text-faint: rgb(150, 150, 150);
+    --text-normal: #3c3c3c;
+    --text-header: rgb(44, 44, 44);
+    --text-faint: rgb(150, 150, 150);
 
-  --text-accent: #808c27;
-  --text-accent-hover: #6a7326;
+    --text-accent: #808c27;
+    --text-accent-hover: #6a7326;
 
-  --border-color: #343434;
+    --border-color: #343434;
 
-  --success-color: #808c27;
-  /* colors from https://www.color-hex.com/color-palette/20141 */
-  --error-color: #ec9192;
-  --info-color: #5bc0de;
-  --warning-color: #f0ad4e;
+    --success-color: #cee39a;
+    --error-color: #ec9192;
+    --info-color: #5bc0de;
+    --warning-color: #e8bd80;
 }
 
 .theme-dark {
-  --background-primary: rgb(28, 30, 32);
-  --background-focus: rgb(33, 36, 38);
+    --background-primary: rgb(28, 30, 32);
+    --background-focus: rgb(33, 36, 38);
 
-  --text-normal: rgb(216, 216, 216);
-  --text-header: rgb(198, 213, 224);
-  --text-faint: rgb(150, 150, 150);
+    --text-normal: rgb(216, 216, 216);
+    --text-header: rgb(198, 213, 224);
+    --text-faint: rgb(150, 150, 150);
 
-  --text-accent: rgb(95, 157, 205);
-  --text-accent-hover: rgb(24, 147, 242);
+    --text-accent: rgb(95, 157, 205);
+    --text-accent-hover: rgb(24, 147, 242);
 
-  --border-color: rgb(150, 150, 150);
+    --border-color: rgb(150, 150, 150);
 
-  --success-color: #656e1f;
-  --error-color: #761c15;
-  --info-color: #165991;
-  --warning-color: #9c4e00;
+    --success-color: #b5ce78;
+    --error-color: #c26566;
+    --info-color: #3d99b4;
+    --warning-color: #d2a25f;
 }
