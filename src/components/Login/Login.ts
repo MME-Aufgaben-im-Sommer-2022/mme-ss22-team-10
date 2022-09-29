@@ -185,12 +185,18 @@ export default class Login extends WebComponent {
         secret,
         this.$passwordInput.value
       );
+      this.sendToast(
+        "Your password has been changed successfully. Please log in to continue.",
+        ToastType.Success
+      );
+      await setTimeout(() => {
+        window.location.href = window.location.origin;
+      }, 2500);
     } catch (error) {
       if (error instanceof Error) {
         this.sendToast(error.message, ToastType.Error);
         return;
       }
-      window.location.href = window.location.origin;
     }
   };
 
@@ -200,7 +206,7 @@ export default class Login extends WebComponent {
   private sendPasswordRecoveryLink = async () => {
     try {
       await DataManager.sendPasswordRecoveryLink(this.$emailInput.value);
-      this.sendToast("An Email has been send!", ToastType.Info);
+      this.sendToast("An Email has been send 📧", ToastType.Info);
       return;
     } catch (error) {
       if (error instanceof Error) {
@@ -266,8 +272,14 @@ export default class Login extends WebComponent {
    * @param message
    */
   private sendToast(message: string, toastType: ToastType): void {
+    const toastMessage =
+      toastType === ToastType.Info
+        ? `ℹ️ ${message}!`
+        : toastType === ToastType.Success
+        ? `✅ ${message}`
+        : `⚠️ ${message}`;
     new ToastFactory()
-      .setMessage(message)
+      .setMessage(toastMessage)
       .setType(toastType)
       .setDuration(ToastDuration.Medium)
       .show();
