@@ -53,7 +53,7 @@ export default class Login extends WebComponent {
     this.usernameInputHTML = this.$usernameInput.outerHTML;
     this.passwordInputHTML = this.$passwordInput.outerHTML;
     this.verifyPasswordInputHTML = this.$verifyPasswordInput.outerHTML;
-    this.toggleRegisterMode();
+    this.$toggleRegisterMode();
   }
 
   /**
@@ -61,10 +61,10 @@ export default class Login extends WebComponent {
    * @private
    */
   private initListeners(): void {
-    this.$registerToggle.addEventListener("click", this.toggleRegisterMode);
+    this.$registerToggle.addEventListener("click", this.$toggleRegisterMode);
     this.$forgotPassword.addEventListener(
       "click",
-      this.toggleForgotPasswordMode
+      this.$toggleForgotPasswordMode
     );
     this.$loginButton.addEventListener("click", this.readInput);
   }
@@ -74,39 +74,39 @@ export default class Login extends WebComponent {
    * toggles registerState and sets HTML elements accordingly
    * @private
    */
-  private toggleRegisterMode = () => {
+  private $toggleRegisterMode = () => {
     // check if the site is being called through a recovery link
     const urlParams = new URLSearchParams(window.location.search),
       userId = urlParams.get("userId");
     if (userId !== null) {
-      this.setUpPasswordRecoveryView();
+      this.$setUpPasswordRecoveryView();
     } else if (this.loginState.value) {
-      this.setUpLogInView();
+      this.$setUpLogInView();
     } else {
-      this.setUpRegisterView();
+      this.$setUpRegisterView();
     }
-    this.resetAllInputFields();
+    this.$resetAllInputFields();
   };
 
   /**
    * function for toggling the view for password reset and login
    * @private
    */
-  private toggleForgotPasswordMode = () => {
+  private $toggleForgotPasswordMode = () => {
     if (this.$forgotPassword.innerText === "go back") {
-      this.addPasswordInputField();
-      this.setUpLogInView();
+      this.$addPasswordInputField();
+      this.$setUpLogInView();
     } else {
-      this.setUpPasswordForgottenView();
+      this.$setUpPasswordForgottenView();
     }
-    this.resetAllInputFields();
+    this.$resetAllInputFields();
   };
 
   /**
    * empties all input fields
    * @private
    */
-  private resetAllInputFields() {
+  private $resetAllInputFields() {
     this.$emailInput.value = "";
     this.$usernameInput.value = "";
     this.$passwordInput.value = "";
@@ -117,7 +117,7 @@ export default class Login extends WebComponent {
    * sets the html for password recovery
    * @private
    */
-  private setUpPasswordRecoveryView() {
+  private $setUpPasswordRecoveryView() {
     this.$loginButton.innerText = "set new password";
     this.$registerToggle.classList.add("remove");
     this.$usernameInput.remove();
@@ -131,7 +131,7 @@ export default class Login extends WebComponent {
    * sets the html for a login
    * @private
    */
-  private setUpLogInView() {
+  private $setUpLogInView() {
     this.$loginButton.innerText = "Login";
     this.$registerToggle.innerText = "Sign Up";
     this.$forgotPassword.innerText = "Forgot Password?";
@@ -150,11 +150,11 @@ export default class Login extends WebComponent {
    * sets up the html for account registration
    * @private
    */
-  private setUpRegisterView() {
+  private $setUpRegisterView() {
     this.$loginButton.innerText = "Register";
     this.$registerToggle.innerText = "Sign In";
     this.$forgotPassword.style.visibility = "hidden";
-    this.insertRegisterInputEl();
+    this.$insertRegisterInputEl();
     this.loginState.value = true;
   }
 
@@ -162,7 +162,7 @@ export default class Login extends WebComponent {
    * inserts the input field at the right position
    * @private
    */
-  private insertRegisterInputEl(): void {
+  private $insertRegisterInputEl(): void {
     const inputElements = document.createElement("div");
     inputElements.innerHTML = (
       this.usernameInputHTML +
@@ -187,7 +187,7 @@ export default class Login extends WebComponent {
    *
    * @private
    */
-  private setUpPasswordForgottenView() {
+  private $setUpPasswordForgottenView() {
     this.$loginButton.innerText = "reset password";
     this.$registerToggle.style.visibility = "hidden";
     this.$passwordInput.classList.add("remove");
@@ -201,7 +201,7 @@ export default class Login extends WebComponent {
    * adds html input element for the password
    * @private
    */
-  private addPasswordInputField = () => {
+  private $addPasswordInputField = () => {
     const inputElements = document.createElement("div");
     inputElements.innerHTML = this.passwordInputHTML;
     this.$loginForm.insertBefore(
