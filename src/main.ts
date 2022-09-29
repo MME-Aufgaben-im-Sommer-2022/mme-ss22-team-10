@@ -115,11 +115,6 @@ const app = () => {
    */
   async function onLoggedOut() {
     log("user is logged out");
-    new ToastFactory()
-      .setMessage("👋 Bye bye - see you soon!")
-      .setType(ToastType.Info)
-      .setDuration(ToastDuration.Short)
-      .show();
     $showLogin();
   }
 

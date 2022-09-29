@@ -12,6 +12,8 @@ import Modal from "../../atomics/Modal/Modal";
 import ModalFactory from "../../atomics/Modal/ModalFactory";
 import { STATE_CHANGE_EVENT } from "../../../events/StateChanged";
 import UserSettings from "./UserSettings/UserSettings";
+import { ToastFactory } from "../../atomics/Toast/ToastFactory";
+import { ToastDuration, ToastType } from "../../atomics/Toast/Toast";
 
 /**
  * @class HomeBar
@@ -89,8 +91,13 @@ export default class HomeBar extends WebComponent {
 
   private $onLogoutOptionClicked = async () => {
     await DataManager.signOut();
+    new ToastFactory()
+      .setMessage("👋 Bye bye - see you soon!")
+      .setType(ToastType.Info)
+      .setDuration(ToastDuration.Short)
+      .show();
     EventBus.notifyAll(LOGOUT_EVENT, {});
-    window.location.reload();
+    setTimeout(() => window.location.reload(), 2000);
   };
 
   private onManageAccOptionClicked = () => {
