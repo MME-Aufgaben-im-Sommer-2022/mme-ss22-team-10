@@ -47,7 +47,7 @@ check-list-item {
   position: relative;
 }
 
-.active.extra-point-container::after {
+.active.extra-point-container::before {
   content: "";
   background-image: var(--enter-icon);
   /*rotate 180 deg*/
@@ -55,11 +55,7 @@ check-list-item {
   width: 24px;
   height: 24px;
   position: absolute;
-  right: 0.5em;
+  left: 13em;
   top: 1.1em;
   opacity: 0.4;
-}
-
-bullet-point-input-field > .active.extra-point-container::after {
-  right: 35% !important;
 }
