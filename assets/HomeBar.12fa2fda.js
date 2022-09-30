@@ -1,4 +1,4 @@
-var r=Object.defineProperty;var c=(n,o,t)=>o in n?r(n,o,{enumerable:!0,configurable:!0,writable:!0,value:t}):n[o]=t;var e=(n,o,t)=>(c(n,typeof o!="symbol"?o+"":o,t),t);import{W as l,G as i,a as s,D as a,M as d,S as p,T as g,b as u,c as h,E as m}from"./index.634112ec.js";import f from"./UserSettings.552f17e2.js";const $=`<div id="home-bar-container">
+var r=Object.defineProperty;var c=(n,o,t)=>o in n?r(n,o,{enumerable:!0,configurable:!0,writable:!0,value:t}):n[o]=t;var e=(n,o,t)=>(c(n,typeof o!="symbol"?o+"":o,t),t);import{W as l,G as i,a as s,D as a,M as d,S as p,T as g,b as u,c as h,E as m}from"./index.e194eebf.js";import f from"./UserSettings.d3b77a00.js";const $=`<div id="home-bar-container">
   <div class="spacer"></div>
   <span id="greet-text"></span>
   <div class="spacer"></div>

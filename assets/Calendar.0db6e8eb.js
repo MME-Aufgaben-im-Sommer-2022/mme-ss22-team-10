@@ -1,4 +1,4 @@
-var s=Object.defineProperty;var o=(n,r,t)=>r in n?s(n,r,{enumerable:!0,configurable:!0,writable:!0,value:t}):n[r]=t;var e=(n,r,t)=>(o(n,typeof r!="symbol"?r+"":r,t),t);import{W as h,G as a,a as i,D as u}from"./index.634112ec.js";import c from"./CalendarMonth.00815230.js";const l=`<div class="calendar border">
+var s=Object.defineProperty;var o=(n,r,t)=>r in n?s(n,r,{enumerable:!0,configurable:!0,writable:!0,value:t}):n[r]=t;var e=(n,r,t)=>(o(n,typeof r!="symbol"?r+"":r,t),t);import{W as h,G as a,a as i,D as u}from"./index.e194eebf.js";import c from"./CalendarMonth.026bbd67.js";const l=`<div class="calendar border">
     <span>Entries</span>
     <div class="calendar-navigation" >
         <a href="#" class="previous doodle-round round">&#8249;</a>
