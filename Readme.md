@@ -6,15 +6,7 @@
 
 ## 📝 Project description
 
-### Projekt
-
-_Fassen Sie kurz die wichtigsten Features, die intendierte Zielgruppe und die grundlegende Motivation des Projekts
-zusammen. Nennen Sie die aktuell bereits implementierten Funktionen und verlinken Sie den aktuellsten Release._
-
 ### Beschreibung & Anleitung
-
-_Nutzen Sie dazu Screenshots und/oder Videos. Verlinken Sie ein min. 60-sekündiges Demo-Video, das die Verwendung aller wichtigen Funktionen zeigt und in Form
-eines Audio-Kommentars beschreibt._
 
 Econotes ist eine personalisierte Daily Note Anwendung. Daily Note Taking ist eine Form des Journalings und die App soll den
 Sie bietet zu verschiedenen Nachhaltigkeitsbereichen Templates mit To-dos/Aufgaben/Ziele, die sich der Nutzer frei zusammenstellen kann. 
