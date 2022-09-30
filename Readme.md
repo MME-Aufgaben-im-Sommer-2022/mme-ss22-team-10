@@ -13,7 +13,7 @@ zusammen. Nennen Sie die aktuell bereits implementierten Funktionen und verlinke
 
 ### Beschreibung & Anleitung
 
-Nutzen Sie dazu Screenshots und/oder Videos. Verlinken Sie ein min. 60-sekündiges Demo-Video, das die Verwendung aller wichtigen Funktionen zeigt und in Form
+_Nutzen Sie dazu Screenshots und/oder Videos. Verlinken Sie ein min. 60-sekündiges Demo-Video, das die Verwendung aller wichtigen Funktionen zeigt und in Form
 eines Audio-Kommentars beschreibt._
 
 Econotes ist eine personalisierte Daily Note Anwendung. Daily Note Taking ist eine Form des Journalings und die App soll den
@@ -62,14 +62,18 @@ werden sich die Browsereinstellungen gezogen.
 <img src="./docs/screenshots/07 2 acc settings.png" width= "600"/>
 <br/>
 
+#### Projekt Architektur
+
+Hier noch ein kleines Cheat-Sheet zur Projekt Architektur:
+
+<br/><img src="./docs/res/web-component-architecture.svg" width= "600"/><br/>
+
+
 ### Team
 
-_Listen Sie tabelarisch alle Teammitglieder mit Name, E-Mail-Adresse und Foto auf. Halten Sie für jedes Mitglied kurz
-fest, welchen Teilbereich der Anwendung die jeweilige Person maßgeblich bearbeitet hat._
-
-| Name               | E-Mail-Adresse                            | Github-Nutzer                                    | Foto                                   | Komponenten der Anwendung                                                                |
-|--------------------|-------------------------------------------|--------------------------------------------------|----------------------------------------|------------------------------------------------------------------------------------------|
-| Alexander Weichart | alexander.weichart@stud.uni-regensburg.de | [@AlexW00](https://github.com/AlexW00)           | ![Alex](./docs/team/img-alex.jpeg)     |                                                                                          |
-| Brooke Pintsuk     | brooke.pintsuk@stud.uni-regensburg.de     | [@Brooke1803](https://github.com/Brooke1803)     | ![Brooke](./docs/team/img-brooke.jpeg) | - Kalender Bereich <br/> - Login Bereich                                                                                         |
-| Le My Ngo          | le-my.ngo@stud.uni-regensburg.de          | [@myusome](https://github.com/myusome)           | ![My](./docs/team/img-my.jpeg)         | - Data Manager <br/> - Appwrite API Anbindung <br/>- Login Bereich <br/>- Logout Feature |
-| Samuel Roeben      | samuel.roeben@stud.uni-regensburg.de      | [@samuelroeben](https://github.com/samuelroeben) | ![Samuel](./docs/team/img-samuel.jpeg) | - Kalender Bereich <br/> - Login Bereich                                                                                          |
+| Name | E-Mail-Adresse | Github-Nutzer | Foto | Komponenten der Anwendung |
+| ---- | -------------- | ------------- | ---- | ------------------------- |
+| Alexander Weichart | alexander.weichart@stud.uni-regensburg.de | [@AlexW00](https://github.com/AlexW00) | ![Alex](./docs/team/img-alex.jpeg) | - Projekt template & standard library (src/lib/) <br/> - Editor Component <br/> - Home Component <br/> - Template Configurator Component <br/> - Atomics (src/components/atomics) |
+| Brooke Pintsuk | brooke.pintsuk@stud.uni-regensburg.de | [@Brooke1803](https://github.com/Brooke1803) | ![Brooke](./docs/team/img-brooke.jpeg) | - Kalender Bereich <br/> - Login Bereich |
+| Le My Ngo | le-my.ngo@stud.uni-regensburg.de | [@myusome](https://github.com/myusome) | ![My](./docs/team/img-my.jpeg) | - Data Manager <br/> - Appwrite API Anbindung <br/>- Login Bereich <br/>- Logout Feature |
+| Samuel Roeben | samuel.roeben@stud.uni-regensburg.de | [@samuelroeben](https://github.com/samuelroeben) | ![Samuel](./docs/team/img-samuel.jpeg) | - Kalender Bereich <br/> - Login Bereich |   
