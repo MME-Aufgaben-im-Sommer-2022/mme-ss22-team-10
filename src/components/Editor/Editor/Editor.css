@@ -42,3 +42,20 @@ check-list-item {
   background-color: var(--background-primary);
   border-radius: 50%;
 }
+
+.extra-point-container {
+  position: relative;
+}
+
+.active.extra-point-container::before {
+  content: "";
+  background-image: var(--enter-icon);
+  /*rotate 180 deg*/
+  transform: rotate(180deg);
+  width: 24px;
+  height: 24px;
+  position: absolute;
+  left: 13em;
+  top: 1.1em;
+  opacity: 0.4;
+}
