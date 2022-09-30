@@ -6,12 +6,15 @@
 
 ## 📝 Project description
 
+- Deployment: [link](https://econotes.software-engineering.education/)
+- Final Release: [link](https://github.com/MME-Aufgaben-im-Sommer-2022/mme-ss22-team-10/releases/tag/Final-Release)
+
 ### Beschreibung & Anleitung
 
 Econotes ist eine personalisierte Daily Note Anwendung. Daily Note Taking ist eine Form des Journalings und die App soll den
-Sie bietet zu verschiedenen Nachhaltigkeitsbereichen Templates mit To-dos/Aufgaben/Ziele, die sich der Nutzer frei zusammenstellen kann. 
-Dort kann er täglich seine Gedanken/Gefühle/To-dos etc., in ein Dokument eintragen. Unsere Anwendung bietet digitales und personalisiertes 
-Daily Note taking. Zusätzlich wird basierend auf vorherigen Notizen des Nutzers mithilfe von GPT-3 (OpenAI) ein personalisierter Eingabeblock erzeugt. 
+Sie bietet zu verschiedenen Nachhaltigkeitsbereichen Templates mit To-dos/Aufgaben/Ziele, die sich der Nutzer frei zusammenstellen kann.
+Dort kann er täglich seine Gedanken/Gefühle/To-dos etc., in ein Dokument eintragen. Unsere Anwendung bietet digitales und personalisiertes
+Daily Note taking. Zusätzlich wird basierend auf vorherigen Notizen des Nutzers mithilfe von GPT-3 (OpenAI) ein personalisierter Eingabeblock erzeugt.
 Dieser enthält Vorschläge und Anregungen für den Nutzer, wie er sein aktuelles Leben nachhaltiger gestalten kann.
 <br/>
 <a href = "https://www.youtube.com/watch?v=ZYBlBfL7dQI">
@@ -40,7 +43,7 @@ Auf der linken seite der Anwendung befindet sich Navigationsbereich für die Ein
 Beim Klick auf eine Kachel wird der entsprechende Eintrag geladen und kann auch nachträglich noch bearbeitet werden.
 <br/><img src="./docs/screenshots/05 navigation.png" width= "600"/><br/>
 
-Sollte sich der Nutzer mal umentscheiden, so kann er sich das Template überarbeiten. Das Menü für die Änderungen wird dabei über das Zahnrad-Icon aufgerufen. 
+Sollte sich der Nutzer mal umentscheiden, so kann er sich das Template überarbeiten. Das Menü für die Änderungen wird dabei über das Zahnrad-Icon aufgerufen.
 Die Änderungen sind dann für den nächsten Tag gültig.
 <br/><img src="./docs/screenshots/04 3 template config later.png" width= "600"/><br/>
 
@@ -60,12 +63,11 @@ Hier noch ein kleines Cheat-Sheet zur Projekt Architektur:
 
 <br/><img src="./docs/res/web-component-architecture.svg" width= "600"/><br/>
 
-
 ### Team
 
-| Name | E-Mail-Adresse | Github-Nutzer | Foto | Komponenten der Anwendung |
-| ---- | -------------- | ------------- | ---- | ------------------------- |
-| Alexander Weichart | alexander.weichart@stud.uni-regensburg.de | [@AlexW00](https://github.com/AlexW00) | ![Alex](./docs/team/img-alex.jpeg) | - Projekt template & standard library (src/lib/) <br/> - Editor Component <br/> - Home Component <br/> - Template Configurator Component <br/> - Atomics (src/components/atomics) |
-| Brooke Pintsuk | brooke.pintsuk@stud.uni-regensburg.de | [@Brooke1803](https://github.com/Brooke1803) | ![Brooke](./docs/team/img-brooke.jpeg) | - Kalender Bereich <br/> - Login Bereich |
-| Le My Ngo | le-my.ngo@stud.uni-regensburg.de | [@myusome](https://github.com/myusome) | ![My](./docs/team/img-my.jpeg) | - Data Manager <br/> - Appwrite API Anbindung <br/>- Login Bereich <br/>- Logout Feature |
-| Samuel Roeben | samuel.roeben@stud.uni-regensburg.de | [@samuelroeben](https://github.com/samuelroeben) | ![Samuel](./docs/team/img-samuel.jpeg) | - Kalender Bereich <br/> - Login Bereich |   
+| Name               | E-Mail-Adresse                            | Github-Nutzer                                    | Foto                                   | Komponenten der Anwendung                                                                                                                                                         |
+| ------------------ | ----------------------------------------- | ------------------------------------------------ | -------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Alexander Weichart | alexander.weichart@stud.uni-regensburg.de | [@AlexW00](https://github.com/AlexW00)           | ![Alex](./docs/team/img-alex.jpeg)     | - Projekt template & standard library (src/lib/) <br/> - Editor Component <br/> - Home Component <br/> - Template Configurator Component <br/> - Atomics (src/components/atomics) |
+| Brooke Pintsuk     | brooke.pintsuk@stud.uni-regensburg.de     | [@Brooke1803](https://github.com/Brooke1803)     | ![Brooke](./docs/team/img-brooke.jpeg) | - Kalender Bereich <br/> - Login Bereich                                                                                                                                          |
+| Le My Ngo          | le-my.ngo@stud.uni-regensburg.de          | [@myusome](https://github.com/myusome)           | ![My](./docs/team/img-my.jpeg)         | - Data Manager <br/> - Appwrite API Anbindung <br/>- Login Bereich <br/>- Logout Feature                                                                                          |
+| Samuel Roeben      | samuel.roeben@stud.uni-regensburg.de      | [@samuelroeben](https://github.com/samuelroeben) | ![Samuel](./docs/team/img-samuel.jpeg) | - Kalender Bereich <br/> - Login Bereich                                                                                                                                          |
